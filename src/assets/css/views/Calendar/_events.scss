@@ -1,0 +1,81 @@
+#calendarEvent {
+  padding: 0 1.25rem;
+
+  .searchBox {
+    display: flex;
+    align-items: center;
+  }
+
+  .searchBtn {
+    margin-left: 10px;
+  }
+
+  .el-button.el-button.importBtn {
+    margin-left: auto;
+  }
+
+  .mainTable {
+    margin-top: 2rem;
+  }
+
+  .eventDateBox,
+  .showDateBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+  }
+
+  .dateLine {
+    width: 1px;
+    height: 10px;
+    border-radius: 4px;
+    background: #898b8d;
+  }
+
+  .inputBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .inputTitle {
+      width: 120px;
+      text-align: right;
+      margin-right: 1rem;
+    }
+  }
+
+  .keyWordInput {
+    width: 240px;
+  }
+
+  .relatedCheck {
+    margin-bottom: 1rem;
+  }
+
+  .changeInputBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .changeInputTitle {
+    width: 100px;
+  }
+
+  // element UI
+  .el-scrollbar__bar.is-vertical > div {
+    background-color: #c4c4c4;
+  }
+
+  .el-scrollbar__wrap {
+    height: 500px;
+  }
+
+  .selectBox {
+    .el-select {
+      margin-right: 1rem;
+    }
+  }
+}

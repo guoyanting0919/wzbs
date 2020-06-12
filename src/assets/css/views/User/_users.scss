@@ -1,0 +1,49 @@
+#userUsers {
+  padding: 0 1.25rem;
+
+  .searchBox {
+    margin-bottom: 2rem;
+  }
+
+  .roleBadge {
+    padding: 8px 12px;
+    background: #ecf5ff;
+    color: #409eff;
+    display: inline-block;
+    border-radius: 4px;
+    border: 1px solid #d9ecff;
+  }
+
+  .inputBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .inputTitle {
+    width: 90px;
+    text-align: right;
+    margin-right: 1rem;
+  }
+
+  .unitSelect {
+    margin-right: 1rem;
+  }
+
+  // element UI
+  .el-scrollbar__bar.is-vertical > div {
+    background-color: #c4c4c4;
+  }
+
+  .el-scrollbar__wrap {
+    height: 500px;
+  }
+
+  .el-tree__empty-block {
+    width: 200px;
+
+    span {
+      color: rgb(219, 28, 28);
+    }
+  }
+}

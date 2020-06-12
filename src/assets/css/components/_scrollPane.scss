@@ -1,0 +1,13 @@
+.scroll-container {
+  white-space: nowrap;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100%;
+}
+.scroll-container .el-scrollbar__bar {
+  bottom: 0px;
+}
+.scroll-container .el-scrollbar__wrap {
+  /* height: 49px; */
+  overflow: hidden;
+}

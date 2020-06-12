@@ -1,0 +1,38 @@
+.mainLayout {
+  width: 100%;
+  height: 100vh;
+
+  .mainLayoutAside {
+    height: calc(100vh - 60px);
+    background: $color-primary;
+    color: #fff;
+    transition: 0.5s;
+    width: 200px !important;
+
+    &.isCollapse {
+      width: auto !important;
+    }
+  }
+
+  .el-main {
+    padding: 0;
+  }
+
+  .viewHeight {
+    height: calc(100% - 56px);
+  }
+
+  .el-menu {
+    border-right: none;
+  }
+
+  .el-submenu__icon-arrow {
+    top: 56% !important;
+    right: 10px !important;
+  }
+}
+
+.el-menu--vertical {
+  border-top: 9px solid transparent;
+  border-left: 4px solid transparent;
+}

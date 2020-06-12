@@ -1,0 +1,63 @@
+#header {
+  width: 100%;
+  background: $color-primary;
+  color: #fff;
+  padding: 0;
+  display: flex;
+  .logoBox {
+    width: 200px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-right: 1px solid rgba(238, 241, 146, 0.3);
+    font-weight: 700;
+
+    &.logoBoxCollapse {
+      width: 64px;
+    }
+  }
+
+  .breads {
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  .fa-bars {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    font-size: 1.5rem;
+    transition: 0.3s;
+
+    &.activeBar {
+      transform: rotate(90deg);
+    }
+  }
+
+  .breadLink {
+    color: #fff !important;
+    pointer-events: none !important;
+  }
+
+  .breadItem span {
+    color: #fff;
+    font-size: 16px;
+  }
+
+  .userBox {
+    height: 60px;
+    line-height: 60px;
+    margin-left: auto;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .userStyle {
+    color: #fff;
+    font-size: 1rem;
+  }
+}

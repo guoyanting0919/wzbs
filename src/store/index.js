@@ -18,6 +18,10 @@ export default new Vuex.Store({
     LOADING(state, payload) {
       state.isLoading = payload;
     },
+    saveTagsData(state, data) {
+      state.tagsStoreList = data;
+      sessionStorage.setItem("Tags", data);
+    },
   },
 
   modules: {},

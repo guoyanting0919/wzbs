@@ -1,7 +1,5 @@
 <template>
-  <div id="home">
-    <h1>ad</h1>
-  </div>
+  <div id="home">文藻外語大學行事曆後台系統</div>
 </template>
 
 <script>
@@ -17,7 +15,18 @@ export default {
   methods: {},
   created() {},
   mounted() {
-    console.log(process.env.VUE_APP_API);
+    // console.log(process.env.VUE_APP_API);
   }
 };
 </script>
+<style lang='scss'>
+#home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  // padding-bottom: 5rem;
+}
+</style>

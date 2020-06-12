@@ -1,0 +1,24 @@
+#userAuthority {
+  .box-card {
+    width: 90%;
+    margin: auto;
+  }
+
+  .authorityHeader {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .role-item {
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .role-item.active {
+    background: #ebf5ff;
+  }
+
+  .role-item:hover {
+    background: #ebf5ff;
+  }
+}

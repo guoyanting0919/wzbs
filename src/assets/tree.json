@@ -1,0 +1,522 @@
+{
+  "success": true,
+  "msg": "獲取成功",
+  "response": {
+    "value": 0,
+    "Pid": 0,
+    "label": "根節點",
+    "btype": null,
+    "order": 0,
+    "isbtn": false,
+    "disabled": false,
+    "children": [
+      {
+        "value": 2,
+        "Pid": 0,
+        "label": "用戶角色管理",
+        "btype": null,
+        "order": 0,
+        "isbtn": false,
+        "disabled": false,
+        "children": [
+          {
+            "value": 3,
+            "Pid": 2,
+            "label": "角色管理",
+            "btype": null,
+            "order": 1,
+            "isbtn": false,
+            "disabled": false,
+            "children": [
+              {
+                "value": 16,
+                "Pid": 3,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 17,
+                "Pid": 3,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 18,
+                "Pid": 3,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 19,
+                "Pid": 3,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ],
+            "btns": [
+              {
+                "value": 16,
+                "Pid": 3,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 17,
+                "Pid": 3,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 18,
+                "Pid": 3,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 19,
+                "Pid": 3,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ]
+          },
+          {
+            "value": 4,
+            "Pid": 2,
+            "label": "用戶管理",
+            "btype": null,
+            "order": 1,
+            "isbtn": false,
+            "disabled": false,
+            "children": [
+              {
+                "value": 9,
+                "Pid": 4,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 13,
+                "Pid": 4,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 14,
+                "Pid": 4,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 15,
+                "Pid": 4,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ],
+            "btns": [
+              {
+                "value": 9,
+                "Pid": 4,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 13,
+                "Pid": 4,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 14,
+                "Pid": 4,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 15,
+                "Pid": 4,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ]
+          }
+        ],
+        "btns": []
+      },
+      {
+        "value": 5,
+        "Pid": 0,
+        "label": "菜單權限管理",
+        "btype": null,
+        "order": 0,
+        "isbtn": false,
+        "disabled": false,
+        "children": [
+          {
+            "value": 6,
+            "Pid": 5,
+            "label": "接口管理",
+            "btype": null,
+            "order": 1,
+            "isbtn": false,
+            "disabled": false,
+            "children": [
+              {
+                "value": 20,
+                "Pid": 6,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 21,
+                "Pid": 6,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 22,
+                "Pid": 6,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 23,
+                "Pid": 6,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ],
+            "btns": [
+              {
+                "value": 20,
+                "Pid": 6,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 21,
+                "Pid": 6,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 22,
+                "Pid": 6,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 23,
+                "Pid": 6,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ]
+          },
+          {
+            "value": 7,
+            "Pid": 5,
+            "label": "菜單管理",
+            "btype": null,
+            "order": 1,
+            "isbtn": false,
+            "disabled": false,
+            "children": [
+              {
+                "value": 84,
+                "Pid": 7,
+                "label": "菜單樹",
+                "btype": null,
+                "order": 0,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 87,
+                "Pid": 7,
+                "label": "左側導航",
+                "btype": null,
+                "order": 0,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 24,
+                "Pid": 7,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 25,
+                "Pid": 7,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 26,
+                "Pid": 7,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 27,
+                "Pid": 7,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ],
+            "btns": [
+              {
+                "value": 84,
+                "Pid": 7,
+                "label": "菜單樹",
+                "btype": null,
+                "order": 0,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 87,
+                "Pid": 7,
+                "label": "左側導航",
+                "btype": null,
+                "order": 0,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 24,
+                "Pid": 7,
+                "label": "查詢",
+                "btype": "btnSearch",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 25,
+                "Pid": 7,
+                "label": "新增",
+                "btype": "btnAdd",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 26,
+                "Pid": 7,
+                "label": "編輯",
+                "btype": "btnEdit",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              },
+              {
+                "value": 27,
+                "Pid": 7,
+                "label": "刪除",
+                "btype": "btnDelete",
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ]
+          },
+          {
+            "value": 34,
+            "Pid": 5,
+            "label": "權限分配",
+            "btype": null,
+            "order": 1,
+            "isbtn": false,
+            "disabled": false,
+            "children": [
+              {
+                "value": 35,
+                "Pid": 34,
+                "label": "保存權限",
+                "btype": null,
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ],
+            "btns": [
+              {
+                "value": 35,
+                "Pid": 34,
+                "label": "保存權限",
+                "btype": null,
+                "order": 1,
+                "isbtn": true,
+                "disabled": false,
+                "children": null,
+                "btns": null
+              }
+            ]
+          }
+        ],
+        "btns": []
+      }
+    ]
+  }
+}
