@@ -15,8 +15,19 @@
       <el-table-column prop="category" label="類別名稱" sortable></el-table-column>
       <el-table-column prop="emit" label="操作" width="200" sortable>
         <template slot-scope="scope">
-          <el-button class="outline" size="mini" @click="handleAddOrEdit('edit',scope.row)">編輯</el-button>
-          <el-button type="danger" class="outline" size="mini" @click="handleDel(scope.row)">刪除</el-button>
+          <el-button
+            v-if="hasBtn('btnEdit')"
+            class="outline"
+            size="mini"
+            @click="handleAddOrEdit('edit',scope.row)"
+          >編輯</el-button>
+          <el-button
+            v-if="hasBtn('btnDelete')"
+            type="danger"
+            class="outline"
+            size="mini"
+            @click="handleDel(scope.row)"
+          >刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,6 +75,10 @@ export default {
   methods: {
     handleEdit() {},
     handleDel() {},
+    hasBtn(btnType) {
+      const vm = this;
+      return this.buttonList.some(btn => btn.btype == btnType);
+    },
     handleAddOrEdit(act, info = "") {
       this.categoryName = "";
       if (act === "add") {

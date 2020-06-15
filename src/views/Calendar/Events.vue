@@ -14,7 +14,9 @@
     <HeaderBox
       @changeHandler="changeHandler"
       @handleAddOrEdit="handleAddOrEdit"
+      @getSearchDate="getSearchDate"
       :buttonList="buttonList"
+      :showDatePicker="true"
     ></HeaderBox>
 
     <!-- mainTable -->
@@ -51,8 +53,19 @@
           <el-table-column prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button class="outline" size="mini" @click="handleCopy(scope.row)">複製</el-button>
-              <el-button class="outline" size="mini" @click="handleAddOrEdit('edit', scope.row)">編輯</el-button>
-              <el-button type="danger" class="outline" size="mini" @click="handleDel(scope.row)">刪除</el-button>
+              <el-button
+                v-if="hasBtn('btnEdit')"
+                class="outline"
+                size="mini"
+                @click="handleAddOrEdit('edit', scope.row)"
+              >編輯</el-button>
+              <el-button
+                v-if="hasBtn('btnDelete')"
+                type="danger"
+                class="outline"
+                size="mini"
+                @click="handleDel(scope.row)"
+              >刪除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -307,7 +320,8 @@ export default {
       addOrEditDialog: false,
       addInnerVisible: false,
       importDialogVisible: false,
-      changeDialog: false
+      changeDialog: false,
+      searchDate: ""
     };
   },
   components: {
@@ -330,6 +344,10 @@ export default {
     },
     handleCopy() {},
     handleEdit() {},
+    hasBtn(btnType) {
+      const vm = this;
+      return this.buttonList.some(btn => btn.btype == btnType);
+    },
     handleDel() {
       this.$notify({
         title: "刪除成功",
@@ -350,6 +368,9 @@ export default {
         type: "success"
       });
     },
+    getSearchDate(dateArr) {
+      this.searchDate = dateArr;
+    },
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];
@@ -361,7 +382,7 @@ export default {
             vm.buttonList = buttonList;
             return;
           } else if (element.children) {
-            this.getButtonList(path, element.children);
+            vm.getButtonList(path, element.children);
           }
         }
       });
@@ -378,4 +399,7 @@ export default {
 </script>
 
 <style lang="scss">
+.el-notification__closeBtn {
+  display: none !important;
+}
 </style>

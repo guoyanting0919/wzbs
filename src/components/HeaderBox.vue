@@ -1,6 +1,16 @@
 <template>
   <div id="headerBox">
     <div class="searchBox">
+      <el-date-picker
+        class="datePicker"
+        v-model="searchDate"
+        type="daterange"
+        range-separator="~"
+        start-placeholder="開始顯示時間"
+        end-placeholder="結束顯示時間"
+        v-if="showDatePicker"
+        @change="setSearchDate"
+      ></el-date-picker>
       <el-input
         v-if="hasBtn('btnSearch')"
         class="keyWordInput"
@@ -43,7 +53,8 @@ export default {
     return {
       keyWordInput: "",
       changeDialogVisible: false,
-      importDialogVisible: false
+      importDialogVisible: false,
+      searchDate: ""
     };
   },
   props: {
@@ -51,6 +62,11 @@ export default {
       type: Array,
       required: true,
       default: []
+    },
+    showDatePicker: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   methods: {
@@ -64,6 +80,9 @@ export default {
     },
     setChangeHandler() {
       this.$emit("changeHandler");
+    },
+    setSearchDate() {
+      this.$emit("getSearchDate", this.searchDate);
     },
     searchHandler() {
       // 透過當前 router 決定跑哪支api

@@ -23,8 +23,19 @@
           </el-table-column>
           <el-table-column prop="emit" label="操作">
             <template slot-scope="scope">
-              <el-button class="outline" size="mini" @click="handleAddOrEdit('edit',scope.row)">編輯</el-button>
-              <el-button type="danger" class="outline" size="mini" @click="handleDel(scope.row)">刪除</el-button>
+              <el-button
+                class="outline"
+                size="mini"
+                v-if="hasBtn('btnEdit')"
+                @click="handleAddOrEdit('edit',scope.row)"
+              >編輯</el-button>
+              <el-button
+                v-if="hasBtn('btnDelete')"
+                type="danger"
+                class="outline"
+                size="mini"
+                @click="handleDel(scope.row)"
+              >刪除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -113,6 +124,10 @@ export default {
         }
       });
       return buttonList;
+    },
+    hasBtn(btnType) {
+      const vm = this;
+      return this.buttonList.some(btn => btn.btype == btnType);
     },
     handleAddOrEdit(method) {
       this.addOrEditDialog = true;
