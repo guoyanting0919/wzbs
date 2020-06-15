@@ -18,7 +18,6 @@
       <el-dropdown trigger="hover">
         <span @click="$router.push('/login')" class="el-dropdown-link userinfo-inner userStyle">User</span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>我的消息</el-dropdown-item>
           <el-dropdown-item>設置</el-dropdown-item>
           <el-dropdown-item @click.native="logout">登出</el-dropdown-item>
         </el-dropdown-menu>
