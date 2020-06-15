@@ -1,0 +1,19 @@
+#headerBox {
+  .searchBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .keyWordInput {
+    width: 240px;
+  }
+
+  .searchBtn {
+    margin-left: 10px;
+  }
+
+  .el-button.el-button.importBtn {
+    margin-left: auto;
+  }
+}

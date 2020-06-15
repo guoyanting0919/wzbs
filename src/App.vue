@@ -91,9 +91,13 @@ export default {
   },
 
   mounted() {
-    this.routes = JSON.parse(
+    let NavigationBar = JSON.parse(
       window.localStorage.router ? window.localStorage.router : null
     );
+
+    if (this.routes.length <= 0 && NavigationBar && NavigationBar.length >= 0) {
+      this.routes = NavigationBar;
+    }
   },
 
   watch: {}

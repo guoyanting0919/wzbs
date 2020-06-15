@@ -20,7 +20,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>我的消息</el-dropdown-item>
           <el-dropdown-item>設置</el-dropdown-item>
-          <el-dropdown-item>退出登錄</el-dropdown-item>
+          <el-dropdown-item @click.native="logout">登出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -39,6 +39,26 @@ export default {
     setCollapse() {
       this.isCollapse = !this.isCollapse;
       this.$emit("getCollapse", this.isCollapse);
+    },
+    logout() {
+      const vm = this;
+      vm.$confirm("即將登出", "提示", {
+        type: "info",
+        confirmButtonText: "確定"
+      })
+        .then(() => {
+          window.localStorage.removeItem("user");
+          window.localStorage.removeItem("Token");
+          window.localStorage.removeItem("TokenExpire");
+          window.localStorage.removeItem("refreshtime");
+          window.localStorage.removeItem("router");
+          sessionStorage.removeItem("Tags");
+          global.antRouter = [];
+          vm.$router.push("/Login");
+          // window.location.reload();
+          //  this.$store.commit("saveTagsData", "");
+        })
+        .catch(() => {});
     }
   }
 };

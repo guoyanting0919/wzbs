@@ -1,0 +1,589 @@
+{
+  "GetToken": [
+    {
+      "success": true,
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW4iLCJqdGkiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjAyMC82LzEyIOS4i-WNiCAwNjowNjozMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluX1JvbGUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zcG4iOlsiMSIsIjIiXSwibmJmIjoxNTkxOTUyNzkzLCJleHAiOjE1OTE5NTYzOTMsImlzcyI6IkFzby5Db3JlIiwiYXVkIjoid3IifQ._uurxyLJ0BViwSDvQLwrk4cXDH1NBeyoNUGd2h8pAig",
+      "expires_in": 3600,
+      "token_type": "Bearer"
+    }
+  ],
+  "UserInfo": [
+    {
+      "success": true,
+      "msg": "獲取成功",
+      "response": {
+        "uID": 1,
+        "uLoginName": "Admin",
+        "uLoginPWD": "92D7DDD2A010C59511DC2905B7E14F64",
+        "uRealName": "管理員",
+        "uStatus": 0,
+        "uRemark": null,
+        "uCreateTime": "2019-01-01T00:00:00",
+        "uUpdateTime": "2019-01-01T00:00:00",
+        "uLastErrTime": "2019-01-01T00:00:00",
+        "uErrorCount": 0,
+        "name": "",
+        "sex": 1,
+        "age": 20,
+        "birth": "2019-01-01T00:00:00",
+        "addr": "",
+        "phone": null,
+        "tdIsDelete": false,
+        "ShopIds": "1,2",
+        "RIDs": [1],
+        "RoleNames": ["Admin_Role"]
+      }
+    }
+  ],
+  "GetNavigationBar": [
+    [
+      {
+        "id": 2,
+        "pid": 0,
+        "order": 0,
+        "name": "用戶角色管理",
+        "IsHide": false,
+        "IsButton": false,
+        "path": "-",
+        "Func": null,
+        "iconCls": "fa-users",
+        "btype": null,
+        "meta": {
+          "title": "用戶角色管理",
+          "requireAuth": true,
+          "NoTabPage": false
+        },
+        "children": [
+          {
+            "id": 3,
+            "pid": 2,
+            "order": 1,
+            "name": "角色管理",
+            "IsHide": false,
+            "IsButton": false,
+            "path": "/User/Roles",
+            "Func": null,
+            "iconCls": null,
+            "btype": null,
+            "meta": {
+              "title": "角色管理",
+              "requireAuth": true,
+              "NoTabPage": false
+            },
+            "children": [
+              {
+                "id": 16,
+                "pid": 3,
+                "order": 1,
+                "name": "查詢",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": "getRoles",
+                "iconCls": null,
+                "btype": "btnSearch",
+                "meta": {
+                  "title": "查詢",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 17,
+                "pid": 3,
+                "order": 1,
+                "name": "新增",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": "handleAdd",
+                "iconCls": null,
+                "btype": "btnAdd",
+                "meta": {
+                  "title": "新增",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 18,
+                "pid": 3,
+                "order": 1,
+                "name": "編輯",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": "handleEdit",
+                "iconCls": null,
+                "btype": "btnEdit",
+                "meta": {
+                  "title": "編輯",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 19,
+                "pid": 3,
+                "order": 1,
+                "name": "刪除",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": "handleDel",
+                "iconCls": null,
+                "btype": "btnDelete",
+                "meta": {
+                  "title": "刪除",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "pid": 2,
+            "order": 1,
+            "name": "用戶管理",
+            "IsHide": false,
+            "IsButton": false,
+            "path": "/User/Users",
+            "Func": null,
+            "iconCls": null,
+            "btype": null,
+            "meta": {
+              "title": "用戶管理",
+              "requireAuth": true,
+              "NoTabPage": false
+            },
+            "children": [
+              {
+                "id": 9,
+                "pid": 4,
+                "order": 1,
+                "name": "查詢",
+                "IsHide": false,
+                "IsButton": true,
+                "path": "",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnSearch",
+                "meta": {
+                  "title": "查詢",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 13,
+                "pid": 4,
+                "order": 1,
+                "name": "新增",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnAdd",
+                "meta": {
+                  "title": "新增",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 14,
+                "pid": 4,
+                "order": 1,
+                "name": "編輯",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnEdit",
+                "meta": {
+                  "title": "編輯",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 15,
+                "pid": 4,
+                "order": 1,
+                "name": "刪除",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnDelete",
+                "meta": {
+                  "title": "刪除",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": 333333,
+            "pid": 333333,
+            "order": 1,
+            "name": "權限分配",
+            "IsHide": false,
+            "IsButton": false,
+            "path": "/User/Authority",
+            "Func": null,
+            "iconCls": null,
+            "btype": null,
+            "meta": {
+              "title": "權限分配",
+              "requireAuth": true,
+              "NoTabPage": false
+            },
+            "children": [
+              {
+                "id": 9,
+                "pid": 4,
+                "order": 1,
+                "name": "查詢",
+                "IsHide": false,
+                "IsButton": true,
+                "path": "",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnSearch",
+                "meta": {
+                  "title": "查詢",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 13,
+                "pid": 4,
+                "order": 1,
+                "name": "新增",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnAdd",
+                "meta": {
+                  "title": "新增",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 14,
+                "pid": 4,
+                "order": 1,
+                "name": "編輯",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnEdit",
+                "meta": {
+                  "title": "編輯",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 15,
+                "pid": 4,
+                "order": 1,
+                "name": "刪除",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnDelete",
+                "meta": {
+                  "title": "刪除",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "pid": 0,
+        "order": 0,
+        "name": "行事曆管理",
+        "IsHide": false,
+        "IsButton": false,
+        "path": "-",
+        "Func": null,
+        "iconCls": "el-icon-date",
+        "btype": null,
+        "meta": {
+          "title": "行事曆管理",
+          "requireAuth": true,
+          "NoTabPage": false
+        },
+        "children": [
+          {
+            "id": 6,
+            "pid": 5,
+            "order": 1,
+            "name": "行事曆類別",
+            "IsHide": false,
+            "IsButton": false,
+            "path": "/Calendar/Category",
+            "Func": null,
+            "iconCls": null,
+            "btype": null,
+            "meta": {
+              "title": "行事曆類別",
+              "requireAuth": true,
+              "NoTabPage": false
+            },
+            "children": [
+              {
+                "id": 20,
+                "pid": 6,
+                "order": 1,
+                "name": "查詢",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnSearch",
+                "meta": {
+                  "title": "查詢",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 21,
+                "pid": 6,
+                "order": 1,
+                "name": "新增",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnAdd",
+                "meta": {
+                  "title": "新增",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 22,
+                "pid": 6,
+                "order": 1,
+                "name": "編輯",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnEdit",
+                "meta": {
+                  "title": "編輯",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 23,
+                "pid": 6,
+                "order": 1,
+                "name": "刪除",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnDelete",
+                "meta": {
+                  "title": "刪除",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "pid": 5,
+            "order": 1,
+            "name": "行事曆事件",
+            "IsHide": false,
+            "IsButton": false,
+            "path": "/Calendar/Events",
+            "Func": null,
+            "iconCls": null,
+            "btype": null,
+            "meta": {
+              "title": "行事曆事件",
+              "requireAuth": true,
+              "NoTabPage": false
+            },
+            "children": [
+              {
+                "id": 84,
+                "pid": 7,
+                "order": 0,
+                "name": "菜單樹",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnChange",
+                "meta": {
+                  "title": "菜單樹",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 87,
+                "pid": 7,
+                "order": 0,
+                "name": "左側導航",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnImport",
+                "meta": {
+                  "title": "左側導航",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 999,
+                "pid": 7,
+                "order": 0,
+                "name": "41ccc",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnExport",
+                "meta": {
+                  "title": "左側導航",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 24,
+                "pid": 7,
+                "order": 1,
+                "name": "查詢",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnSearch",
+                "meta": {
+                  "title": "查詢",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 25,
+                "pid": 7,
+                "order": 1,
+                "name": "新增",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnAdd",
+                "meta": {
+                  "title": "新增",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 26,
+                "pid": 7,
+                "order": 1,
+                "name": "編輯",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnEdit",
+                "meta": {
+                  "title": "編輯",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              },
+              {
+                "id": 27,
+                "pid": 7,
+                "order": 1,
+                "name": "刪除",
+                "IsHide": false,
+                "IsButton": true,
+                "path": " ",
+                "Func": null,
+                "iconCls": null,
+                "btype": "btnDelete",
+                "meta": {
+                  "title": "刪除",
+                  "requireAuth": true,
+                  "NoTabPage": false
+                },
+                "children": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ]
+}

@@ -1,14 +1,21 @@
 <template>
   <div id="calendarEvent">
     <!-- searchBox -->
-    <div class="searchBox">
+    <!-- <div class="searchBox">
       <el-input class="keyWordInput" v-model="keyWordInput" placeholder="請輸入關鍵字"></el-input>
       <el-button class="searchBtn" type="primary">搜尋</el-button>
       <el-button @click="handleAddOrEdit('add')" class="addBtn" type="primary">新增</el-button>
-      <el-button @click="changeDialogVisible = true" class="changeBtn" type="primary">批次替換</el-button>
+      <el-button @click="changeDialog = true" class="changeBtn" type="primary">批次替換</el-button>
       <el-button @click="importDialogVisible = true" class="importBtn" type="primary">匯入</el-button>
       <el-button class="exportBtn" type="primary">匯出</el-button>
-    </div>
+    </div>-->
+
+    <!-- headerBox -->
+    <HeaderBox
+      @changeHandler="changeHandler"
+      @handleAddOrEdit="handleAddOrEdit"
+      :buttonList="buttonList"
+    ></HeaderBox>
 
     <!-- mainTable -->
     <div class="mainTable">
@@ -53,7 +60,7 @@
     </div>
 
     <!-- addOrEditDialog -->
-    <el-dialog :close-on-click-modal="false" title="新增" :visible.sync="addOuterVisible">
+    <el-dialog :close-on-click-modal="false" title="新增" :visible.sync="addOrEditDialog">
       <el-scrollbar class="scrollbar-handle">
         <div class="inputBox">
           <div class="inputTitle">事件名稱</div>
@@ -175,13 +182,13 @@
         </div>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addOuterVisible = false">取 消</el-button>
+        <el-button @click="addOrEditDialog = false">取 消</el-button>
         <el-button type="primary" @click="addInnerVisible = true">提 交</el-button>
       </div>
     </el-dialog>
 
     <!-- changeDialog -->
-    <el-dialog title="替換人員" :visible.sync="changeDialogVisible" width="30%">
+    <el-dialog title="替換人員" :visible.sync="changeDialog" width="30%">
       <div class="changeInputBox">
         <p class="changeInputTitle">原始人員</p>
         <el-select v-model="changeMember" placeholder="請選擇原始人員">
@@ -195,8 +202,8 @@
         </el-select>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="changeDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeDialogVisible = false">提 交</el-button>
+        <el-button @click="changeDialog = false">取 消</el-button>
+        <el-button type="primary" @click="changeDialog = false">提 交</el-button>
       </span>
     </el-dialog>
 
@@ -219,6 +226,7 @@
 </template>
 
 <script>
+import HeaderBox from "../../components/HeaderBox";
 export default {
   name: "CalendarEvents",
   data() {
@@ -241,6 +249,7 @@ export default {
       showDate: [],
       eventDate: "",
       keyWordInput: "",
+      buttonList: [],
       tableData: [
         {
           eventName: "重大會議A",
@@ -295,23 +304,29 @@ export default {
           unit: "Unit1"
         }
       ],
-      addOuterVisible: false,
+      addOrEditDialog: false,
       addInnerVisible: false,
       importDialogVisible: false,
-      changeDialogVisible: false
+      changeDialog: false
     };
+  },
+  components: {
+    HeaderBox
   },
   methods: {
     handleAddOrEdit(act, info) {
       this.showDate = [];
       if (act === "add") {
-        this.addOuterVisible = !this.addOuterVisible;
+        this.addOrEditDialog = !this.addOrEditDialog;
       } else {
         this.eventNameInput = info.eventName;
         this.showDate[0] = info.showStartDate;
         this.showDate[1] = info.showEndDate;
-        this.addOuterVisible = !this.addOuterVisible;
+        this.addOrEditDialog = !this.addOrEditDialog;
       }
+    },
+    changeHandler() {
+      this.changeDialog = true;
     },
     handleCopy() {},
     handleEdit() {},
@@ -327,14 +342,37 @@ export default {
       // console.log(val);
     },
     addOrEditConfirm() {
-      this.addOuterVisible = false;
+      this.addOrEditDialog = false;
       this.addInnerVisible = false;
       this.$notify({
         title: "成功",
         message: "添加成功",
         type: "success"
       });
+    },
+    getButtonList(routePath, routers) {
+      const vm = this;
+      let buttonList = [];
+      routers.forEach(element => {
+        if (routePath && element.path) {
+          let path = routePath.toLowerCase();
+          if (element.path && element.path.toLowerCase() === path) {
+            buttonList = element.children;
+            vm.buttonList = buttonList;
+            return;
+          } else if (element.children) {
+            this.getButtonList(path, element.children);
+          }
+        }
+      });
+      return buttonList;
     }
+  },
+  mounted() {
+    let routers = JSON.parse(window.localStorage.router)
+      ? JSON.parse(window.localStorage.router)
+      : [];
+    this.getButtonList(this.$route.path, routers);
   }
 };
 </script>

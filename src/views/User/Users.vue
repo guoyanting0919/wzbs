@@ -1,11 +1,7 @@
 <template>
   <div id="userUsers">
-    <!-- searchBox -->
-    <div class="searchBox">
-      <el-input style="width:240px;margin-right:10px" v-model="keyWordInput" placeholder="請輸入關鍵字"></el-input>
-      <el-button class="searchBtn" type="primary">搜尋</el-button>
-      <el-button @click="handleAddOrEdit('add')" class="addBtn" type="primary">新增</el-button>
-    </div>
+    <!-- headerBox -->
+    <HeaderBox @handleAddOrEdit="handleAddOrEdit" :buttonList="buttonList"></HeaderBox>
 
     <!-- mainBox -->
     <div class="mainTable">
@@ -36,7 +32,7 @@
     </div>
 
     <!-- addOrEditDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialogVisible" width="50%">
+    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="50%">
       <el-scrollbar class="scrollbar-handle">
         <!-- unit -->
         <div class="inputBox">
@@ -105,21 +101,22 @@
         </div>
       </el-scrollbar>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrEditDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addOrEditDialogVisible = false">提 交</el-button>
+        <el-button @click="addOrEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="addOrEditDialog = false">提 交</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import HeaderBox from "../../components/HeaderBox";
 export default {
   name: "UserUsers",
   data() {
     return {
       filterText: "",
       categoryList: [],
-      addOrEditDialogVisible: false,
+      addOrEditDialog: false,
       keyWordInput: "",
       tableData: [
         {
@@ -235,16 +232,18 @@ export default {
       userUnit3Select: "",
       userNameSelect: "",
       userRoleSelect: "",
+      buttonList: [],
       defaultProps: {
         children: "children",
         label: "label"
       }
     };
   },
+  components: { HeaderBox },
   methods: {
     handleAddOrEdit() {
       const vm = this;
-      this.addOrEditDialogVisible = true;
+      this.addOrEditDialog = true;
       this.$nextTick(function() {
         vm.setCheckedKeys();
       });
@@ -263,12 +262,35 @@ export default {
     },
     setCheckedKeys() {
       this.$refs.tree.setCheckedKeys([3, 12]);
+    },
+    getButtonList(routePath, routers) {
+      const vm = this;
+      let buttonList = [];
+      routers.forEach(element => {
+        if (routePath && element.path) {
+          let path = routePath.toLowerCase();
+          if (element.path && element.path.toLowerCase() === path) {
+            buttonList = element.children;
+            vm.buttonList = buttonList;
+            return;
+          } else if (element.children) {
+            this.getButtonList(path, element.children);
+          }
+        }
+      });
+      return buttonList;
     }
   },
   watch: {
     filterText(val) {
       this.$refs.tree.filter(val);
     }
+  },
+  mounted() {
+    let routers = JSON.parse(window.localStorage.router)
+      ? JSON.parse(window.localStorage.router)
+      : [];
+    this.getButtonList(this.$route.path, routers);
   }
 };
 </script>

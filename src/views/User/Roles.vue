@@ -1,11 +1,7 @@
 <template>
   <div id="userRoles">
-    <!-- searchBox -->
-    <div class="searchBox">
-      <el-input style="width:240px;margin-right:10px" v-model="keyWordInput" placeholder="請輸入關鍵字"></el-input>
-      <el-button class="searchBtn" type="primary">搜尋</el-button>
-      <el-button @click="handleAddOrEdit('add')" class="addBtn" type="primary">新增</el-button>
-    </div>
+    <!-- headerBox -->
+    <HeaderBox @handleAddOrEdit="handleAddOrEdit" :buttonList="buttonList"></HeaderBox>
 
     <!-- mainBox -->
     <div class="mainTable">
@@ -36,7 +32,7 @@
     </div>
 
     <!-- addOrEditDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialogVisible" width="40%">
+    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="40%">
       <div class="inputBox">
         <p class="inputTitle">角色名</p>
         <el-input style="width:300px" v-model="roleNameInput" placeholder="請輸入角色名"></el-input>
@@ -53,19 +49,21 @@
         <el-input style="width:300px" v-model="roleDescriptionInput" placeholder="說明欄位"></el-input>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrEditDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addOrEditDialogVisible = false">提 交</el-button>
+        <el-button @click="addOrEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="addOrEditDialog = false">提 交</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import HeaderBox from "../../components/HeaderBox";
 export default {
   name: "UserRoles",
+  components: { HeaderBox },
   data() {
     return {
-      addOrEditDialogVisible: false,
+      addOrEditDialog: false,
       roleNameInput: "",
       roleStatusSelect: "",
       roleDescriptionInput: "",
@@ -100,10 +98,8 @@ export default {
   },
   methods: {
     getButtonList(routePath, routers) {
-      // console.log("1", routers);
-      // console.log(routePath);
       const vm = this;
-      var buttonList = [];
+      let buttonList = [];
       routers.forEach(element => {
         if (routePath && element.path) {
           let path = routePath.toLowerCase();
@@ -118,8 +114,8 @@ export default {
       });
       return buttonList;
     },
-    handleAddOrEdit() {
-      this.addOrEditDialogVisible = true;
+    handleAddOrEdit(method) {
+      this.addOrEditDialog = true;
     },
     handleDel() {},
     handleSelectionChange(val) {
@@ -128,9 +124,9 @@ export default {
     }
   },
   mounted() {
-    let routers = JSON.parse(window.localStorage.router);
-    // ? JSON.parse(window.localStorage.router)
-    // : [];
+    let routers = JSON.parse(window.localStorage.router)
+      ? JSON.parse(window.localStorage.router)
+      : [];
     this.getButtonList(this.$route.path, routers);
   }
 };

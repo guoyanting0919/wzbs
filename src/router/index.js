@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Layout from "../views/Layout/Layout";
 import Home from "../views/Home.vue";
+import api from "../api/apis";
+import store from "../store";
 
 const _import = require("@/router/_import_" + process.env.NODE_ENV); //獲取組件的方法
 
@@ -100,7 +102,7 @@ export function filterAsyncRouter(asyncRouterMap) {
 }
 
 router.$addRoutes = (params) => {
-  var f = (item) => {
+  let f = (item) => {
     if (item["children"]) {
       item["children"] = item["children"].filter(f);
       return true;
@@ -111,13 +113,34 @@ router.$addRoutes = (params) => {
     }
   };
 
-  var params = params.filter(f);
+  params = params.filter(f);
 
   router.addRoutes(params);
 };
 
 function getObjArr(name) {
   return JSON.parse(window.localStorage.getItem(name));
+}
+
+function saveObjArr(name, data) {
+  localStorage.setItem(name, JSON.stringify(data));
+}
+
+function saveRefreshtime(params) {
+  let nowtime = new Date();
+  let lastRefreshtime = window.localStorage.refreshtime
+    ? new Date(window.localStorage.refreshtime)
+    : new Date(-1);
+  let expiretime = new Date(Date.parse(window.localStorage.TokenExpire));
+
+  let refreshCount = 1; //滑動係數
+  if (lastRefreshtime >= nowtime) {
+    lastRefreshtime = nowtime > expiretime ? nowtime : expiretime;
+    lastRefreshtime.setMinutes(lastRefreshtime.getMinutes() + refreshCount);
+    window.localStorage.refreshtime = lastRefreshtime;
+  } else {
+    window.localStorage.refreshtime = new Date(-1);
+  }
 }
 
 export function resetRouter() {
@@ -139,85 +162,132 @@ function routerGo(to, next) {
   next({ ...to, replace: true });
 }
 
-let getRouter; //類似flag以驗證是否刷新頁面
+//類似flag以驗證是否刷新頁面，首次進入會執行以下程式
+let getRouter;
 
 if (!getRouter) {
-  //不加這個判斷，路由會陷入死循環
-
   if (!getObjArr("router")) {
-    //本地沒有，則從數據庫獲取
-    var user = window.localStorage.user
+    // 若 localStorage 不存在 router資料
+    let user = window.localStorage.user
       ? JSON.parse(window.localStorage.user)
       : null;
     if (user && user.uID > 0) {
-      console.info(user.uID);
-      var loginParams = { uid: user.uID };
-      getNavigationBar(loginParams).then((data) => {
+      let params = { uid: user.uID };
+      api.GetNavigationBar().then((data) => {
         if (data.success) {
-          console.info("%c get navigation bar from api succeed!", "color:red");
-          getRouter = data.response.children; //後台拿到路由
-          saveObjArr("router", getRouter); //存儲路由到localStorage
-          // routerGo(to, next)//執行路由跳轉方法
+          console.log("已透過 api 獲取 router");
+          getRouter = data.data[0];
+          // 將 router 存到 localStorage
+          saveObjArr("router", getRouter);
+          //執行路由跳轉方法
+          routerGo(to, next);
         }
       });
+    } else {
+      console.log("未登入狀態");
     }
   } else {
-    //從localStorage拿到了路由
-    console.info(
-      "%c get navigation bar from localStorage succeed!",
-      "color:green"
-    );
-    getRouter = getObjArr("router"); //拿到路由
-    getRouter = filterAsyncRouter(getRouter); //過濾路由
-    router.$addRoutes(getRouter); //動態添加路由
-    global.antRouter = getRouter; //將路由數據傳遞給全局變量，做側邊欄菜單渲染工作
+    // localStorage 中有 router
+    console.log("已從 localStorage 獲取路由");
+    //獲取 router
+    getRouter = getObjArr("router");
+    // 過濾拿到的router
+    getRouter = filterAsyncRouter(getRouter);
+    // 動態添加router
+    router.$addRoutes(getRouter);
+    // global.antRouter = getRouter; //將路由數據傳遞給全局變量，做側邊欄菜單渲染工作
   }
+} else {
+  if (to.name && to.name != "Login") {
+    // 獲取 localStorage 裏頭得 router
+    getRouter = getObjArr("router");
+    global.antRouter = getRouter;
+    // routerGo(to, next)//執行路由跳轉方法
+  }
+  next();
 }
 
+// let store = store;
 router.beforeEach((to, from, next) => {
-  // console.log(to.meta);
+  // console.log(store);
+  // 設定網頁 title
   if (to.meta.title) {
     document.title = `文藻行事曆後臺-${to.meta.title}`;
   }
-  if (!getRouter) {
-    if (!getObjArr("router")) {
-    } else {
-      //刷新頁面時
-      getRouter = getObjArr("router");
-      routerGo(to, next);
-    }
 
-    // if (!getObjArr("router")) {
-    //   var user = window.localStorage.user
-    //     ? JSON.parse(window.localStorage.user)
-    //     : null;
-    //   if (user && user.uID > 0) {
-    //     var loginParams = { uid: user.uID };
-    //     getNavigationBar(loginParams).then((data) => {
-    //       console.log(
-    //         "router before each get navigation bar from api succeed!"
-    //       );
-    //       if (data.success) {
-    //         getRouter = data.response.children; //後台拿到路由
-    //         saveObjArr("router", getRouter); //存儲路由到localStorage
-    //         routerGo(to, next); //執行路由跳轉方法
-    //       }
-    //     });
-    //   }
-    // } else {
-    //   //從localStorage拿到了路由
-    //   console.log(2);
-    //   getRouter = getObjArr("router"); //拿到路由
-    //   routerGo(to, next);
-    // }
-  } else {
-    if (to.name && to.name != "login") {
-      // console.log(to);s
-      getRouter = getObjArr("router"); //拿到路由
-      global.antRouter = getRouter;
-      // routerGo(to, next); //執行路由跳轉方法
+  // 檢查 token
+  {
+    if (!store.state.token) {
+      store.commit("SAVE_TOKEN", window.localStorage.Token);
     }
-    next();
+    if (!store.state.tokenExpire) {
+      store.commit("SAVE_TOKEN_EXPIRE", window.localStorage.TokenExpire);
+    }
+    saveRefreshtime();
+
+    // 判斷該路由是否需要登入權限
+    if (to.meta.requireAuth) {
+      var curTime = new Date();
+      var expiretime = new Date(Date.parse(window.localStorage.TokenExpire));
+      if (store.state.token && store.state.token != "undefined") {
+        // 通過vuex state獲取當前的token是否存在
+        next();
+      } else {
+        store.commit("SAVE_TOKEN", "");
+        store.commit("SAVE_TOKEN_EXPIRE", "");
+        store.commit("saveTagsData", "");
+        window.localStorage.removeItem("user");
+        window.localStorage.removeItem("NavigationBar");
+        window.localStorage.removeItem("router");
+
+        next({
+          path: "/login",
+          query: { redirect: to.fullPath }, // 將跳轉的路由path作為參數，登錄成功後跳轉到該路由
+        });
+
+        window.location.reload();
+      }
+    } else {
+      next();
+    }
+  }
+
+  // 檢查 router 設置
+  {
+    if (!getRouter) {
+      if (!getObjArr("router")) {
+        // 若 localStorage 不存在 router資料
+        let user = window.localStorage.user
+          ? JSON.parse(window.localStorage.user)
+          : null;
+        if (user && user.uID > 0) {
+          let params = { uid: user.uID };
+          api.GetNavigationBar().then((data) => {
+            if (data.success) {
+              console.log("已透過 api 獲取 router");
+
+              getRouter = data.data[0];
+              // 將 router 存到 localStorage
+              saveObjArr("router", getRouter);
+              //執行路由跳轉方法
+              routerGo(to, next);
+            }
+          });
+        }
+      } else {
+        // localStorage 中有 router
+        getRouter = getObjArr("router");
+        routerGo(to, next);
+      }
+    } else {
+      if (to.name && to.name != "login") {
+        // 獲取 localStorage 中的 router
+        getRouter = getObjArr("router");
+        global.antRouter = getRouter;
+        // routerGo(to, next); //執行路由跳轉方法
+      }
+      next();
+    }
   }
 });
 
