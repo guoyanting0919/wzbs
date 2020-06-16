@@ -10,8 +10,17 @@ const api = {
   UserInfo(data) {
     return req("get", "UserInfo", data);
   },
-  GetNavigationBar() {
+  GetNavigationBar1() {
     return req("get", "GetNavigationBar");
+  },
+  GetAdminToken(params) {
+    return req("get", "Login/GetAdminToken", params);
+  },
+  GetInfoByToken(params) {
+    return req("get", "Login/GetInfoByToken", params);
+  },
+  GetNavigationBar(params) {
+    return req("get", "Permission/GetNavigationBar", params);
   },
 };
 

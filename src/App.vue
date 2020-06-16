@@ -18,7 +18,6 @@
               class="sideBar"
               :unique-opened="uniqueOp"
               :collapse="isCollapse"
-              background-color="#2f3e52"
               text-color="#fff"
               active-text-color="#ffd04b"
               :router="true"

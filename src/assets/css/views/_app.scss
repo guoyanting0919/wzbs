@@ -4,7 +4,7 @@
 
   .mainLayoutAside {
     height: calc(100vh - 60px);
-    background: $color-primary;
+    @include bg_color($background-color-theme1);
     color: #fff;
     transition: 0.5s;
     width: 200px !important;

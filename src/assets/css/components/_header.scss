@@ -1,6 +1,6 @@
 #header {
   width: 100%;
-  background: $color-primary;
+  @include bg_color($background-color-theme1);
   color: #fff;
   padding: 0;
   display: flex;
@@ -48,11 +48,21 @@
     font-size: 16px;
   }
 
+  .themeSwitch {
+    height: 60px;
+    margin-left: auto;
+  }
+
+  .el-switch__core {
+    @include bg_color($background-color-theme1);
+    border: 1px solid #000;
+  }
+
   .userBox {
     height: 60px;
     line-height: 60px;
-    margin-left: auto;
     text-align: center;
+    margin-left: auto;
     padding: 0 1rem;
   }
 

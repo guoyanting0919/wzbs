@@ -8,3 +8,36 @@
 //     height: 60px;
 //     line-height: 60px;
 //   }
+
+@mixin bg_color($color) {
+  /*通过该函数设置主题颜色，后期方便统一管理；*/
+  background-color: $color;
+  [data-theme="theme1"] & {
+    background-color: $background-color-theme1;
+  }
+  [data-theme="theme2"] & {
+    background-color: $background-color-theme2;
+  }
+}
+
+@mixin hover_darken($color) {
+  /*通过该函数设置主题颜色，后期方便统一管理；*/
+  background-color: darken($color, 5%);
+  [data-theme="theme1"] & {
+    background-color: darken($background-color-theme1, 5%);
+  }
+  [data-theme="theme2"] & {
+    background-color: darken($background-color-theme2, 5%);
+  }
+}
+
+@mixin hover_lighten($color) {
+  /*通过该函数设置主题颜色，后期方便统一管理；*/
+  background-color: lighten($color, 5%);
+  [data-theme="theme1"] & {
+    background-color: lighten($background-color-theme1, 5%);
+  }
+  [data-theme="theme2"] & {
+    background-color: lighten($background-color-theme2, 5%);
+  }
+}

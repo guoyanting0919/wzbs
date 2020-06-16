@@ -4,5 +4,14 @@
 }
 
 .el-menu {
-  background-color: $color-primary;
+  @include bg_color($background-color-theme1);
+}
+
+.el-submenu__title:hover {
+  @include bg_color($background-color-theme1);
+}
+
+.el-menu-item:hover,
+.el-menu-item:focus {
+  @include hover_darken($background-color-theme1);
 }

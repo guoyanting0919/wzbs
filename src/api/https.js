@@ -34,7 +34,7 @@ const errorHandle = (status, msg) => {
 
 // 設定 baseURL
 let instance = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "https://cors-anywhere.herokuapp.com/https://scan.1966.org.tw/api/",
 });
 
 // request 攔截

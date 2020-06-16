@@ -127,7 +127,9 @@ export default {
     },
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.btype == btnType);
+      if (vm.buttonList.length != null && vm.buttonList.length > 0) {
+        return this.buttonList.some(btn => btn.btype == btnType);
+      }
     },
     handleAddOrEdit(method) {
       this.addOrEditDialog = true;

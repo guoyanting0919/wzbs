@@ -13,12 +13,15 @@
       </el-breadcrumb>
     </div>
 
+    <!-- theme switch -->
+    <!-- <el-switch class="themeSwitch" v-model="themeMode" active-text="國民黨" inactive-text="民進黨"></el-switch> -->
+
     <!-- user -->
     <div class="userBox">
       <el-dropdown trigger="hover">
         <span @click="$router.push('/login')" class="el-dropdown-link userinfo-inner userStyle">User</span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>設置</el-dropdown-item>
+          <el-dropdown-item @click.native="changeTheme('theme2')">換色</el-dropdown-item>
           <el-dropdown-item @click.native="logout">登出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -31,7 +34,8 @@ export default {
   name: "Header",
   data() {
     return {
-      isCollapse: false
+      isCollapse: false,
+      themeMode: true
     };
   },
   methods: {
@@ -58,6 +62,11 @@ export default {
           //  this.$store.commit("saveTagsData", "");
         })
         .catch(() => {});
+    },
+    changeTheme(theme) {
+      // window.localStorage.setItem("Theme", theme);
+      // console.log(theme);
+      window.document.documentElement.setAttribute("data-theme", theme);
     }
   }
 };
