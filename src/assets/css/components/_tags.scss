@@ -11,7 +11,7 @@
   .tagsItem {
     margin: 0 0.5rem;
     font-size: 15px;
-    border: 1px solid #2f3e52;
+    border: 1px solid $color-primary;
     padding: 0 4px;
     border-radius: 4px;
     cursor: pointer;
@@ -19,7 +19,7 @@
 
     &:hover {
       color: #fff;
-      background: #2f3e52;
+      background: $color-primary;
     }
 
     &:first-child {
@@ -27,7 +27,7 @@
     }
 
     &.active {
-      background: #2f3e52;
+      background: $color-primary;
       color: #fff;
     }
   }
