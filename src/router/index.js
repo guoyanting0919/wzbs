@@ -185,6 +185,7 @@ if (!getRouter) {
       });
     } else {
       console.log("未登入狀態");
+      // routerGo(to, next);
     }
   } else {
     // localStorage 中有 router
@@ -235,13 +236,13 @@ router.beforeEach((to, from, next) => {
       } else {
         store.commit("SAVE_TOKEN", "");
         store.commit("SAVE_TOKEN_EXPIRE", "");
-        store.commit("saveTagsData", "");
+        store.commit("SAVE_TAG_DATA", "");
         window.localStorage.removeItem("user");
         window.localStorage.removeItem("NavigationBar");
         window.localStorage.removeItem("router");
 
         next({
-          path: "/login",
+          path: "/Login",
           query: { redirect: to.fullPath }, // 將跳轉的路由path作為參數，登錄成功後跳轉到該路由
         });
 

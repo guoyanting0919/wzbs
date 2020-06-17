@@ -14,18 +14,18 @@
     </div>
 
     <!-- theme switch -->
-    <!-- <el-switch class="themeSwitch" v-model="themeMode" active-text="國民黨" inactive-text="民進黨"></el-switch> -->
+    <el-switch @change="changeTheme" class="themeSwitch" v-model="themeMode"></el-switch>
 
     <!-- user -->
-    <div class="userBox">
+    <div class="userBox" v-if="userInfo">
       <el-dropdown trigger="hover">
-        <span @click="$router.push('/login')" class="el-dropdown-link userinfo-inner userStyle">User</span>
+        <span class="el-dropdown-link userinfo-inner userStyle">{{userInfo.LoginName}}</span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="changeTheme('theme2')">換色</el-dropdown-item>
-          <el-dropdown-item @click.native="logout">登出</el-dropdown-item>
+          <el-dropdown-item @click.native="logoutHandler">登出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <div style="cursor:pointer" @click="$router.push('/login')" class="userBox" v-else>登入</div>
   </div>
 </template>
 
@@ -38,12 +38,17 @@ export default {
       themeMode: true
     };
   },
+  computed: {
+    userInfo() {
+      return JSON.parse(window.localStorage.getItem("user"));
+    }
+  },
   methods: {
     setCollapse() {
       this.isCollapse = !this.isCollapse;
       this.$emit("getCollapse", this.isCollapse);
     },
-    logout() {
+    logoutHandler() {
       const vm = this;
       vm.$confirm("即將登出", "提示", {
         type: "info",
@@ -56,17 +61,21 @@ export default {
           window.localStorage.removeItem("refreshtime");
           window.localStorage.removeItem("router");
           sessionStorage.removeItem("Tags");
+          // this.$store.commit("SAVE_TAG_DATA", "");
           global.antRouter = [];
-          vm.$router.push("/Login");
-          // window.location.reload();
-          //  this.$store.commit("saveTagsData", "");
+          vm.$router.push("/");
+          window.location.reload();
         })
         .catch(() => {});
     },
-    changeTheme(theme) {
+    changeTheme() {
       // window.localStorage.setItem("Theme", theme);
       // console.log(theme);
-      window.document.documentElement.setAttribute("data-theme", theme);
+      if (this.themeMode) {
+        window.document.documentElement.setAttribute("data-theme", "theme1");
+      } else {
+        window.document.documentElement.setAttribute("data-theme", "theme2");
+      }
     }
   }
 };

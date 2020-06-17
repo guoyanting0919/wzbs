@@ -28,7 +28,7 @@ export default new Vuex.Store({
       state.tokenExpire = data;
       window.localStorage.setItem("TokenExpire", data);
     },
-    saveTagsData(state, data) {
+    SAVE_TAG_DATA(state, data) {
       state.tagsStoreList = data;
       sessionStorage.setItem("Tags", data);
     },

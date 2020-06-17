@@ -1,0 +1,28 @@
+.el-button--primary {
+  //   @include btn_outline($background-color-theme1);
+  @include btn_contain($background-color-theme1);
+}
+
+.el-button--danger {
+  background-color: #8a0909;
+  border-color: #8a0909;
+
+  &:hover {
+    border-color: #aa0c0c;
+    background-color: #aa0c0c;
+  }
+}
+
+.el-button--default {
+  @include btn_outline($background-color-theme1);
+}
+
+.el-notification__closeBtn {
+  display: none;
+}
+
+// .el-button--default:hover {
+//   color: rgb(56, 55, 55);
+//   background-color: #ebebeb;
+//   border-color: #e2dfdf;
+// }

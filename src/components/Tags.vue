@@ -35,7 +35,7 @@ export default {
   computed: {
     showTags() {
       if (this.tagsList.length > 1) {
-        this.$store.commit("saveTagsData", JSON.stringify(this.tagsList));
+        this.$store.commit("SAVE_TAG_DATA", JSON.stringify(this.tagsList));
       }
       return this.tagsList.length > 0;
     }
@@ -67,7 +67,7 @@ export default {
       if (item) {
         delItem.path === this.$route.fullPath && this.$router.push(item.path);
 
-        this.$store.commit("saveTagsData", JSON.stringify(this.tagsList));
+        this.$store.commit("SAVE_TAG_DATA", JSON.stringify(this.tagsList));
       } else {
         this.$router.push("/");
       }

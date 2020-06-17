@@ -346,7 +346,7 @@ export default {
     handleEdit() {},
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.btype == btnType);
+      return this.buttonList.some(btn => btn.iconCls == btnType);
     },
     handleDel() {
       this.$notify({

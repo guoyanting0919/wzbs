@@ -2,9 +2,11 @@
 @import "./css/basic/variable";
 @import "./css/basic/mixin";
 @import "./css/basic/reset";
+@import "./css/basic/global";
 
 // views
 @import "./css/views/app";
+@import "./css/views/login";
 @import "./css/views/Calendar/category";
 @import "./css/views/Calendar/events";
 @import "./css/views/User/authority";

@@ -1,5 +1,6 @@
 #header {
   width: 100%;
+  transition: 0.5s;
   @include bg_color($background-color-theme1);
   color: #fff;
   padding: 0;
@@ -55,14 +56,23 @@
 
   .el-switch__core {
     @include bg_color($background-color-theme1);
-    border: 1px solid #000;
+    border: 1px solid #fff;
+  }
+
+  .el-switch__label {
+    color: transparent;
+    pointer-events: none;
+  }
+
+  .el-switch__label.is-active {
+    color: #fff;
   }
 
   .userBox {
     height: 60px;
     line-height: 60px;
     text-align: center;
-    margin-left: auto;
+    // margin-left: auto;
     padding: 0 1rem;
   }
 

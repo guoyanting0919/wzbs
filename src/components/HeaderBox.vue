@@ -71,8 +71,9 @@ export default {
   },
   methods: {
     hasBtn(btnType) {
+      // return true;
       const vm = this;
-      return this.buttonList.some(btn => btn.btype == btnType);
+      return this.buttonList.some(btn => btn.iconCls == btnType);
     },
     setHandleAddOrEdit(method) {
       //   console.log(method);

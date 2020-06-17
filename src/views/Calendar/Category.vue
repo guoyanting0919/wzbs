@@ -77,7 +77,7 @@ export default {
     handleDel() {},
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.btype == btnType);
+      return this.buttonList.some(btn => btn.iconCls == btnType);
     },
     handleAddOrEdit(act, info = "") {
       this.categoryName = "";
