@@ -48,7 +48,7 @@ export default {
     handleCurrentChange(page) {
       this.setCurrentPage = page;
       let key = this.$props.keyWord;
-      this.$emit("getEventType", page, key);
+      this.$emit("changePage", page, key);
     }
   }
 };

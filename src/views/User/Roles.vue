@@ -5,6 +5,7 @@
       @searchHandler="searchHandler"
       @handleAddOrEdit="handleAddOrEdit"
       :buttonList="buttonList"
+      :searchLoading="searchLoading"
     ></HeaderBox>
 
     <!-- mainBox -->
@@ -19,7 +20,18 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="Name" label="角色名" sortable></el-table-column>
-          <el-table-column prop="Description" label="說明" sortable></el-table-column>
+          <el-table-column prop="Description" label="說明" sortable>
+            <template slot-scope="scope">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="scope.row.Description"
+                placement="top-end"
+              >
+                <p class="textOverflow">{{scope.row.Description}}</p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
           <el-table-column prop="CreateTime" label="創建時間" sortable>
             <template slot-scope="scope">
               <span>{{scope.row.CreateTime}}</span>
@@ -44,13 +56,22 @@
                 type="danger"
                 class="outline"
                 size="mini"
-                @click="handleDel(scope.row)"
+                @click="deleteHandler(scope.row)"
               >刪除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+
+    <!-- pagination -->
+    <Pagination
+      v-if="totalCount"
+      :keyWord="keyWordInput"
+      :total="totalCount"
+      :currentPage="currentPage"
+      @changePage="getRoles"
+    ></Pagination>
 
     <!-- addOrEditDialog -->
     <el-dialog title="新增" :visible.sync="addOrEditDialog" width="40%">
@@ -70,11 +91,12 @@
       </div>
       <div class="inputBox">
         <p class="inputTitle">說明</p>
-        <el-input style="width:300px" v-model="roleDescriptionInput" placeholder="說明欄位"></el-input>
+        <el-input style="width:300px" v-model="roleDescription" placeholder="說明欄位"></el-input>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addOrEditDialog = false">提 交</el-button>
+        <el-button v-if="addOrEdit==='add'" type="primary" @click="addHandler">新 增</el-button>
+        <el-button v-else type="primary" @click="editHandler">編 輯</el-button>
       </span>
     </el-dialog>
   </div>
@@ -82,18 +104,27 @@
 
 <script>
 import HeaderBox from "../../components/HeaderBox";
+import Pagination from "../../components/Pagination";
 import moment from "moment";
 export default {
   name: "UserRoles",
-  components: { HeaderBox },
+  components: { HeaderBox, Pagination },
   data() {
     return {
       addOrEditDialog: false,
       roleNameInput: "",
       roleStatusSelect: "",
-      roleDescriptionInput: "",
+      roleDescription: "",
       buttonList: [],
-      rolesData: ""
+      keyWordInput: "",
+      rolesData: "",
+      currentPage: 1,
+      totalCount: "",
+      searchLoading: false,
+      addLoading: false,
+      editLoading: false,
+      addOrEdit: "",
+      editId: ""
     };
   },
   computed: {
@@ -128,40 +159,122 @@ export default {
       return this.buttonList.some(btn => btn.iconCls == btnType);
       // return true;
     },
-    handleAddOrEdit(method, data) {
-      const vm = this;
-      if (method === "add") {
-        vm.addOrEditDialog = true;
+    handleAddOrEdit(act, info = "") {
+      this.roleNameInput = "";
+      this.roleDescription = "";
+      this.roleStatusSelect = true;
+      this.addOrEdit = "add";
+      if (act === "add") {
+        this.addOrEditDialog = true;
       } else {
-        vm.addOrEditDialog = true;
-        console.log(data);
-        vm.roleNameInput = data.Name;
-        vm.roleStatusSelect = data.Enabled;
-        vm.roleDescriptionInput = data.Description;
+        console.log(info);
+        this.addOrEdit = "edit";
+        this.addOrEditDialog = true;
+        this.roleNameInput = info.Name;
+        this.roleDescription = info.Description;
+        this.roleStatusSelect = info.Enabled;
+        this.editId = info.Id;
       }
     },
-    searchHandler(key) {
+    addHandler() {
       const vm = this;
-      vm.$store.dispatch("loadingHandler", true);
+      vm.addLoading = true;
+      let Name = vm.roleNameInput;
+      let Enabled = vm.roleStatusSelect;
+      let Description = vm.roleDescription;
+      let CreateTime = moment(new Date()).format("YYYY-MM-DD");
       let params = {
-        page: 1,
-        key
+        Name,
+        Enabled,
+        Description,
+        CreateTime
       };
-      vm.$api.SearchRoles(params).then(res => {
+      vm.$api.AddRole(params).then(res => {
+        vm.getRoles();
         console.log(res);
-        vm.rolesData = res.data.response.data;
-        vm.$store.dispatch("loadingHandler", false);
+        vm.addOrEditDialog = false;
+        vm.addLoading = false;
+        vm.$message({
+          type: "success",
+          message: `角色 ${Name} 添加成功 ! `
+        });
       });
     },
-    handleDel() {},
+    searchHandler({ page, key }) {
+      const vm = this;
+      vm.searchLoading = true;
+      vm.keyWordInput = key;
+      let params = {
+        key,
+        page
+      };
+      vm.$api.SearchRoles(params).then(res => {
+        vm.totalCount = res.data.response.dataCount;
+        vm.rolesData = res.data.response.data;
+        vm.searchLoading = false;
+        vm.currentPage = 1;
+      });
+    },
+    deleteHandler(role) {
+      const vm = this;
+      console.log(role);
+      vm.$confirm(`確認刪除 ${role.Name} ?`, "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let params = {
+            id: role.Id
+          };
+          vm.$api.DeleteRole(params).then(res => {
+            vm.getRoles();
+          });
+          vm.$message({
+            type: "success",
+            message: `角色 ${role.Name} 删除成功`
+          });
+        })
+        .catch(() => {
+          vm.$message({
+            type: "info",
+            message: "已取消刪除"
+          });
+        });
+    },
+    editHandler() {
+      const vm = this;
+      vm.editLoading = true;
+      let Id = vm.editId;
+      let Name = vm.roleNameInput;
+      let Enabled = vm.roleStatusSelect;
+      let Description = vm.roleDescription;
+      let params = {
+        Id,
+        Name,
+        Enabled,
+        Description
+      };
+      vm.$api.EditRole(params).then(res => {
+        vm.getRoles();
+        this.addOrEditDialog = false;
+        vm.editLoading = false;
+      });
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
       // console.log(val);
     },
-    async getRoles() {
+    async getRoles(page = 1, key) {
       const vm = this;
-      await vm.$api.GetRoles().then(res => {
-        vm.rolesData = res.data;
+      let params = {
+        key: vm.keyWordInput,
+        page
+      };
+      await vm.$api.GetRoles(params).then(res => {
+        vm.totalCount = res.data.response.dataCount;
+        vm.rolesData = res.data.response.data;
+        vm.currentPage = page;
       });
     }
   },

@@ -40,7 +40,7 @@
       :keyWord="keyWordInput"
       :total="totalCount"
       :currentPage="currentPage"
-      @getEventType="getEventType"
+      @changePage="getEventType"
     ></Pagination>
 
     <!-- addDialog -->
@@ -158,6 +158,10 @@ export default {
         vm.getEventType();
         vm.addOrEditDialog = false;
         vm.addLoading = false;
+        vm.$message({
+          type: "success",
+          message: `類別 ${eventTypeName} 添加成功 ! `
+        });
       });
     },
     editHandler() {
@@ -172,7 +176,6 @@ export default {
         StartDate,
         EndDate
       };
-      console.log(params);
       vm.$api.EditEventType(params).then(res => {
         vm.getEventType();
         this.addOrEditDialog = false;
@@ -181,7 +184,7 @@ export default {
     },
     deleteHandler(type) {
       const vm = this;
-      console.log(type);
+      // console.log(type);
       vm.$confirm(`確認刪除 ${type.EventTypeName} ?`, "提示", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",

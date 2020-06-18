@@ -93,7 +93,6 @@ export default {
       this.$emit("getSearchDate", this.searchDate);
     },
     setSearchHandler() {
-      // 透過當前 router 決定跑哪支api
       const vm = this;
       let page = 1;
       let key = vm.keyWordInput;

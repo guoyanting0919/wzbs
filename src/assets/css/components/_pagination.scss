@@ -1,6 +1,9 @@
 #pagination {
-  margin: 2rem 0;
-  text-align: center;
+  margin: 2rem 2rem;
+  text-align: right;
+  // position: absolute;
+  // bottom: 0;
+  // right: 1rem;
 
   .el-pagination.is-background .el-pager li:not(.disabled).active {
     @include bg_color($background-color-theme1);

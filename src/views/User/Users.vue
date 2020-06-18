@@ -50,7 +50,8 @@
           <p class="inputTitle">單位</p>
           <el-select
             filterable
-            @change="userUnit2Select=''"
+            no-match-text="暫無資料"
+            @change="lv1Change"
             class="unitSelect"
             v-model="userUnit1Select"
             placeholder="請選擇最高單位"
@@ -64,7 +65,8 @@
           </el-select>
           <el-select
             filterable
-            @change="userUnit3Select=''"
+            no-match-text="暫無資料"
+            @change="lv2Change"
             class="unitSelect"
             v-model="userUnit2Select"
             placeholder="請選擇次高單位"
@@ -79,7 +81,9 @@
           </el-select>
           <el-select
             filterable
+            no-match-text="暫無資料"
             class="unitSelect"
+            @change="lv3Change"
             v-model="userUnit3Select"
             placeholder="請選擇單位"
             v-if="userUnit2Select && unitLv3.length > 0"
@@ -96,18 +100,34 @@
         <!-- name -->
         <div class="inputBox">
           <p class="inputTitle">名稱</p>
-          <el-select filterable v-model="userNameSelect" placeholder="請選擇名稱">
-            <el-option value="正常"></el-option>
-            <el-option value="異常"></el-option>
+          <el-select
+            :loading="userNameLoading"
+            loading-text="Loading..."
+            no-data-text="暫無資料"
+            filterable
+            no-match-text="暫無資料"
+            v-model="userNameSelect"
+            placeholder="請選擇名稱"
+          >
+            <el-option
+              v-for="user in usersData"
+              :key="user.Account"
+              :value="user.Account"
+              :label="user.Name"
+            ></el-option>
           </el-select>
         </div>
 
         <!-- role -->
         <div class="inputBox">
           <p class="inputTitle">角色</p>
-          <el-select v-model="userRoleSelect" placeholder="請選擇角色">
-            <el-option value="正常"></el-option>
-            <el-option value="異常"></el-option>
+          <el-select filterable no-match-text="暫無資料" v-model="userRoleSelect" placeholder="請選擇角色">
+            <el-option
+              v-for="role in rolesData"
+              :key="role.Id"
+              :value="role.Id"
+              :label="role.Name"
+            >{{role.Name}}</el-option>
           </el-select>
         </div>
 
@@ -120,15 +140,15 @@
           <p class="inputTitle"></p>
           <el-tree
             class="filter-tree"
-            :data="data"
+            :data="orgsData"
             show-checkbox
-            node-key="id"
+            node-key="Id"
             empty-text="暫無資料!"
             :indent="32"
             :props="defaultProps"
-            default-expand-all
             :filter-node-method="filterNode"
             ref="tree"
+            @change="getCheckedKeys"
           ></el-tree>
         </div>
 
@@ -144,7 +164,7 @@
       </el-scrollbar>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addOrEditDialog = false">提 交</el-button>
+        <el-button type="primary" @click="getCheckedKeys">提 交</el-button>
       </span>
     </el-dialog>
   </div>
@@ -157,10 +177,14 @@ export default {
   components: { HeaderBox },
   data() {
     return {
+      userNameLoading: false,
       filterText: "",
       categoryList: [],
       addOrEditDialog: false,
       keyWordInput: "",
+      orgsData: "",
+      rolesData: "",
+      usersData: "",
       tableData: [
         {
           name: "陳阿花",
@@ -278,8 +302,8 @@ export default {
       userRoleSelect: "",
       buttonList: [],
       defaultProps: {
-        children: "children",
-        label: "label"
+        children: "Children",
+        label: "Label"
       }
     };
   },
@@ -318,6 +342,57 @@ export default {
         this.unitsData = res.data;
       });
     },
+    getRoles() {
+      const vm = this;
+      vm.$api.GetAllRoles().then(res => {
+        this.rolesData = res.data.response;
+      });
+    },
+    getUsers(params) {
+      const vm = this;
+      vm.userNameLoading = true;
+      vm.$api.GetUsers(params).then(res => {
+        console.log(res);
+        vm.usersData = res.data;
+
+        vm.userNameLoading = false;
+      });
+    },
+    getOrg() {
+      const vm = this;
+      vm.$api.GetOrg().then(res => {
+        vm.orgsData = res.data;
+      });
+    },
+    lv1Change() {
+      const vm = this;
+      vm.userUnit2Select = "";
+      vm.userNameSelect = "";
+      let unitCode = vm.userUnit1Select;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
+    lv2Change() {
+      const vm = this;
+      vm.userUnit3Select = "";
+      vm.userNameSelect = "";
+      let unitCode = vm.userUnit2Select;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
+    lv3Change() {
+      const vm = this;
+      vm.userNameSelect = "";
+      let unitCode = vm.userUnit3Select;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
     handleAddOrEdit() {
       const vm = this;
       this.addOrEditDialog = true;
@@ -342,7 +417,7 @@ export default {
       console.log(this.$refs.tree.getCheckedKeys());
     },
     setCheckedKeys() {
-      this.$refs.tree.setCheckedKeys([3, 12]);
+      this.$refs.tree.setCheckedKeys(["AA00", "EU00"]);
     },
     getButtonList(routePath, routers) {
       const vm = this;
@@ -373,7 +448,8 @@ export default {
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
-
+    this.getRoles();
+    this.getOrg();
     await this.getUnits();
     this.$store.dispatch("loadingHandler", false);
   }

@@ -16,16 +16,36 @@ const api = {
   },
 
   // Roles
-  GetRoles() {
+  GetRoles(params) {
+    return req("get", "Role/Get", params);
+  },
+  GetAllRoles() {
     return req("get", "Role/GetRoles");
+  },
+  DeleteRole(params) {
+    return req("delete", "Role/Delete", params);
   },
   SearchRoles(params) {
     return req("get", "Role/Get", params);
+  },
+  AddRole(params) {
+    return req("post", "Role/Post", params);
+  },
+  EditRole(params) {
+    return req("put", "Role/put", params);
   },
 
   // Units
   GetUnits() {
     return req("get", "Unit/GetUnits");
+  },
+
+  // School
+  GetUsers(params) {
+    return req("get", "School/GetUsers", params);
+  },
+  GetOrg() {
+    return req("get", "School/GetUnits");
   },
 
   // Calendar
