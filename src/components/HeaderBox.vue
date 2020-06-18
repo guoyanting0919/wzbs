@@ -16,12 +16,14 @@
         class="keyWordInput"
         v-model="keyWordInput"
         placeholder="請輸入關鍵字"
+        @keyup.enter.native="setSearchHandler"
       ></el-input>
       <el-button
         v-if="hasBtn('btnSearch')"
         class="searchBtn"
+        :loading="searchLoading"
         type="primary"
-        @click="searchHandler"
+        @click="setSearchHandler"
       >搜尋</el-button>
       <el-button
         v-if="hasBtn('btnAdd')"
@@ -67,6 +69,11 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    searchLoading: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
   methods: {
@@ -85,9 +92,12 @@ export default {
     setSearchDate() {
       this.$emit("getSearchDate", this.searchDate);
     },
-    searchHandler() {
+    setSearchHandler() {
       // 透過當前 router 決定跑哪支api
-      console.log(this.$route);
+      const vm = this;
+      let page = 1;
+      let key = vm.keyWordInput;
+      vm.$emit("searchHandler", { page, key });
     }
   }
 };

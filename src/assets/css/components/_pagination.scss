@@ -1,0 +1,8 @@
+#pagination {
+  margin: 2rem 0;
+  text-align: center;
+
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    @include bg_color($background-color-theme1);
+  }
+}

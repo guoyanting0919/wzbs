@@ -43,29 +43,60 @@
     </div>
 
     <!-- addOrEditDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="50%">
+    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="50%" v-if="unitsData">
       <el-scrollbar class="scrollbar-handle">
         <!-- unit -->
         <div class="inputBox">
           <p class="inputTitle">單位</p>
-          <el-select class="unitSelect" v-model="userUnit1Select" placeholder="請選擇最高單位">
-            <el-option value="正常"></el-option>
-            <el-option value="異常"></el-option>
+          <el-select
+            filterable
+            @change="userUnit2Select=''"
+            class="unitSelect"
+            v-model="userUnit1Select"
+            placeholder="請選擇最高單位"
+          >
+            <el-option
+              :value="unit.UntId"
+              :label="unit.UntNameFull"
+              v-for="unit in unitLv1"
+              :key="unit.UntId"
+            >{{unit.UntNameFull}}</el-option>
           </el-select>
-          <el-select class="unitSelect" v-model="userUnit2Select" placeholder="請選擇次高單位">
-            <el-option value="正常"></el-option>
-            <el-option value="異常"></el-option>
+          <el-select
+            filterable
+            @change="userUnit3Select=''"
+            class="unitSelect"
+            v-model="userUnit2Select"
+            placeholder="請選擇次高單位"
+            v-if="userUnit1Select && unitLv2.length > 0"
+          >
+            <el-option
+              v-for="unit in unitLv2"
+              :key="unit.UntId"
+              :value="unit.UntId"
+              :label="unit.UntNameFull"
+            >{{unit.UntNameFull}}</el-option>
           </el-select>
-          <el-select class="unitSelect" v-model="userUnit3Select" placeholder="請選擇單位">
-            <el-option value="正常"></el-option>
-            <el-option value="異常"></el-option>
+          <el-select
+            filterable
+            class="unitSelect"
+            v-model="userUnit3Select"
+            placeholder="請選擇單位"
+            v-if="userUnit2Select && unitLv3.length > 0"
+          >
+            <el-option
+              v-for="unit in unitLv3"
+              :key="unit.UntId"
+              :value="unit.UntId"
+              :label="unit.UntNameFull"
+            >{{unit.UntNameFull}}</el-option>
           </el-select>
         </div>
 
         <!-- name -->
         <div class="inputBox">
           <p class="inputTitle">名稱</p>
-          <el-select v-model="userNameSelect" placeholder="請選擇名稱">
+          <el-select filterable v-model="userNameSelect" placeholder="請選擇名稱">
             <el-option value="正常"></el-option>
             <el-option value="異常"></el-option>
           </el-select>
@@ -123,6 +154,7 @@
 import HeaderBox from "../../components/HeaderBox";
 export default {
   name: "UserUsers",
+  components: { HeaderBox },
   data() {
     return {
       filterText: "",
@@ -238,6 +270,7 @@ export default {
           ]
         }
       ],
+      unitsData: "",
       userUnit1Select: "",
       userUnit2Select: "",
       userUnit3Select: "",
@@ -250,8 +283,41 @@ export default {
       }
     };
   },
-  components: { HeaderBox },
+  computed: {
+    unitLv1() {
+      const vm = this;
+      return vm.unitsData.filter(unit => {
+        return unit.UntLevelb === "1";
+      });
+    },
+    unitLv2() {
+      const vm = this;
+      let arrLv1 = vm.unitsData.filter(unit => {
+        return unit.UntId === vm.userUnit1Select;
+      });
+      let uintLv1 = arrLv1[0];
+      return vm.unitsData.filter(unit => {
+        return unit.UntIdUp === uintLv1.UntIdUp && unit.UntLevelb === "2";
+      });
+    },
+    unitLv3() {
+      const vm = this;
+      let arrLv2 = vm.unitsData.filter(unit => {
+        return unit.UntId === vm.userUnit2Select;
+      });
+      let uintLv2 = arrLv2[0];
+      return vm.unitsData.filter(unit => {
+        return unit.UntIdUp === uintLv2.UntIdUp && unit.UntLevelb === "3";
+      });
+    }
+  },
   methods: {
+    async getUnits() {
+      const vm = this;
+      await vm.$api.GetUnits().then(res => {
+        this.unitsData = res.data;
+      });
+    },
     handleAddOrEdit() {
       const vm = this;
       this.addOrEditDialog = true;
@@ -301,11 +367,15 @@ export default {
       this.$refs.tree.filter(val);
     }
   },
-  mounted() {
+  async mounted() {
+    this.$store.dispatch("loadingHandler", true);
     let routers = JSON.parse(window.localStorage.router)
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
+
+    await this.getUnits();
+    this.$store.dispatch("loadingHandler", false);
   }
 };
 </script>

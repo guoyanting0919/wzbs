@@ -1,18 +1,20 @@
 <template>
   <div id="calendarCategory">
-    <!-- searchBox -->
-    <!-- <div class="searchBox">
-      <el-input class="keyWordInput" v-model="keyWordInput" placeholder="請輸入關鍵字"></el-input>
-      <el-button class="searchBtn" type="primary">搜尋</el-button>
-      <el-button @click="handleAddOrEdit('add')" class="addBtn" type="primary">新增</el-button>
-    </div>-->
-
     <!-- headerBox -->
-    <HeaderBox @handleAddOrEdit="handleAddOrEdit" :buttonList="buttonList"></HeaderBox>
+    <HeaderBox
+      @searchHandler="searchHandler"
+      @handleAddOrEdit="handleAddOrEdit"
+      :buttonList="buttonList"
+      :searchLoading="searchLoading"
+    ></HeaderBox>
 
     <!-- mainTable -->
-    <el-table :data="tableData" :default-sort="{prop: 'date', order: 'descending'}">
-      <el-table-column prop="category" label="類別名稱" sortable></el-table-column>
+    <el-table
+      v-if="eventTypeData"
+      :data="eventTypeData"
+      :default-sort="{prop: 'date', order: 'descending'}"
+    >
+      <el-table-column prop="EventTypeName" label="類別名稱" sortable></el-table-column>
       <el-table-column prop="emit" label="操作" width="200" sortable>
         <template slot-scope="scope">
           <el-button
@@ -26,18 +28,47 @@
             type="danger"
             class="outline"
             size="mini"
-            @click="handleDel(scope.row)"
+            @click="deleteHandler(scope.row)"
           >刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <!-- pagination -->
+    <Pagination
+      v-if="totalCount"
+      :keyWord="keyWordInput"
+      :total="totalCount"
+      :currentPage="currentPage"
+      @getEventType="getEventType"
+    ></Pagination>
+
     <!-- addDialog -->
     <el-dialog title="新增" :visible.sync="addOrEditDialog" width="30%">
-      <el-input v-model="categoryName" placeholder="請輸入行事曆類別名稱"></el-input>
+      <div class="inputBox">
+        <p class="inputTitle">類別名稱:</p>
+        <el-input style="width:400px" v-model="categoryName" placeholder="請輸入行事曆類別名稱"></el-input>
+      </div>
+      <div class="inputBox">
+        <p class="inputTitle">起迄日:</p>
+        <el-date-picker
+          v-model="startEndDate"
+          type="daterange"
+          style="width:400px"
+          range-separator="~"
+          start-placeholder="開始日期"
+          end-placeholder="結束日期"
+        ></el-date-picker>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addOrEditDialog = false">新 增</el-button>
+        <el-button
+          :loading="addLoading"
+          v-if="addOrEdit==='add'"
+          type="primary"
+          @click="addHandler"
+        >新 增</el-button>
+        <el-button :loading="editLoading" v-else type="primary" @click="editHandler">編 輯</el-button>
       </span>
     </el-dialog>
   </div>
@@ -45,14 +76,25 @@
 
 <script>
 import HeaderBox from "../../components/HeaderBox";
+import Pagination from "../../components/Pagination";
+import moment from "moment";
 export default {
   name: "CalendarCategory",
   data() {
     return {
       keyWordInput: "",
       categoryName: "",
+      totalCount: "",
+      startEndDate: "",
       buttonList: [],
       addOrEditDialog: false,
+      addOrEdit: "",
+      editId: "",
+      currentPage: 1,
+      eventTypeData: "",
+      searchLoading: false,
+      addLoading: false,
+      editLoading: false,
       tableData: [
         {
           category: "重大會議"
@@ -70,22 +112,117 @@ export default {
     };
   },
   components: {
-    HeaderBox
+    HeaderBox,
+    Pagination
   },
   methods: {
-    handleEdit() {},
-    handleDel() {},
+    getEventType(page = 1, key) {
+      const vm = this;
+      let params = {
+        key: vm.keyWordInput,
+        page
+      };
+      vm.$api.SearchEventType(params).then(res => {
+        vm.totalCount = res.data.response.dataCount;
+        vm.eventTypeData = res.data.response.data;
+        vm.currentPage = page;
+      });
+    },
+    searchHandler({ page, key }) {
+      const vm = this;
+      vm.searchLoading = true;
+      vm.keyWordInput = key;
+      let params = {
+        key,
+        page
+      };
+      vm.$api.SearchEventType(params).then(res => {
+        vm.totalCount = res.data.response.dataCount;
+        vm.eventTypeData = res.data.response.data;
+        vm.searchLoading = false;
+        vm.currentPage = 1;
+      });
+    },
+    addHandler() {
+      const vm = this;
+      vm.addLoading = true;
+      let eventTypeName = vm.categoryName;
+      let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
+      let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+      let params = {
+        eventTypeName,
+        StartDate,
+        EndDate
+      };
+      vm.$api.AddEventType(params).then(res => {
+        vm.getEventType();
+        vm.addOrEditDialog = false;
+        vm.addLoading = false;
+      });
+    },
+    editHandler() {
+      const vm = this;
+      vm.editLoading = true;
+      let eventTypeName = vm.categoryName;
+      let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
+      let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+      let params = {
+        id: vm.editId,
+        eventTypeName,
+        StartDate,
+        EndDate
+      };
+      console.log(params);
+      vm.$api.EditEventType(params).then(res => {
+        vm.getEventType();
+        this.addOrEditDialog = false;
+        vm.editLoading = false;
+      });
+    },
+    deleteHandler(type) {
+      const vm = this;
+      console.log(type);
+      vm.$confirm(`確認刪除 ${type.EventTypeName} ?`, "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let params = {
+            id: type.Id
+          };
+          vm.$api.DeleteEventType(params).then(res => {
+            vm.getEventType();
+          });
+          vm.$message({
+            type: "success",
+            message: `類別 ${type.EventTypeName} 删除成功`
+          });
+        })
+        .catch(() => {
+          vm.$message({
+            type: "info",
+            message: "已取消刪除"
+          });
+        });
+    },
     hasBtn(btnType) {
       const vm = this;
       return this.buttonList.some(btn => btn.iconCls == btnType);
     },
     handleAddOrEdit(act, info = "") {
       this.categoryName = "";
+      this.startEndDate = "";
+      this.addOrEdit = "add";
       if (act === "add") {
         this.addOrEditDialog = true;
       } else {
+        console.log(info);
+        this.addOrEdit = "edit";
+        this.editId = info.Id;
+        this.startEndDate = [info.StartDate, info.EndDate];
         this.addOrEditDialog = true;
-        this.categoryName = info.category;
+        this.categoryName = info.EventTypeName;
       }
     },
     getButtonList(routePath, routers) {
@@ -111,6 +248,7 @@ export default {
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
+    this.getEventType();
   }
 };
 </script>

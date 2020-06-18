@@ -4,12 +4,17 @@
 }
 
 .el-button--danger {
-  background-color: #8a0909;
+  background: #8a0909;
   border-color: #8a0909;
+
+  &:focus {
+    background: #8a0909;
+    border-color: #8a0909;
+  }
 
   &:hover {
     border-color: #aa0c0c;
-    background-color: #aa0c0c;
+    background: #aa0c0c !important;
   }
 }
 

@@ -1,24 +1,34 @@
 <template>
   <div id="userRoles">
     <!-- headerBox -->
-    <HeaderBox @handleAddOrEdit="handleAddOrEdit" :buttonList="buttonList"></HeaderBox>
+    <HeaderBox
+      @searchHandler="searchHandler"
+      @handleAddOrEdit="handleAddOrEdit"
+      :buttonList="buttonList"
+    ></HeaderBox>
 
     <!-- mainBox -->
     <div class="mainTable">
-      <div class="tableContainer mt-5">
+      <div class="tableContainer mt-5" v-if="rolesData">
         <el-table
-          :data="tableData"
+          :data="rolesDataFilter"
+          empty-text="暫無資料"
           style="width: 100%"
           :default-sort="{prop: 'date', order: 'descending'}"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="roleName" label="角色名" sortable></el-table-column>
-          <el-table-column prop="roleDescription" label="說明" sortable></el-table-column>
-          <el-table-column prop="creatDate" label="創建時間" sortable></el-table-column>
-          <el-table-column prop="status" label="狀態" sortable>
+          <el-table-column prop="Name" label="角色名" sortable></el-table-column>
+          <el-table-column prop="Description" label="說明" sortable></el-table-column>
+          <el-table-column prop="CreateTime" label="創建時間" sortable>
             <template slot-scope="scope">
-              <span :class="[scope.row.status==='正常' ? 'status1' : 'status2']">{{scope.row.status}}</span>
+              <span>{{scope.row.CreateTime}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Enabled" label="狀態" sortable>
+            <template slot-scope="scope">
+              <span v-if="scope.row.Enabled" class="status1">啟用</span>
+              <span v-else class="status2">禁用</span>
             </template>
           </el-table-column>
           <el-table-column prop="emit" label="操作">
@@ -50,10 +60,13 @@
       </div>
       <div class="inputBox">
         <p class="inputTitle">狀態</p>
-        <el-select v-model="roleStatusSelect" placeholder="請選擇狀態">
-          <el-option value="正常"></el-option>
-          <el-option value="異常"></el-option>
-        </el-select>
+        <el-switch
+          active-text="啟用"
+          inactive-text="禁用"
+          v-model="roleStatusSelect"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+        ></el-switch>
       </div>
       <div class="inputBox">
         <p class="inputTitle">說明</p>
@@ -69,6 +82,7 @@
 
 <script>
 import HeaderBox from "../../components/HeaderBox";
+import moment from "moment";
 export default {
   name: "UserRoles",
   components: { HeaderBox },
@@ -78,34 +92,18 @@ export default {
       roleNameInput: "",
       roleStatusSelect: "",
       roleDescriptionInput: "",
-      keyWordInput: "",
       buttonList: [],
-      tableData: [
-        {
-          roleName: "角色A",
-          status: "正常",
-          roleDescription:
-            "角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明",
-          creatDate: "2020-05-01",
-          emit: 1
-        },
-        {
-          roleName: "角色B",
-          status: "正常",
-          roleDescription: "角色說明角色說明角色說明角色說明",
-          creatDate: "2020-05-02",
-          emit: 1
-        },
-        {
-          roleName: "角色C",
-          status: "異常",
-          roleDescription:
-            "角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明角色說明",
-          creatDate: "2019-05-03",
-          emit: 1
-        }
-      ]
+      rolesData: ""
     };
+  },
+  computed: {
+    rolesDataFilter() {
+      let data = this.rolesData;
+      data.map(role => {
+        role.CreateTime = moment(role.CreateTime).format("YYYY-MM-DD");
+      });
+      return data;
+    }
   },
   methods: {
     getButtonList(routePath, routers) {
@@ -130,20 +128,53 @@ export default {
       return this.buttonList.some(btn => btn.iconCls == btnType);
       // return true;
     },
-    handleAddOrEdit(method) {
-      this.addOrEditDialog = true;
+    handleAddOrEdit(method, data) {
+      const vm = this;
+      if (method === "add") {
+        vm.addOrEditDialog = true;
+      } else {
+        vm.addOrEditDialog = true;
+        console.log(data);
+        vm.roleNameInput = data.Name;
+        vm.roleStatusSelect = data.Enabled;
+        vm.roleDescriptionInput = data.Description;
+      }
+    },
+    searchHandler(key) {
+      const vm = this;
+      vm.$store.dispatch("loadingHandler", true);
+      let params = {
+        page: 1,
+        key
+      };
+      vm.$api.SearchRoles(params).then(res => {
+        console.log(res);
+        vm.rolesData = res.data.response.data;
+        vm.$store.dispatch("loadingHandler", false);
+      });
     },
     handleDel() {},
     handleSelectionChange(val) {
       this.multipleSelection = val;
       // console.log(val);
+    },
+    async getRoles() {
+      const vm = this;
+      await vm.$api.GetRoles().then(res => {
+        vm.rolesData = res.data;
+      });
     }
   },
-  mounted() {
+  async mounted() {
+    this.$store.dispatch("loadingHandler", true);
     let routers = JSON.parse(window.localStorage.router)
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
+
+    await this.getRoles();
+
+    this.$store.dispatch("loadingHandler", false);
   }
 };
 </script>

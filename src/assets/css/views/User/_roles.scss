@@ -31,4 +31,12 @@
     text-align: right;
     margin-right: 1rem;
   }
+
+  .el-switch__label {
+    color: #c9c8c8;
+  }
+
+  .el-switch__label.is-active {
+    color: #000;
+  }
 }

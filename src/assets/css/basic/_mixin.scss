@@ -69,8 +69,13 @@
   transition: 0.5s;
   font-family: "微軟正黑體";
 
-  &:hover,
   &:focus {
+    background-color: $color;
+    color: #fff;
+    border-color: $color;
+  }
+
+  &:hover {
     background-color: lighten($color, 10%);
     color: #fff;
     border-color: $color;
@@ -82,8 +87,13 @@
     transition: 0.5s;
     font-family: "微軟正黑體";
 
-    &:hover,
     &:focus {
+      background-color: $background-color-theme1;
+      color: #fff;
+      border-color: $background-color-theme1;
+    }
+
+    &:hover {
       background-color: lighten($background-color-theme1, 10%);
       color: #fff;
       border-color: $background-color-theme1;
@@ -96,8 +106,12 @@
     transition: 0.5s;
     font-family: "微軟正黑體";
 
-    &:hover,
     &:focus {
+      background-color: $background-color-theme2;
+      color: #fff;
+      border-color: $background-color-theme2;
+    }
+    &:hover {
       background-color: lighten($background-color-theme2, 10%);
       color: #fff;
       border-color: $background-color-theme2;

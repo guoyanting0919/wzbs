@@ -1,3 +1,14 @@
 #calendarCategory {
   padding: 0 1.25rem;
+
+  .inputBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .inputTitle {
+    margin-right: 1rem;
+    width: 60px;
+  }
 }
