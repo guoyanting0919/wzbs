@@ -7,17 +7,19 @@
     <div class="mainTable">
       <div class="tableContainer mt-5">
         <el-table
-          :data="tableData"
+          v-if="adminUsersData"
+          :data="adminUsersData"
+          empty-text="暫無資料"
           style="width: 100%"
           :default-sort="{prop: 'date', order: 'descending'}"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="unit" label="單位" sortable></el-table-column>
-          <el-table-column prop="name" label="名稱" sortable></el-table-column>
-          <el-table-column prop="role" label="角色" sortable>
+          <el-table-column prop="UnitCode" label="單位" sortable></el-table-column>
+          <el-table-column prop="RealName" label="名稱" sortable></el-table-column>
+          <el-table-column prop="LoginName" label="角色" sortable>
             <template slot-scope="scope">
-              <span class="roleBadge">{{scope.row.role}}</span>
+              <span class="roleBadge">{{scope.row.LoginName}}</span>
             </template>
           </el-table-column>
           <el-table-column prop="organization" label="組織" sortable></el-table-column>
@@ -140,6 +142,7 @@
           <p class="inputTitle"></p>
           <el-tree
             class="filter-tree"
+            @check="getCheckedKeys"
             :data="orgsData"
             show-checkbox
             node-key="Id"
@@ -148,17 +151,18 @@
             :props="defaultProps"
             :filter-node-method="filterNode"
             ref="tree"
-            @change="getCheckedKeys"
           ></el-tree>
         </div>
 
         <!-- category -->
         <div class="inputBox">
           <p class="inputTitle">行事曆類別</p>
-          <el-checkbox-group v-model="categoryList">
-            <el-checkbox label="類別A"></el-checkbox>
-            <el-checkbox label="類別B"></el-checkbox>
-            <el-checkbox label="類別C"></el-checkbox>
+          <el-checkbox-group v-model="categoryList" v-if="eventTypeData">
+            <el-checkbox
+              v-for="type  in eventTypeData"
+              :key="type.Id"
+              :label="type.Id"
+            >{{type.EventTypeName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </el-scrollbar>
@@ -185,6 +189,7 @@ export default {
       orgsData: "",
       rolesData: "",
       usersData: "",
+      adminUsersData: "",
       tableData: [
         {
           name: "陳阿花",
@@ -295,6 +300,7 @@ export default {
         }
       ],
       unitsData: "",
+      eventTypeData: "",
       userUnit1Select: "",
       userUnit2Select: "",
       userUnit3Select: "",
@@ -348,14 +354,30 @@ export default {
         this.rolesData = res.data.response;
       });
     },
+    getAdminUsers() {
+      const vm = this;
+      let params;
+      vm.$api.GetAdminUsers(params).then(res => {
+        console.log(res);
+        vm.adminUsersData = res.data.response.data;
+
+        vm.userNameLoading = false;
+      });
+    },
     getUsers(params) {
       const vm = this;
       vm.userNameLoading = true;
       vm.$api.GetUsers(params).then(res => {
-        console.log(res);
+        // console.log(res);
         vm.usersData = res.data;
 
         vm.userNameLoading = false;
+      });
+    },
+    getEventType() {
+      const vm = this;
+      vm.$api.GetEventType().then(res => {
+        vm.eventTypeData = res.data;
       });
     },
     getOrg() {
@@ -450,6 +472,8 @@ export default {
     this.getButtonList(this.$route.path, routers);
     this.getRoles();
     this.getOrg();
+    this.getEventType();
+    this.getAdminUsers();
     await this.getUnits();
     this.$store.dispatch("loadingHandler", false);
   }

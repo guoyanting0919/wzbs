@@ -7,12 +7,12 @@
           <el-button style="padding: 3px 0" type="text">刷新</el-button>
         </div>
         <div
-          v-for="o in roles"
-          :key="o.Id"
-          @click="operate(o.Id)"
-          :class="o.Id == roleid ? 'active' : ''"
+          v-for="role in rolesData"
+          :key="role.Id"
+          @click="operate(role.Id)"
+          :class="role.Id == roleid ? 'active' : ''"
           class="text item role-item"
-        >{{ o.Name }}</div>
+        >{{ role.Name }}</div>
       </el-card>
     </el-col>
 
@@ -24,7 +24,8 @@
         </div>
         <div>
           <el-tree
-            :data="data5"
+            v-if="authorityData"
+            :data="authorityData"
             show-checkbox
             node-key="value"
             ref="tree"
@@ -68,10 +69,28 @@ export default {
           Name: "User",
           Id: 4
         }
-      ]
+      ],
+      rolesData: "",
+      authorityData: ""
     };
   },
   methods: {
+    async getAuthority() {
+      const vm = this;
+      let params = {
+        needbtn: true
+      };
+      await vm.$api.GetAuthority(params).then(res => {
+        vm.authorityData = res.data.response.children;
+        console.log(vm.authorityData);
+      });
+    },
+    getRoles() {
+      const vm = this;
+      vm.$api.GetAllRoles().then(res => {
+        vm.rolesData = res.data.response;
+      });
+    },
     operate(id) {
       this.roleid = id;
       this.$refs.tree.setCheckedKeys([23, 35]);
@@ -82,6 +101,13 @@ export default {
       let data = this.ogTree.response.children;
       return JSON.parse(JSON.stringify(data));
     }
+  },
+  async mounted() {
+    this.$store.dispatch("loadingHandler", true);
+    this.getRoles();
+    await this.getAuthority();
+
+    this.$store.dispatch("loadingHandler", false);
   }
 };
 </script>

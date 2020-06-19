@@ -14,6 +14,9 @@ const api = {
   GetNavigationBar(params) {
     return req("get", "Permission/GetNavigationBar", params);
   },
+  RefreshToken(params) {
+    return req("get", "Login/RefreshToken/api/RefreshToken", params);
+  },
 
   // Roles
   GetRoles(params) {
@@ -33,6 +36,11 @@ const api = {
   },
   EditRole(params) {
     return req("put", "Role/put", params);
+  },
+
+  // AdminUsers
+  GetAdminUsers(params) {
+    return req("get", "AdminUser/Get", params);
   },
 
   // Units
@@ -63,6 +71,11 @@ const api = {
   },
   EditEventType(params) {
     return req("put", "EventType/Put", params);
+  },
+
+  // Authority
+  GetAuthority(params) {
+    return req("get", "Permission/GetPermissionTree", params);
   },
 };
 
