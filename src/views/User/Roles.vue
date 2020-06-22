@@ -75,26 +75,46 @@
 
     <!-- addOrEditDialog -->
     <el-dialog title="新增" :visible.sync="addOrEditDialog" width="40%">
-      <div class="inputBox">
-        <p class="inputTitle">角色名</p>
-        <el-input style="width:300px" v-model="roleNameInput" placeholder="請輸入角色名"></el-input>
-      </div>
-      <div class="inputBox">
-        <p class="inputTitle">狀態</p>
-        <el-switch
-          active-text="啟用"
-          inactive-text="禁用"
-          v-model="roleStatusSelect"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-        ></el-switch>
-      </div>
-      <div class="inputBox">
-        <p class="inputTitle">說明</p>
-        <el-input style="width:300px" v-model="roleDescription" placeholder="說明欄位"></el-input>
-      </div>
+      <ValidationObserver ref="obs">
+        <div class="inputBox">
+          <p class="inputTitle">角色名</p>
+          <ValidationProvider name="請輸入角色名!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              style="width:300px"
+              v-model="roleNameInput"
+              placeholder="請輸入角色名"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+        <div class="inputBox">
+          <p class="inputTitle">狀態</p>
+          <el-switch
+            active-text="啟用"
+            inactive-text="禁用"
+            v-model="roleStatusSelect"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          ></el-switch>
+        </div>
+        <div class="inputBox">
+          <p class="inputTitle">說明</p>
+          <ValidationProvider name="請輸入角色說明!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              style="width:300px"
+              v-model="roleDescription"
+              placeholder="說明欄位"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      </ValidationObserver>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
+
         <el-button v-if="addOrEdit==='add'" type="primary" @click="addHandler">新 增</el-button>
         <el-button v-else type="primary" @click="editHandler">編 輯</el-button>
       </span>
@@ -176,29 +196,37 @@ export default {
         this.editId = info.Id;
       }
     },
-    addHandler() {
+    async addHandler() {
       const vm = this;
-      vm.addLoading = true;
-      let Name = vm.roleNameInput;
-      let Enabled = vm.roleStatusSelect;
-      let Description = vm.roleDescription;
-      let CreateTime = moment(new Date()).format("YYYY-MM-DD");
-      let params = {
-        Name,
-        Enabled,
-        Description,
-        CreateTime
-      };
-      vm.$api.AddRole(params).then(res => {
-        vm.getRoles();
-        console.log(res);
-        vm.addOrEditDialog = false;
-        vm.addLoading = false;
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
         vm.$message({
-          type: "success",
-          message: `角色 ${Name} 添加成功 ! `
+          type: "error",
+          message: "請確認欄位是否正確填寫!"
         });
-      });
+      } else {
+        vm.addLoading = true;
+        let Name = vm.roleNameInput;
+        let Enabled = vm.roleStatusSelect;
+        let Description = vm.roleDescription;
+        let CreateTime = moment(new Date()).format("YYYY-MM-DD");
+        let params = {
+          Name,
+          Enabled,
+          Description,
+          CreateTime
+        };
+        vm.$api.AddRole(params).then(res => {
+          vm.getRoles();
+          console.log(res);
+          vm.addOrEditDialog = false;
+          vm.addLoading = false;
+          vm.$message({
+            type: "success",
+            message: `角色 ${Name} 添加成功 ! `
+          });
+        });
+      }
     },
     searchHandler({ page, key }) {
       const vm = this;
@@ -242,24 +270,36 @@ export default {
           });
         });
     },
-    editHandler() {
+    async editHandler() {
       const vm = this;
-      vm.editLoading = true;
-      let Id = vm.editId;
-      let Name = vm.roleNameInput;
-      let Enabled = vm.roleStatusSelect;
-      let Description = vm.roleDescription;
-      let params = {
-        Id,
-        Name,
-        Enabled,
-        Description
-      };
-      vm.$api.EditRole(params).then(res => {
-        vm.getRoles();
-        this.addOrEditDialog = false;
-        vm.editLoading = false;
-      });
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
+        vm.$message({
+          type: "error",
+          message: "請確認欄位是否正確填寫"
+        });
+      } else {
+        vm.editLoading = true;
+        let Id = vm.editId;
+        let Name = vm.roleNameInput;
+        let Enabled = vm.roleStatusSelect;
+        let Description = vm.roleDescription;
+        let params = {
+          Id,
+          Name,
+          Enabled,
+          Description
+        };
+        vm.$api.EditRole(params).then(res => {
+          vm.getRoles();
+          this.addOrEditDialog = false;
+          vm.editLoading = false;
+          vm.$message({
+            type: "success",
+            message: `角色 ${Name} 更新成功 ! `
+          });
+        });
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

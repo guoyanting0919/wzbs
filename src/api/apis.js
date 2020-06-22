@@ -55,6 +55,17 @@ const api = {
     return req("put", "AdminUser/Put", params);
   },
 
+  // Authority
+  GetAuthority(params) {
+    return req("get", "Permission/GetPermissionTree", params);
+  },
+  GetPermissionByRid(params) {
+    return req("get", "Permission/GetPermissionIdByRoleId", params);
+  },
+  EditPermissionByRid(params) {
+    return req("post", "Permission/Assign", params);
+  },
+
   // Units
   GetUnits() {
     return req("get", "Unit/GetUnits");
@@ -68,7 +79,7 @@ const api = {
     return req("get", "School/GetUnits");
   },
 
-  // Calendar
+  // Calendar EventType
   GetEventType() {
     return req("get", "EventType/GetList");
   },
@@ -85,15 +96,9 @@ const api = {
     return req("put", "EventType/Put", params);
   },
 
-  // Authority
-  GetAuthority(params) {
-    return req("get", "Permission/GetPermissionTree", params);
-  },
-  GetPermissionByRid(params) {
-    return req("get", "Permission/GetPermissionIdByRoleId", params);
-  },
-  EditPermissionByRid(params) {
-    return req("post", "Permission/Assign", params);
+  //  Calendar Event
+  GetEventsPage() {
+    return req("get", "CalendarEvent/Get");
   },
 };
 

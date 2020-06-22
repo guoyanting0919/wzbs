@@ -20,36 +20,36 @@
     ></HeaderBox>
 
     <!-- mainTable -->
-    <div class="mainTable">
+    <div class="mainTable" v-if="unitsData">
       <div class="tableContainer mt-5">
         <el-table
-          :data="tableData"
+          :data="eventsData"
           style="width: 100%"
           :default-sort="{ prop: 'date', order: 'descending' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="eventName" label="事件名稱" sortable></el-table-column>
-          <el-table-column prop="eventCategory" label="行事曆類別" sortable></el-table-column>
-          <el-table-column prop="showDate" label="顯示時間" sortable>
+          <el-table-column prop="EventName" label="事件名稱" sortable></el-table-column>
+          <el-table-column prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
+          <el-table-column prop="ShowStartDate" label="顯示時間" sortable>
             <template slot-scope="scope">
               <div class="showDateBox">
-                <span>{{ scope.row.showStartDate }}</span>
+                <span>{{ scope.row.ShowStartDate }}</span>
                 <div class="dateLine"></div>
-                <span>{{ scope.row.showEndDate }}</span>
+                <span>{{ scope.row.ShowEndDate }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="eventDate" label="活動時間" sortable>
+          <el-table-column prop="EventStartDate" label="活動時間" sortable>
             <template slot-scope="scope">
               <div class="eventDateBox">
-                <span>{{ scope.row.eventStartDate }}</span>
+                <span>{{ scope.row.EventStartDate }}</span>
                 <div class="dateLine"></div>
-                <span>{{ scope.row.eventEndDate }}</span>
+                <span>{{ scope.row.EventEndDate }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="eventSite" label="地址" sortable></el-table-column>
+          <el-table-column prop="EventAddr" label="地址" sortable></el-table-column>
           <el-table-column prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button class="outline" size="mini" @click="handleCopy(scope.row)">複製</el-button>
@@ -73,7 +73,12 @@
     </div>
 
     <!-- addOrEditDialog -->
-    <el-dialog :close-on-click-modal="false" title="新增" :visible.sync="addOrEditDialog">
+    <el-dialog
+      :close-on-click-modal="false"
+      title="新增"
+      :visible.sync="addOrEditDialog"
+      v-if="unitsData"
+    >
       <el-scrollbar class="scrollbar-handle">
         <div class="inputBox">
           <div class="inputTitle">事件名稱</div>
@@ -97,9 +102,13 @@
         </div>
         <div class="inputBox">
           <div class="inputTitle">行事曆類別</div>
-          <el-select v-model="eventCategorySelete" placeholder="請選擇行事曆類別">
-            <el-option value="111">111111</el-option>
-            <el-option value="2222">222222</el-option>
+          <el-select v-if="eventTypeData" v-model="eventCategorySelete" placeholder="請選擇行事曆類別">
+            <el-option
+              v-for="type in eventTypeData"
+              :key="type.Value"
+              :label="type.Text"
+              :value="type.Value"
+            ></el-option>
           </el-select>
         </div>
         <div class="inputBox">
@@ -146,14 +155,52 @@
           <div>
             <el-checkbox class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
             <div class="selectBox">
-              <el-select v-model="unit1" placeholder="單位一">
-                <el-option value="111">單位1</el-option>
+              <el-select
+                filterable
+                no-match-text="暫無資料"
+                @change="lv1Change"
+                class="unitSelect"
+                v-model="unit1"
+                placeholder="請選擇最高單位"
+              >
+                <el-option
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                  v-for="unit in unitLv1"
+                  :key="unit.UntId"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
-              <el-select v-model="unit2" placeholder="單位二">
-                <el-option value="111">單位2</el-option>
+              <el-select
+                filterable
+                no-match-text="暫無資料"
+                @change="lv2Change"
+                class="unitSelect"
+                v-model="unit2"
+                placeholder="請選擇次高單位"
+                v-if="unit1 && unitLv2.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv2"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
-              <el-select v-model="unit3" placeholder="單位三">
-                <el-option value="111">單位3</el-option>
+              <el-select
+                filterable
+                no-match-text="暫無資料"
+                class="unitSelect"
+                @change="lv3Change"
+                v-model="unit3"
+                placeholder="請選擇單位"
+                v-if="unit2 && unitLv3.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv3"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
             </div>
           </div>
@@ -161,8 +208,21 @@
         <div class="inputBox" style="align-items:flex-start">
           <div class="inputTitle"></div>
           <div class="selectBox">
-            <el-select v-model="member" placeholder="人員">
-              <el-option value="YT">YT</el-option>
+            <el-select
+              :loading="userNameLoading"
+              loading-text="Loading..."
+              no-data-text="暫無資料"
+              filterable
+              no-match-text="暫無資料"
+              v-model="userNameSelect"
+              placeholder="請選擇名稱"
+            >
+              <el-option
+                v-for="user in usersData"
+                :key="user.Account"
+                :value="user.Account"
+                :label="user.Name"
+              ></el-option>
             </el-select>
             <el-select v-model="memberTitle" placeholder="職稱">
               <el-option value="memberTitle">校長</el-option>
@@ -240,12 +300,35 @@
 
 <script>
 import HeaderBox from "../../components/HeaderBox";
+import moment from "moment";
 export default {
   name: "CalendarEvents",
+  components: {
+    HeaderBox
+  },
   data() {
     return {
+      userNameLoading: false,
+      // 全域資料
+      eventsData: "",
+      eventTypeData: "",
+      unitsData: "",
+      usersData: "",
+
+      //欄位
       eventNameInput: "",
       inputDescription: "",
+      eventCategorySelete: "",
+      showDate: [],
+      eventDate: [],
+      eventSiteInput: "",
+      eventUrlInput: "",
+      unit1: "",
+      unit2: "",
+      unit3: "",
+
+      // 123
+      userNameSelect: "",
       multipleSelection: [],
       changeMember: "",
       newChangeMember: "",
@@ -253,48 +336,9 @@ export default {
       memberTitle: "",
       rloe: "",
       isRelated: "",
-      unit1: "",
-      unit2: "",
-      unit3: "",
-      eventCategorySelete: "",
-      eventUrlInput: "",
-      eventSiteInput: "",
-      showDate: [],
-      eventDate: "",
       keyWordInput: "",
       buttonList: [],
-      tableData: [
-        {
-          eventName: "重大會議A",
-          eventCategory: "重大事件",
-          eventSite: "新北市板橋區板新路27號8樓如果字太多就會折行",
-          showStartDate: "2020-05-01",
-          showEndDate: "2020-06-01",
-          eventStartDate: "2020-05-12",
-          eventEndDate: "2020-05-22 ",
-          emit: 1
-        },
-        {
-          eventName: "活動B",
-          eventCategory: "活動",
-          eventSite: "竹市板橋區板新路27號8樓如果字太多就會折行",
-          showStartDate: "2020-05-02",
-          showEndDate: "2019-07-01",
-          eventStartDate: "2020-05-13",
-          eventEndDate: "2020-05-22 ",
-          emit: 1
-        },
-        {
-          eventName: "重大會議A",
-          eventCategory: "重大事件",
-          eventSite: "新北市板橋區板新路27號8樓如果字太多就會折行",
-          showStartDate: "2019-05-03",
-          showEndDate: "2020-06-01",
-          eventStartDate: "2020-05-14",
-          eventEndDate: "2020-05-22 ",
-          emit: 1
-        }
-      ],
+
       tableData2: [
         {
           title: "主任",
@@ -324,10 +368,102 @@ export default {
       searchDate: ""
     };
   },
-  components: {
-    HeaderBox
+  computed: {
+    unitLv1() {
+      const vm = this;
+      return vm.unitsData.filter(unit => {
+        return unit.UntLevelb === "1";
+      });
+    },
+    unitLv2() {
+      const vm = this;
+      let arrLv1 = vm.unitsData.filter(unit => {
+        return unit.UntId === vm.unit1;
+      });
+      let uintLv1 = arrLv1[0];
+      return vm.unitsData.filter(unit => {
+        return unit.UntIdUp === uintLv1.UntId && unit.UntLevelb === "2";
+      });
+    },
+    unitLv3() {
+      const vm = this;
+      let arrLv2 = vm.unitsData.filter(unit => {
+        return unit.UntId === vm.unit2;
+      });
+      let uintLv2 = arrLv2[0];
+      return vm.unitsData.filter(unit => {
+        return unit.UntIdUp === uintLv2.UntId && unit.UntLevelb === "3";
+      });
+    }
   },
   methods: {
+    async getUnits() {
+      const vm = this;
+      await vm.$api.GetUnits().then(res => {
+        vm.unitsData = res.data;
+      });
+    },
+    getEvents() {
+      const vm = this;
+      vm.$api.GetEventsPage().then(res => {
+        console.log(res);
+        let arr = res.data.response.data;
+        arr.map(event => {
+          event.EventEndDate = moment(event.EventEndDate).format("YYYY-MM-DD");
+          event.EventStartDate = moment(event.EventStartDate).format(
+            "YYYY-MM-DD"
+          );
+          event.ShowEndDate = moment(event.ShowEndDate).format("YYYY-MM-DD");
+          event.ShowStartDate = moment(event.ShowStartDate).format(
+            "YYYY-MM-DD"
+          );
+        });
+        vm.eventsData = arr;
+      });
+    },
+    getEventType() {
+      let user = JSON.parse(window.localStorage.user);
+      this.eventTypeData = user.DropCtrlTypes;
+    },
+    lv1Change() {
+      const vm = this;
+      vm.unit2 = "";
+      vm.unit3 = "";
+      let unitCode = vm.unit1;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
+    lv2Change() {
+      const vm = this;
+      vm.unit3 = "";
+      vm.userNameSelect = "";
+      let unitCode = vm.unit2;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
+    lv3Change() {
+      const vm = this;
+      vm.userNameSelect = "";
+      let unitCode = vm.unit3;
+      let params = {
+        unitCode
+      };
+      vm.getUsers(params);
+    },
+    getUsers(params) {
+      const vm = this;
+      vm.userNameLoading = true;
+      vm.$api.GetUsers(params).then(res => {
+        // console.log(res);
+        vm.usersData = res.data;
+
+        vm.userNameLoading = false;
+      });
+    },
     handleAddOrEdit(act, info) {
       this.showDate = [];
       if (act === "add") {
@@ -389,11 +525,14 @@ export default {
       return buttonList;
     }
   },
-  mounted() {
+  async mounted() {
     let routers = JSON.parse(window.localStorage.router)
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
+    this.getEvents();
+    this.getEventType();
+    await this.getUnits();
   }
 };
 </script>

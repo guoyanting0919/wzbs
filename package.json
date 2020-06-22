@@ -13,6 +13,7 @@
     "g": "^2.0.1",
     "json-server": "^0.16.1",
     "moment": "^2.26.0",
+    "vee-validate": "^3.3.5",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-loading-overlay": "^3.3.2",
