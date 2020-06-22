@@ -12,6 +12,7 @@
     <el-table
       v-if="eventTypeData"
       :data="eventTypeData"
+      empty-text="暫無資料"
       :default-sort="{prop: 'date', order: 'descending'}"
     >
       <el-table-column prop="EventTypeName" label="類別名稱" sortable></el-table-column>

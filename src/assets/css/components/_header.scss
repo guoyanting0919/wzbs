@@ -1,6 +1,8 @@
 #header {
   width: 100%;
   transition: 0.5s;
+  position: fixed;
+  z-index: 2;
   @include bg_color($background-color-theme1);
   color: #fff;
   padding: 0;

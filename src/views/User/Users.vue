@@ -1,7 +1,12 @@
 <template>
   <div id="userUsers">
     <!-- headerBox -->
-    <HeaderBox @handleAddOrEdit="handleAddOrEdit" :buttonList="buttonList"></HeaderBox>
+    <HeaderBox
+      @searchHandler="searchHandler"
+      :searchLoading="searchLoading"
+      @handleAddOrEdit="handleAddOrEdit"
+      :buttonList="buttonList"
+    ></HeaderBox>
 
     <!-- mainBox -->
     <div class="mainTable">
@@ -15,15 +20,37 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="UnitCode" label="單位" sortable></el-table-column>
-          <el-table-column prop="RealName" label="名稱" sortable></el-table-column>
-          <el-table-column prop="LoginName" label="角色" sortable>
+          <el-table-column prop="UnitName" width="180" label="單位" sortable></el-table-column>
+          <el-table-column prop="LoginName" width="180" label="名稱" sortable></el-table-column>
+          <el-table-column prop="RoleNames" label="角色" sortable>
             <template slot-scope="scope">
-              <span class="roleBadge">{{scope.row.LoginName}}</span>
+              <span
+                v-for="role in scope.row.RoleNames"
+                :key="`da${role}`"
+                class="roleBadge"
+              >{{role}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="organization" label="組織" sortable></el-table-column>
-          <el-table-column prop="emit" label="操作">
+          <el-table-column prop="CtrlUnits" label="組織" sortable>
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="dark" placement="top-start">
+                <div slot="content">
+                  <span
+                    v-for="(unit,index) in scope.row.CtrlUnits"
+                    :key="`da${unit}`"
+                  >{{index+1}}.{{unit}}</span>
+                </div>
+                <p class="textOverflow">
+                  <span
+                    v-for="(unit,index) in scope.row.CtrlUnits"
+                    :key="`da${unit}`"
+                    class="unitBadge"
+                  >{{index+1}}.{{unit}}</span>
+                </p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="emit" width="200" label="操作">
             <template slot-scope="scope">
               <el-button
                 v-if="hasBtn('btnEdit')"
@@ -36,13 +63,23 @@
                 type="danger"
                 class="outline"
                 size="mini"
-                @click="handleDel(scope.row)"
+                @click="deleteHandler(scope.row)"
               >刪除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+
+    <!-- pagination -->
+    <Pagination
+      v-if="totalCount"
+      :keyWord="keyWordInput"
+      :total="totalCount"
+      :currentPage="currentPage"
+      :pageSize="pageSize"
+      @changePage="getUsersPage"
+    ></Pagination>
 
     <!-- addOrEditDialog -->
     <el-dialog title="新增" :visible.sync="addOrEditDialog" width="50%" v-if="unitsData">
@@ -123,7 +160,13 @@
         <!-- role -->
         <div class="inputBox">
           <p class="inputTitle">角色</p>
-          <el-select filterable no-match-text="暫無資料" v-model="userRoleSelect" placeholder="請選擇角色">
+          <el-select
+            multiple
+            filterable
+            no-match-text="暫無資料"
+            v-model="userRoleSelect"
+            placeholder="請選擇角色"
+          >
             <el-option
               v-for="role in rolesData"
               :key="role.Id"
@@ -157,9 +200,9 @@
         <!-- category -->
         <div class="inputBox">
           <p class="inputTitle">行事曆類別</p>
-          <el-checkbox-group v-model="categoryList" v-if="eventTypeData">
+          <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
             <el-checkbox
-              v-for="type  in eventTypeData"
+              v-for="type in eventTypeData"
               :key="type.Id"
               :label="type.Id"
             >{{type.EventTypeName}}</el-checkbox>
@@ -168,7 +211,7 @@
       </el-scrollbar>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button type="primary" @click="getCheckedKeys">提 交</el-button>
+        <el-button type="primary" :loading="addLoading" @click="editHandler">提 交</el-button>
       </span>
     </el-dialog>
   </div>
@@ -176,137 +219,37 @@
 
 <script>
 import HeaderBox from "../../components/HeaderBox";
+import Pagination from "../../components/Pagination";
 export default {
   name: "UserUsers",
-  components: { HeaderBox },
+  components: { HeaderBox, Pagination },
   data() {
     return {
+      buttonList: [],
       userNameLoading: false,
-      filterText: "",
-      categoryList: [],
+      searchLoading: false,
+      addLoading: false,
       addOrEditDialog: false,
+      addOrEdit: "",
+      filterText: "",
+      totalCount: "",
       keyWordInput: "",
+      currentPage: "",
+      pageSize: "",
       orgsData: "",
       rolesData: "",
       usersData: "",
       adminUsersData: "",
-      tableData: [
-        {
-          name: "陳阿花",
-          unit: "最高單位 / 次高單位 / 單位",
-          organization:
-            "組織名 1, 組織名 2, 組織名 3.組織名 1, 組織名 2,組織名 1, 組織名 2,組織名 1, 組織名 2,組織名 1, 組織名 2,組織名 1, 組織名 2,組織名 1, 組織名 2,",
-          role: "Admin"
-        },
-        {
-          name: "林曉婷",
-          unit: "最高單位 / 次高單位 / 單位",
-          organization: "角色說明角色說明角色說明角色說明",
-          role: "User"
-        },
-        {
-          name: "莊曉燕",
-          unit: "最高單位 / 次高單位 / 單位",
-          organization: "組織名 1, 組織名 2, 組織名 3...",
-          role: "Master"
-        }
-      ],
-      data: [
-        {
-          id: 1,
-          label: "師範學院",
-          children: [
-            {
-              id: 4,
-              label: "教育學系",
-              children: [
-                {
-                  id: 9,
-                  label: "系主任"
-                },
-                {
-                  id: 10,
-                  label: "教授"
-                }
-              ]
-            },
-            {
-              id: 11,
-              label: "幼兒教育學系",
-              children: [
-                {
-                  id: 12,
-                  label: "系主任"
-                },
-                {
-                  id: 13,
-                  label: "教授"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: "人文學院",
-          children: [
-            {
-              id: 5,
-              label: "外語系",
-              children: [
-                {
-                  id: 14,
-                  label: "系主任"
-                },
-                {
-                  id: 15,
-                  label: "教授"
-                },
-                {
-                  id: 16,
-                  label: "工讀生"
-                }
-              ]
-            },
-            {
-              id: 6,
-              label: "音樂系",
-              children: [
-                {
-                  id: 17,
-                  label: "系主任"
-                },
-                {
-                  id: 18,
-                  label: "教授"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: "商學院",
-          children: [
-            {
-              id: 7,
-              label: "企業管理系"
-            },
-            {
-              id: 8,
-              label: "商業管理系"
-            }
-          ]
-        }
-      ],
       unitsData: "",
       eventTypeData: "",
+      editUserId: "",
+      eventTypeSelect: [],
       userUnit1Select: "",
       userUnit2Select: "",
       userUnit3Select: "",
       userNameSelect: "",
       userRoleSelect: "",
-      buttonList: [],
+      userControlSelect: "",
       defaultProps: {
         children: "Children",
         label: "Label"
@@ -327,7 +270,7 @@ export default {
       });
       let uintLv1 = arrLv1[0];
       return vm.unitsData.filter(unit => {
-        return unit.UntIdUp === uintLv1.UntIdUp && unit.UntLevelb === "2";
+        return unit.UntIdUp === uintLv1.UntId && unit.UntLevelb === "2";
       });
     },
     unitLv3() {
@@ -337,7 +280,7 @@ export default {
       });
       let uintLv2 = arrLv2[0];
       return vm.unitsData.filter(unit => {
-        return unit.UntIdUp === uintLv2.UntIdUp && unit.UntLevelb === "3";
+        return unit.UntIdUp === uintLv2.UntId && unit.UntLevelb === "3";
       });
     }
   },
@@ -354,14 +297,28 @@ export default {
         this.rolesData = res.data.response;
       });
     },
+    getUsersPage(page = 1, key) {
+      const vm = this;
+      let params = {
+        key: vm.keyWordInput,
+        page
+      };
+      vm.$api.GetAdminUsers(params).then(res => {
+        console.log(res);
+        vm.adminUsersData = res.data.response.data;
+        vm.totalCount = res.data.response.dataCount;
+        vm.currentPage = page;
+      });
+    },
     getAdminUsers() {
       const vm = this;
       let params;
       vm.$api.GetAdminUsers(params).then(res => {
         console.log(res);
         vm.adminUsersData = res.data.response.data;
-
-        vm.userNameLoading = false;
+        vm.totalCount = res.data.response.dataCount;
+        vm.currentPage = res.data.response.page;
+        vm.pageSize = res.data.response.PageSize;
       });
     },
     getUsers(params) {
@@ -384,6 +341,105 @@ export default {
       const vm = this;
       vm.$api.GetOrg().then(res => {
         vm.orgsData = res.data;
+      });
+    },
+    addAdminUser() {
+      const vm = this;
+      vm.addLoading = true;
+      let unitCode =
+        vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
+      let loginName = vm.userNameSelect;
+      let roles = vm.userRoleSelect;
+      let ctrlUnits = vm.userControlSelect;
+      let ctrlType = vm.eventTypeSelect;
+      let params = {
+        unitCode,
+        loginName,
+        roles,
+        ctrlUnits,
+        ctrlType
+      };
+      vm.$api.AddAdminUser(params).then(res => {
+        vm.addOrEditDialog = false;
+        vm.addLoading = false;
+        vm.getAdminUsers();
+        vm.$message({
+          type: "success",
+          message: `用戶 ${loginName} 添加成功 ! `
+        });
+      });
+    },
+    deleteHandler(user) {
+      const vm = this;
+      console.log(user);
+      vm.$confirm(`確認刪除 ${user.LoginName} ?`, "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let params = {
+            id: user.Id
+          };
+          vm.$api.DeleteAdminUser(params).then(res => {
+            vm.getAdminUsers();
+          });
+          vm.$message({
+            type: "success",
+            message: `角色 ${user.LoginName} 删除成功`
+          });
+        })
+        .catch(() => {
+          vm.$message({
+            type: "info",
+            message: "已取消刪除"
+          });
+        });
+    },
+    searchHandler({ page, key }) {
+      const vm = this;
+      vm.searchLoading = true;
+      vm.keyWordInput = key;
+      let params = {
+        key,
+        page
+      };
+      vm.$api.GetAdminUsers(params).then(res => {
+        console.log(res);
+        vm.adminUsersData = res.data.response.data;
+        vm.totalCount = res.data.response.dataCount;
+        vm.currentPage = res.data.response.page;
+        vm.searchLoading = false;
+        vm.currentPage = 1;
+      });
+    },
+    editHandler() {
+      const vm = this;
+      vm.$store.dispatch("loadingHandler", true);
+      let id = vm.editUserId;
+      let unitCode =
+        vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
+      let loginName = vm.userNameSelect;
+      let roles = vm.userRoleSelect;
+      let ctrlUnits = vm.userControlSelect;
+      let ctrlType = vm.eventTypeSelect;
+      let params = {
+        id,
+        unitCode,
+        loginName,
+        roles,
+        ctrlUnits,
+        ctrlType
+      };
+      vm.$api.EditAdminUserById(params).then(res => {
+        console.log(res);
+        vm.$store.dispatch("loadingHandler", false);
+        vm.addOrEditDialog = false;
+        vm.getAdminUsers();
+        vm.$message({
+          type: "success",
+          message: `更新成功 ! `
+        });
       });
     },
     lv1Change() {
@@ -415,14 +471,81 @@ export default {
       };
       vm.getUsers(params);
     },
-    handleAddOrEdit() {
+    handleAddOrEdit(act, info = "") {
       const vm = this;
-      this.addOrEditDialog = true;
-      this.$nextTick(function() {
-        vm.setCheckedKeys();
-      });
+      (vm.userUnit3Select = ""),
+        (vm.userUnit2Select = ""),
+        (vm.userUnit1Select = ""),
+        (vm.userNameSelect = ""),
+        (vm.userRoleSelect = ""),
+        (vm.userControlSelect = []),
+        (vm.eventTypeSelect = []);
+
+      if (act === "add") {
+        vm.addOrEdit = "add";
+        vm.addOrEditDialog = true;
+
+        vm.$nextTick(function() {
+          vm.$refs.tree.setCheckedKeys([]);
+        });
+      } else {
+        vm.$store.dispatch("loadingHandler", true);
+        vm.editUserId = info.Id;
+        vm.addOrEditDialog = true;
+        vm.addOrEdit = "edit";
+        let params = {
+          id: info.Id
+        };
+        vm.$api.GetAdminUserById(params).then(res => {
+          let user = res.data.response;
+          vm.$nextTick(function() {
+            (vm.userRoleSelect = user.Roles),
+              (vm.eventTypeSelect = user.CtrlType),
+              (vm.userControlSelect = user.CtrlUnits),
+              vm.$refs.tree.setCheckedKeys(vm.userControlSelect);
+            vm.userNameSelect = user.LoginName;
+            let arr = vm.unitsData.filter(unit => {
+              return unit.UntId === user.UnitCode;
+            });
+            let userUnit = arr[0];
+            if (userUnit.UntLevelb === "1") {
+              vm.userUnit1Select = userUnit.UntId;
+              vm.$api.GetUsers({ unitCode: vm.userUnit1Select }).then(res => {
+                vm.usersData = res.data;
+                vm.$store.dispatch("loadingHandler", false);
+              });
+            } else if (userUnit.UntLevelb === "2") {
+              vm.userUnit1Select = userUnit.UntIdUp;
+              vm.userUnit2Select = userUnit.UntId;
+              vm.$api.GetUsers({ unitCode: vm.userUnit2Select }).then(res => {
+                vm.usersData = res.data;
+                vm.$store.dispatch("loadingHandler", false);
+              });
+            } else {
+              vm.userUnit2Select = userUnit.UntIdUp;
+              vm.userUnit3Select = userUnit.UntId;
+              let lv2Arr = vm.unitsData.filter(unit => {
+                return (
+                  unit.UntLevelb === "2" && unit.UntId === vm.userUnit2Select
+                );
+              });
+              let pId = lv2Arr[0].UntIdUp;
+              let lv1Arr = vm.unitsData.filter(unit => {
+                return unit.UntLevelb === "1" && unit.UntId === pId;
+              });
+              vm.$api.GetUsers({ unitCode: vm.userUnit3Select }).then(res => {
+                vm.usersData = res.data;
+                vm.$store.dispatch("loadingHandler", false);
+              });
+              vm.userUnit1Select = lv1Arr[0].UntId;
+            }
+          });
+        });
+
+        console.log(info);
+      }
     },
-    handleDel() {},
+
     hasBtn(btnType) {
       const vm = this;
       return this.buttonList.some(btn => btn.iconCls == btnType);
@@ -433,14 +556,15 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.Label.indexOf(value) !== -1;
     },
     getCheckedKeys() {
-      console.log(this.$refs.tree.getCheckedKeys());
+      this.userControlSelect = this.$refs.tree.getCheckedKeys();
+      console.log(this.userControlSelect);
     },
-    setCheckedKeys() {
-      this.$refs.tree.setCheckedKeys(["AA00", "EU00"]);
-    },
+    // setCheckedKeys() {
+    //   this.$refs.tree.setCheckedKeys(["AA00", "EU00"]);
+    // },
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];

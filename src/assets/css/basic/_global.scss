@@ -26,6 +26,10 @@
   display: none;
 }
 
+.el-tooltip__popper {
+  max-width: 400px;
+}
+
 // .el-button--default:hover {
 //   color: rgb(56, 55, 55);
 //   background-color: #ebebeb;

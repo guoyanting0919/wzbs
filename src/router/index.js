@@ -68,11 +68,9 @@ const createRouter = () =>
 const router = createRouter();
 
 export function filterAsyncRouter(asyncRouterMap) {
-  //注意這裡的 asyncRouterMap 是一個數組
   const accessedRouters = asyncRouterMap.filter((route) => {
     if (route.path && !route.IsButton) {
       if (route.path === "/" || route.path === "-" || route.path === " ") {
-        //Layout組件特殊處理
         route.component = Layout;
       } else {
         try {

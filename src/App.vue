@@ -30,7 +30,7 @@
               ></Sidebar>
             </el-menu>
           </el-aside>
-          <el-main>
+          <el-main :class="{'withUp':isCollapse}">
             <!-- tags -->
             <Tags></Tags>
             <div class="viewHeight">

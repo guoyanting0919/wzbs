@@ -42,6 +42,18 @@ const api = {
   GetAdminUsers(params) {
     return req("get", "AdminUser/Get", params);
   },
+  AddAdminUser(params) {
+    return req("post", "AdminUser/Post", params);
+  },
+  DeleteAdminUser(params) {
+    return req("delete", "AdminUser/Delete", params);
+  },
+  GetAdminUserById(params) {
+    return req("get", "AdminUser/GetAdminUserById", params);
+  },
+  EditAdminUserById(params) {
+    return req("put", "AdminUser/Put", params);
+  },
 
   // Units
   GetUnits() {
@@ -76,6 +88,12 @@ const api = {
   // Authority
   GetAuthority(params) {
     return req("get", "Permission/GetPermissionTree", params);
+  },
+  GetPermissionByRid(params) {
+    return req("get", "Permission/GetPermissionIdByRoleId", params);
+  },
+  EditPermissionByRid(params) {
+    return req("post", "Permission/Assign", params);
   },
 };
 

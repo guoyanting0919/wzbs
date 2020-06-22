@@ -1,15 +1,24 @@
 import Vue from "vue";
 import router from "../router/index";
+import store from "../store/index";
+import axios from "axios";
 
 // 跳轉回首頁
 // 登入完成後跳轉回原頁面
 export const toLogin = () => {
+  // store.commit("saveToken", "");
+  //    store.commit("saveTokenExpire", "");
+  //    store.commit("saveTagsData", "");
+  //    window.localStorage.removeItem('user');
+  //    window.localStorage.removeItem('NavigationBar');
   router.replace({
     name: "Login",
     query: {
       redirect: router.currentRoute.fullPath,
     },
   });
+
+  // window.location.reload()
 };
 
 // 跳轉到404頁面
@@ -20,7 +29,7 @@ export const to404Page = () => {
 };
 
 // refreshToken
-export const setRefreshToken = () => {
+export const setRefreshToken = (error) => {
   let curTime = new Date();
   let refreshtime = new Date(Date.parse(window.localStorage.refreshtime));
   // 在用戶操作的活躍期內
@@ -34,16 +43,19 @@ export const setRefreshToken = () => {
             type: "success",
           });
 
-          store.commit("saveToken", res.data.token);
+          store.commit("SAVE_TOKEN", res.data.token);
 
           let curTime = new Date();
           let expiredate = new Date(
             curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
           );
-          store.commit("saveTokenExpire", expiredate);
+          store.commit("SAVE_TOKEN_EXPIRE", expiredate);
 
           error.config.__isRetryRequest = true;
           error.config.headers.Authorization = "Bearer " + res.data.token;
+          console.log("a");
+          store.dispatch("loadingHandler", false);
+          window.location.reload();
           return axios(error.config);
         } else {
           // 刷新token失敗 清除token信息並跳轉到登錄頁面

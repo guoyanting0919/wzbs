@@ -6,6 +6,7 @@
       :total="total"
       :pager-count="5"
       :current-page="setCurrentPage"
+      :page-size='pageSize'
       @current-change="handleCurrentChange"
     ></el-pagination>
   </div>
@@ -34,6 +35,11 @@ export default {
       type: Number,
       default: 1,
       required: false
+    },
+    pageSize:{
+      type:Number,
+      default:10,
+      required:false
     }
   },
   computed: {

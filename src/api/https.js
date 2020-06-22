@@ -4,14 +4,15 @@ import store from "../store/index";
 import { toLogin, to404Page, setRefreshToken } from "./utils";
 
 // 錯誤捕捉
-const errorHandle = (status, msg) => {
+const errorHandle = (status, msg, response) => {
   switch (status) {
     case 400:
       to404Page();
       break;
 
     case 401:
-      setRefreshToken();
+      console.log(response);
+      setRefreshToken(response);
       break;
 
     case 403:
@@ -59,7 +60,7 @@ instance.interceptors.response.use(
     const { response } = error;
 
     if (response) {
-      errorHandle(response.status, response.data.error);
+      errorHandle(response.status, response.data.error, response);
       return Promise.reject(error);
     } else {
       return Promise.reject(error);
