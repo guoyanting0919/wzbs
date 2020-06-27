@@ -45,27 +45,42 @@
     ></Pagination>
 
     <!-- addDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="30%">
-      <div class="inputBox">
-        <p class="inputTitle">類別名稱:</p>
-        <el-input style="width:400px" v-model="categoryName" placeholder="請輸入行事曆類別名稱"></el-input>
-      </div>
-      <div class="inputBox">
-        <p class="inputTitle">起迄日:</p>
-        <el-date-picker
-          v-model="startEndDate"
-          type="daterange"
-          style="width:400px"
-          range-separator="~"
-          start-placeholder="開始日期"
-          end-placeholder="結束日期"
-        ></el-date-picker>
-      </div>
+    <el-dialog :title="addOrEdit" :visible.sync="addOrEditDialog" width="30%">
+      <ValidationObserver ref="obs">
+        <div class="inputBox">
+          <p class="inputTitle">類別名稱:</p>
+          <ValidationProvider name="請輸入類別名!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              style="width:250px"
+              :class="classes"
+              v-model="categoryName"
+              placeholder="請輸入行事曆類別名稱"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+        <div class="inputBox" style="flex-wrap: wrap;">
+          <p class="inputTitle">起迄日:</p>
+          <ValidationProvider name="請輸入起迄日!!" rules="required" v-slot="{  errors,classes }">
+            <el-date-picker
+              v-model="startEndDate"
+              type="daterange"
+              :class="classes"
+              style="width:350px"
+              range-separator="~"
+              start-placeholder="開始日期"
+              end-placeholder="結束日期"
+            ></el-date-picker>
+
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      </ValidationObserver>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
         <el-button
           :loading="addLoading"
-          v-if="addOrEdit==='add'"
+          v-if="addOrEdit==='新增'"
           type="primary"
           @click="addHandler"
         >新 增</el-button>
@@ -89,7 +104,7 @@ export default {
       startEndDate: "",
       buttonList: [],
       addOrEditDialog: false,
-      addOrEdit: "",
+      addOrEdit: "新增",
       editId: "",
       currentPage: 1,
       eventTypeData: "",
@@ -117,13 +132,13 @@ export default {
     Pagination
   },
   methods: {
-    getEventType(page = 1, key) {
+    async getEventType(page = 1, key) {
       const vm = this;
       let params = {
         key: vm.keyWordInput,
         page
       };
-      vm.$api.SearchEventType(params).then(res => {
+      await vm.$api.SearchEventType(params).then(res => {
         vm.totalCount = res.data.response.dataCount;
         vm.eventTypeData = res.data.response.data;
         vm.currentPage = page;
@@ -144,44 +159,68 @@ export default {
         vm.currentPage = 1;
       });
     },
-    addHandler() {
+    async addHandler() {
       const vm = this;
-      vm.addLoading = true;
-      let eventTypeName = vm.categoryName;
-      let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
-      let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
-      let params = {
-        eventTypeName,
-        StartDate,
-        EndDate
-      };
-      vm.$api.AddEventType(params).then(res => {
-        vm.getEventType();
-        vm.addOrEditDialog = false;
-        vm.addLoading = false;
-        vm.$message({
-          type: "success",
-          message: `類別 ${eventTypeName} 添加成功 ! `
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
+        vm.$notify({
+          title: "失敗",
+          type: "error",
+          message: "請確認欄位是否正確填寫!"
         });
-      });
+      } else {
+        vm.addLoading = true;
+        let eventTypeName = vm.categoryName;
+        let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
+        let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+        let params = {
+          eventTypeName,
+          StartDate,
+          EndDate
+        };
+        vm.$api.AddEventType(params).then(res => {
+          vm.getEventType();
+          vm.addOrEditDialog = false;
+          vm.addLoading = false;
+          vm.$notify({
+            title: "成功",
+            type: "success",
+            message: `類別 ${eventTypeName} 添加成功 ! `
+          });
+        });
+      }
     },
-    editHandler() {
+    async editHandler() {
       const vm = this;
-      vm.editLoading = true;
-      let eventTypeName = vm.categoryName;
-      let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
-      let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
-      let params = {
-        id: vm.editId,
-        eventTypeName,
-        StartDate,
-        EndDate
-      };
-      vm.$api.EditEventType(params).then(res => {
-        vm.getEventType();
-        this.addOrEditDialog = false;
-        vm.editLoading = false;
-      });
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
+        vm.$notify({
+          title: "失敗",
+          type: "error",
+          message: "請確認欄位是否正確填寫!"
+        });
+      } else {
+        vm.editLoading = true;
+        let eventTypeName = vm.categoryName;
+        let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
+        let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+        let params = {
+          id: vm.editId,
+          eventTypeName,
+          StartDate,
+          EndDate
+        };
+        vm.$api.EditEventType(params).then(res => {
+          vm.getEventType();
+          this.addOrEditDialog = false;
+          vm.editLoading = false;
+          vm.$notify({
+            title: "成功",
+            type: "success",
+            message: `類別 ${eventTypeName} 更新成功 ! `
+          });
+        });
+      }
     },
     deleteHandler(type) {
       const vm = this;
@@ -198,13 +237,15 @@ export default {
           vm.$api.DeleteEventType(params).then(res => {
             vm.getEventType();
           });
-          vm.$message({
+          vm.$notify({
+            title: "成功",
             type: "success",
             message: `類別 ${type.EventTypeName} 删除成功`
           });
         })
         .catch(() => {
-          vm.$message({
+          vm.$notify({
+            title: "提醒",
             type: "info",
             message: "已取消刪除"
           });
@@ -214,19 +255,23 @@ export default {
       const vm = this;
       return this.buttonList.some(btn => btn.iconCls == btnType);
     },
-    handleAddOrEdit(act, info = "") {
-      this.categoryName = "";
-      this.startEndDate = "";
-      this.addOrEdit = "add";
+    async handleAddOrEdit(act, info = "") {
+      const vm = this;
+      if (vm.$refs.obs) {
+        await vm.$refs.obs.reset();
+      }
+      vm.categoryName = "";
+      vm.startEndDate = "";
+      vm.addOrEdit = "新增";
       if (act === "add") {
-        this.addOrEditDialog = true;
+        vm.addOrEditDialog = true;
       } else {
         console.log(info);
-        this.addOrEdit = "edit";
-        this.editId = info.Id;
-        this.startEndDate = [info.StartDate, info.EndDate];
-        this.addOrEditDialog = true;
-        this.categoryName = info.EventTypeName;
+        vm.addOrEdit = "編輯";
+        vm.editId = info.Id;
+        vm.startEndDate = [info.StartDate, info.EndDate];
+        vm.addOrEditDialog = true;
+        vm.categoryName = info.EventTypeName;
       }
     },
     getButtonList(routePath, routers) {
@@ -247,12 +292,15 @@ export default {
       return buttonList;
     }
   },
-  mounted() {
+  async mounted() {
+    this.$store.dispatch("loadingHandler", true);
     let routers = JSON.parse(window.localStorage.router)
       ? JSON.parse(window.localStorage.router)
       : [];
     this.getButtonList(this.$route.path, routers);
-    this.getEventType();
+    await this.getEventType();
+
+    this.$store.dispatch("loadingHandler", false);
   }
 };
 </script>

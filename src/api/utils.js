@@ -6,11 +6,13 @@ import axios from "axios";
 // 跳轉回首頁
 // 登入完成後跳轉回原頁面
 export const toLogin = () => {
-  // store.commit("saveToken", "");
-  //    store.commit("saveTokenExpire", "");
-  //    store.commit("saveTagsData", "");
-  //    window.localStorage.removeItem('user');
-  //    window.localStorage.removeItem('NavigationBar');
+  window.localStorage.removeItem("user");
+  window.localStorage.removeItem("Token");
+  window.localStorage.removeItem("TokenExpire");
+  window.localStorage.removeItem("refreshtime");
+  window.localStorage.removeItem("router");
+  sessionStorage.removeItem("Tags");
+  store.dispatch("loadingHandler", false);
   router.replace({
     name: "Login",
     query: {

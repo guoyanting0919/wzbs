@@ -4,12 +4,12 @@
       <el-card class="box-card">
         <div slot="header" class="authorityHeader">
           <span>角色</span>
-          <el-button style="padding: 3px 0" type="text">刷新</el-button>
+          <el-button style="padding: 3px 0" type="text" @click="refreshRoles">刷新</el-button>
         </div>
         <div
           v-for="role in rolesData"
           :key="role.Id"
-          @click="getPermissionByRid(role.Id)"
+          @click="getPermissionByRid(role.Id,role.Name)"
           :class="role.Id == roleid ? 'active' : ''"
           class="text item role-item"
         >{{ role.Name }}</div>
@@ -20,7 +20,7 @@
       <el-card class="box-card">
         <div slot="header" class="authorityHeader">
           <span>權限管理</span>
-          <el-button @click="editHandler" style="padding: 3px 0" type="text">保存</el-button>
+          <el-button @click="editHandler" style="padding: 3px 0" type="text">修改</el-button>
         </div>
         <div>
           <el-tree
@@ -49,6 +49,7 @@ export default {
     return {
       ogTree,
       roleid: "",
+      roleName: "",
       permissionId: [],
       defaultProps: {
         children: "children",
@@ -87,16 +88,29 @@ export default {
         console.log(vm.authorityData);
       });
     },
-    getRoles() {
+    async getRoles() {
       const vm = this;
-      vm.$api.GetAllRoles().then(res => {
+      await vm.$api.GetAllRoles().then(res => {
         vm.rolesData = res.data.response;
       });
     },
-    getPermissionByRid(id) {
+    async refreshRoles() {
+      const vm = this;
+      vm.$store.dispatch("loadingHandler", true);
+      await vm.getRoles();
+
+      vm.$store.dispatch("loadingHandler", false);
+      vm.$notify({
+        title: "成功",
+        type: "success",
+        message: `角色列表刷新成功 ! `
+      });
+    },
+    getPermissionByRid(id, name) {
       const vm = this;
       vm.$store.dispatch("loadingHandler", true);
       vm.roleid = id;
+      vm.roleName = name;
       let rid = id;
       let params = {
         rid
@@ -112,18 +126,37 @@ export default {
     },
     editHandler() {
       const vm = this;
-      vm.$store.dispatch("loadingHandler", true);
-      let rid = vm.roleid;
-      let pids = vm.$refs.tree.getCheckedKeys();
-      let params = { rid, pids };
-      console.log(params);
-      vm.$api.EditPermissionByRid(params).then(res => {
-        vm.$message({
-          type: "success",
-          message: `修改成功 ! `
+      if (!vm.roleName) {
+        vm.$notify({
+          title: "失敗",
+          type: "error",
+          message: `請選擇欲修改角色 ! `
         });
-        vm.$store.dispatch("loadingHandler", false);
-      });
+      } else {
+        vm.$confirm(`確認修改角色 ${vm.roleName} 權限 ?`, "提示", {
+          confirmButtonText: "確定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            vm.$store.dispatch("loadingHandler", true);
+            let rid = vm.roleid;
+            let pids = vm.$refs.tree.getCheckedKeys();
+            let params = { rid, pids };
+            console.log(params);
+            vm.$api.EditPermissionByRid(params).then(res => {
+              vm.$notify({
+                title: "成功",
+                type: "success",
+                message: `角色 ${vm.roleName} 權限修改成功 ! `
+              });
+              vm.$store.dispatch("loadingHandler", false);
+            });
+          })
+          .catch(() => {
+            vm.$notify({ title: "提醒", type: "info", message: "已取消修改" });
+          });
+      }
     },
     getCheckedKeys() {
       console.log(this.$refs.tree.getCheckedKeys());

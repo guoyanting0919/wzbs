@@ -66,17 +66,15 @@ const api = {
     return req("post", "Permission/Assign", params);
   },
 
-  // Units
-  GetUnits() {
-    return req("get", "Unit/GetUnits");
-  },
-
   // School
   GetUsers(params) {
     return req("get", "School/GetUsers", params);
   },
   GetOrg() {
     return req("get", "School/GetUnits");
+  },
+  GetUnits() {
+    return req("get", "School/GetUnitList");
   },
 
   // Calendar EventType
@@ -97,8 +95,37 @@ const api = {
   },
 
   //  Calendar Event
-  GetEventsPage() {
-    return req("get", "CalendarEvent/Get");
+  GetEventsPage(params) {
+    return req("get", "CalendarEvent/Get", params);
+  },
+  AddEvent(params) {
+    return req("post", "CalendarEvent/Post", params);
+  },
+  EditEvent(params) {
+    return req("put", "CalendarEvent/Put", params);
+  },
+  DeleteEvent(params) {
+    return req("delete", "CalendarEvent/Delete", params);
+  },
+  SearchEvent(params) {
+    return req("get", "CalendarEvent/Get", params);
+  },
+  CheckUserHasEvent(params) {
+    return req("get", "CalendarEvent/CheckUserHasEvent", params);
+  },
+  GetEventById(params) {
+    return req("get", "CalendarEvent/GetById/Id", params);
+  },
+  GetJoinUserByEventIds(params) {
+    return req("get", "CalendarEvent/GetJoinUserByEventIds", params);
+  },
+  ChangeMember(params) {
+    return req("get", "CalendarEvent/ReplaceJoinUser", params);
+  },
+
+  // upload
+  UploadFile() {
+    return req("get", "/images/Upload/Pic");
   },
 };
 

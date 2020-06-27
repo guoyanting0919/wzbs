@@ -17,7 +17,6 @@ configure({
     invalid: "invalid",
   },
 });
-
 extend("required", {
   ...required,
   message: "{_field_}",

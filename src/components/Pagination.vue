@@ -6,13 +6,14 @@
       :total="total"
       :pager-count="5"
       :current-page="setCurrentPage"
-      :page-size='pageSize'
+      :page-size="pageSize"
       @current-change="handleCurrentChange"
     ></el-pagination>
   </div>
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "Pagination",
   data() {
@@ -31,15 +32,25 @@ export default {
       default: "",
       required: false
     },
+    start: {
+      type: String,
+      default: "",
+      required: false
+    },
+    end: {
+      type: String,
+      default: "",
+      required: false
+    },
     currentPage: {
       type: Number,
       default: 1,
       required: false
     },
-    pageSize:{
-      type:Number,
-      default:10,
-      required:false
+    pageSize: {
+      type: Number,
+      default: 10,
+      required: false
     }
   },
   computed: {
@@ -53,8 +64,20 @@ export default {
   methods: {
     handleCurrentChange(page) {
       this.setCurrentPage = page;
-      let key = this.$props.keyWord;
-      this.$emit("changePage", page, key);
+      if (!this.$props.end) {
+        // console.log("NOEND");
+        let key = this.$props.keyWord;
+        this.$emit("changePage", page, key);
+        window.scrollTo(0, 0);
+      } else {
+        console.log("END");
+        let key = this.$props.keyWord;
+        console.log(key);
+        let startDate = this.$props.start;
+        let endDate = this.$props.end;
+        this.$emit("changePage", page, key, startDate, endDate);
+        window.scrollTo(0, 0);
+      }
     }
   }
 };

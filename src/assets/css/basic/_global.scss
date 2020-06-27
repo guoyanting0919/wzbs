@@ -31,13 +31,22 @@
 }
 
 .validateSpan {
-  color: #ff6767;
+  color: #eb0600;
   margin-left: 0.5rem;
 }
 
+.validateCheckSpan {
+  color: #eb0600;
+}
+
+.el-select .el-input.is-focus .el-input__inner,
+.el-select .el-input__inner:focus,
 .el-input.is-active .el-input__inner,
 .el-input__inner:focus,
-.el-input__inner:hover {
+.el-input__inner:hover,
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover,
+.el-textarea__inner:focus {
   border-color: rgb(214, 209, 209);
   outline: 0;
 }
@@ -45,14 +54,23 @@
 .invalid {
   color: #eb0600;
 }
-.invalid input {
+.invalid input,
+.invalid textarea,
+.el-date-editor.invalid {
   box-shadow: 0 0 5px #eb0600;
 }
 .valid {
   color: green;
 }
-.valid input {
+.valid input,
+.valid textarea,
+.el-date-editor.valid {
   box-shadow: 0 0 5px green;
+}
+
+.el-select__tags input,
+.el-date-editor input {
+  box-shadow: none;
 }
 
 // .el-button--default:hover {

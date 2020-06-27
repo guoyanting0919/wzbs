@@ -74,7 +74,7 @@
     ></Pagination>
 
     <!-- addOrEditDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="40%">
+    <el-dialog :title="addOrEdit" :visible.sync="addOrEditDialog" width="40%">
       <ValidationObserver ref="obs">
         <div class="inputBox">
           <p class="inputTitle">角色名</p>
@@ -115,7 +115,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
 
-        <el-button v-if="addOrEdit==='add'" type="primary" @click="addHandler">新 增</el-button>
+        <el-button v-if="addOrEdit==='新增'" type="primary" @click="addHandler">新 增</el-button>
         <el-button v-else type="primary" @click="editHandler">編 輯</el-button>
       </span>
     </el-dialog>
@@ -143,7 +143,7 @@ export default {
       searchLoading: false,
       addLoading: false,
       editLoading: false,
-      addOrEdit: "",
+      addOrEdit: "新增",
       editId: ""
     };
   },
@@ -179,28 +179,33 @@ export default {
       return this.buttonList.some(btn => btn.iconCls == btnType);
       // return true;
     },
-    handleAddOrEdit(act, info = "") {
-      this.roleNameInput = "";
-      this.roleDescription = "";
-      this.roleStatusSelect = true;
-      this.addOrEdit = "add";
+    async handleAddOrEdit(act, info = "") {
+      const vm = this;
+      if (vm.$refs.obs) {
+        await vm.$refs.obs.reset();
+      }
+      vm.roleNameInput = "";
+      vm.roleDescription = "";
+      vm.roleStatusSelect = true;
+      vm.addOrEdit = "新增";
       if (act === "add") {
-        this.addOrEditDialog = true;
+        vm.addOrEditDialog = true;
       } else {
         console.log(info);
-        this.addOrEdit = "edit";
-        this.addOrEditDialog = true;
-        this.roleNameInput = info.Name;
-        this.roleDescription = info.Description;
-        this.roleStatusSelect = info.Enabled;
-        this.editId = info.Id;
+        vm.addOrEdit = "編輯";
+        vm.addOrEditDialog = true;
+        vm.roleNameInput = info.Name;
+        vm.roleDescription = info.Description;
+        vm.roleStatusSelect = info.Enabled;
+        vm.editId = info.Id;
       }
     },
     async addHandler() {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$message({
+        vm.$notify({
+          title: "失敗",
           type: "error",
           message: "請確認欄位是否正確填寫!"
         });
@@ -221,7 +226,8 @@ export default {
           console.log(res);
           vm.addOrEditDialog = false;
           vm.addLoading = false;
-          vm.$message({
+          vm.$notify({
+            title: "成功",
             type: "success",
             message: `角色 ${Name} 添加成功 ! `
           });
@@ -246,7 +252,7 @@ export default {
     deleteHandler(role) {
       const vm = this;
       console.log(role);
-      vm.$confirm(`確認刪除 ${role.Name} ?`, "提示", {
+      vm.$confirm(`確認刪除角色 ${role.Name} ?`, "提示", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
@@ -258,13 +264,15 @@ export default {
           vm.$api.DeleteRole(params).then(res => {
             vm.getRoles();
           });
-          vm.$message({
+          vm.$notify({
+            title: "成功",
             type: "success",
             message: `角色 ${role.Name} 删除成功`
           });
         })
         .catch(() => {
-          vm.$message({
+          vm.$notify({
+            title: "提醒",
             type: "info",
             message: "已取消刪除"
           });
@@ -274,7 +282,8 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$message({
+        vm.$notify({
+          title: "失敗",
           type: "error",
           message: "請確認欄位是否正確填寫"
         });
@@ -294,7 +303,8 @@ export default {
           vm.getRoles();
           this.addOrEditDialog = false;
           vm.editLoading = false;
-          vm.$message({
+          vm.$notify({
+            title: "成功",
             type: "success",
             message: `角色 ${Name} 更新成功 ! `
           });

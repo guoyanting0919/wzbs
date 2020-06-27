@@ -6,8 +6,8 @@
         v-model="searchDate"
         type="daterange"
         range-separator="~"
-        start-placeholder="開始顯示時間"
-        end-placeholder="結束顯示時間"
+        start-placeholder="開始時間"
+        end-placeholder="結束時間"
         v-if="showDatePicker"
         @change="setSearchDate"
       ></el-date-picker>
@@ -16,14 +16,21 @@
         class="keyWordInput"
         v-model="keyWordInput"
         placeholder="請輸入關鍵字"
-        @keyup.enter.native="setSearchHandler"
+        @keyup.enter.native="setSearchHandler "
       ></el-input>
       <el-button
-        v-if="hasBtn('btnSearch')"
+        v-if="hasBtn('btnSearch') && !isEvent"
         class="searchBtn"
         :loading="searchLoading"
         type="primary"
-        @click="setSearchHandler"
+        @click="setSearchHandlerDate"
+      >搜尋</el-button>
+      <el-button
+        v-if="hasBtn('btnSearch') && isEvent"
+        class="searchBtn"
+        :loading="searchLoading"
+        type="primary"
+        @click="setSearchHandlerDate"
       >搜尋</el-button>
       <el-button
         v-if="hasBtn('btnAdd')"
@@ -32,7 +39,7 @@
         type="primary"
       >新增</el-button>
       <el-button
-        v-if="hasBtn('btnChange')"
+        v-if="hasBtn('btnEdit') && isEvent"
         @click="setChangeHandler"
         class="changeBtn"
         type="primary"
@@ -49,6 +56,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "HeaderBox",
   data() {
@@ -71,6 +79,11 @@ export default {
       required: false
     },
     searchLoading: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    isEvent: {
       type: Boolean,
       default: false,
       required: false
@@ -97,6 +110,27 @@ export default {
       let page = 1;
       let key = vm.keyWordInput;
       vm.$emit("searchHandler", { page, key });
+    },
+    setSearchHandlerDate() {
+      const vm = this;
+      let page = 1;
+      let key = vm.keyWordInput;
+
+      console.log(vm.searchDate);
+      if (vm.searchDate !== null || vm.searchDate) {
+        let startDate = moment(vm.searchDate[0]).format("YYYY-MM-DD");
+        let endDate = moment(vm.searchDate[1]).format("YYYY-MM-DD");
+        vm.$emit("searchHandlerDate", { page, key, startDate, endDate });
+      } else {
+        let startDate = "";
+        let endDate = "";
+        vm.$emit("searchHandlerDate", { page, key, startDate, endDate });
+      }
+
+      // console.log(vm.searchDate, "s");
+      // let endDate = vm.searchDate
+      //   ? moment(vm.searchDate[1]).format("YYYY-MM-DD")
+      //   : "";
     }
   }
 };

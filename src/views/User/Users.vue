@@ -82,136 +82,174 @@
     ></Pagination>
 
     <!-- addOrEditDialog -->
-    <el-dialog title="新增" :visible.sync="addOrEditDialog" width="50%" v-if="unitsData">
-      <el-scrollbar class="scrollbar-handle">
-        <!-- unit -->
-        <div class="inputBox">
-          <p class="inputTitle">單位</p>
-          <el-select
-            filterable
-            no-match-text="暫無資料"
-            @change="lv1Change"
-            class="unitSelect"
-            v-model="userUnit1Select"
-            placeholder="請選擇最高單位"
-          >
-            <el-option
-              :value="unit.UntId"
-              :label="unit.UntNameFull"
-              v-for="unit in unitLv1"
-              :key="unit.UntId"
-            >{{unit.UntNameFull}}</el-option>
-          </el-select>
-          <el-select
-            filterable
-            no-match-text="暫無資料"
-            @change="lv2Change"
-            class="unitSelect"
-            v-model="userUnit2Select"
-            placeholder="請選擇次高單位"
-            v-if="userUnit1Select && unitLv2.length > 0"
-          >
-            <el-option
-              v-for="unit in unitLv2"
-              :key="unit.UntId"
-              :value="unit.UntId"
-              :label="unit.UntNameFull"
-            >{{unit.UntNameFull}}</el-option>
-          </el-select>
-          <el-select
-            filterable
-            no-match-text="暫無資料"
-            class="unitSelect"
-            @change="lv3Change"
-            v-model="userUnit3Select"
-            placeholder="請選擇單位"
-            v-if="userUnit2Select && unitLv3.length > 0"
-          >
-            <el-option
-              v-for="unit in unitLv3"
-              :key="unit.UntId"
-              :value="unit.UntId"
-              :label="unit.UntNameFull"
-            >{{unit.UntNameFull}}</el-option>
-          </el-select>
-        </div>
+    <el-dialog
+      @opened="scrollToTop"
+      :title="addOrEdit"
+      :visible.sync="addOrEditDialog"
+      width="50%"
+      v-if="unitsData"
+    >
+      <ValidationObserver ref="obs">
+        <el-scrollbar ref="scrollBox" class="scrollbar-handle">
+          <!-- unit -->
+          <div class="inputBox" style="margin-top:1rem">
+            <p class="inputTitle">單位</p>
+            <ValidationProvider name="請選擇最高單位" rules="required" v-slot="{  errors,classes }">
+              <el-select
+                filterable
+                :class="classes"
+                no-match-text="暫無資料"
+                @change="lv1Change"
+                class="unitSelect"
+                v-model="userUnit1Select"
+                placeholder="請選擇最高單位"
+              >
+                <el-option
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                  v-for="unit in unitLv1"
+                  :key="unit.UntId"
+                >{{unit.UntNameFull}}</el-option>
+              </el-select>
+              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+            </ValidationProvider>
 
-        <!-- name -->
-        <div class="inputBox">
-          <p class="inputTitle">名稱</p>
-          <el-select
-            :loading="userNameLoading"
-            loading-text="Loading..."
-            no-data-text="暫無資料"
-            filterable
-            no-match-text="暫無資料"
-            v-model="userNameSelect"
-            placeholder="請選擇名稱"
-          >
-            <el-option
-              v-for="user in usersData"
-              :key="user.Account"
-              :value="user.Account"
-              :label="user.Name"
-            ></el-option>
-          </el-select>
-        </div>
+            <ValidationProvider v-slot="{  errors,classes }">
+              <el-select
+                filterable
+                :class="classes"
+                no-match-text="暫無資料"
+                @change="lv2Change"
+                class="unitSelect"
+                v-model="userUnit2Select"
+                placeholder="請選擇次高單位"
+                v-if="userUnit1Select && unitLv2.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv2"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
+              </el-select>
+            </ValidationProvider>
 
-        <!-- role -->
-        <div class="inputBox">
-          <p class="inputTitle">角色</p>
-          <el-select
-            multiple
-            filterable
-            no-match-text="暫無資料"
-            v-model="userRoleSelect"
-            placeholder="請選擇角色"
-          >
-            <el-option
-              v-for="role in rolesData"
-              :key="role.Id"
-              :value="role.Id"
-              :label="role.Name"
-            >{{role.Name}}</el-option>
-          </el-select>
-        </div>
+            <ValidationProvider v-slot="{  errors,classes }">
+              <el-select
+                filterable
+                :class="classes"
+                no-match-text="暫無資料"
+                class="unitSelect"
+                @change="lv3Change"
+                v-model="userUnit3Select"
+                placeholder="請選擇單位"
+                v-if="userUnit2Select && unitLv3.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv3"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
+              </el-select>
+            </ValidationProvider>
+          </div>
 
-        <!-- organization -->
-        <div class="inputBox">
-          <p class="inputTitle">組織</p>
-          <el-input style="width:200px" placeholder="輸入關鍵字" v-model="filterText"></el-input>
-        </div>
-        <div class="inputBox">
-          <p class="inputTitle"></p>
-          <el-tree
-            class="filter-tree"
-            @check="getCheckedKeys"
-            :data="orgsData"
-            show-checkbox
-            node-key="Id"
-            empty-text="暫無資料!"
-            :indent="32"
-            :props="defaultProps"
-            :filter-node-method="filterNode"
-            ref="tree"
-          ></el-tree>
-        </div>
+          <!-- name -->
+          <div class="inputBox">
+            <p class="inputTitle">名稱</p>
+            <ValidationProvider name="請選擇人員名稱" rules="required" v-slot="{  errors,classes }">
+              <el-select
+                :class="classes"
+                :loading="userNameLoading"
+                loading-text="Loading..."
+                no-data-text="暫無資料"
+                filterable
+                no-match-text="暫無資料"
+                v-model="userNameSelect"
+                placeholder="請選擇名稱"
+              >
+                <el-option
+                  v-for="user in usersData"
+                  :key="user.Account"
+                  :value="user.Account"
+                  :label="user.Name"
+                ></el-option>
+              </el-select>
+              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+            </ValidationProvider>
+          </div>
 
-        <!-- category -->
-        <div class="inputBox">
-          <p class="inputTitle">行事曆類別</p>
-          <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
-            <el-checkbox
-              v-for="type in eventTypeData"
-              :key="type.Id"
-              :label="type.Id"
-            >{{type.EventTypeName}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
-      </el-scrollbar>
+          <!-- role -->
+          <div class="inputBox">
+            <p class="inputTitle">角色</p>
+            <ValidationProvider name="請至少選擇一種角色" rules="required" v-slot="{  errors,classes }">
+              <el-select
+                :class="classes"
+                multiple
+                filterable
+                no-match-text="暫無資料"
+                v-model="userRoleSelect"
+                placeholder="請選擇角色"
+              >
+                <el-option
+                  v-for="role in rolesData"
+                  :key="role.Id"
+                  :value="role.Id"
+                  :label="role.Name"
+                >{{role.Name}}</el-option>
+              </el-select>
+              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+            </ValidationProvider>
+          </div>
+
+          <!-- organization -->
+          <div class="inputBox">
+            <p class="inputTitle">組織</p>
+            <el-input style="width:200px" placeholder="輸入關鍵字搜尋" v-model="filterText"></el-input>
+          </div>
+          <div class="inputBox">
+            <p class="inputTitle"></p>
+            <el-tree
+              class="filter-tree"
+              @check="getCheckedKeys"
+              :data="orgsData"
+              show-checkbox
+              node-key="Id"
+              empty-text="暫無資料!"
+              :indent="32"
+              :props="defaultProps"
+              :filter-node-method="filterNode"
+              ref="tree"
+            ></el-tree>
+          </div>
+
+          <!-- category -->
+          <div class="inputBox">
+            <p class="inputTitle" style="align-self: flex-start;">行事曆類別</p>
+            <ValidationProvider name="請至少選擇一種類型" rules="required" v-slot="{  errors }">
+              <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
+                <el-checkbox
+                  v-for="type in eventTypeData"
+                  :key="type.Id"
+                  :label="type.Id"
+                >{{type.EventTypeName}}</el-checkbox>
+              </el-checkbox-group>
+
+              <span class="validateCheckSpan" v-if="errors[0]">{{ errors[0] }}</span>
+            </ValidationProvider>
+          </div>
+        </el-scrollbar>
+      </ValidationObserver>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="addLoading" @click="editHandler">提 交</el-button>
+        <el-button
+          type="primary"
+          v-if="addOrEdit==='新增'"
+          :loading="addLoading"
+          @click="addHandler"
+        >新 增</el-button>
+        <el-button type="primary" v-else :loading="addLoading" @click="editHandler">提 交</el-button>
       </span>
     </el-dialog>
   </div>
@@ -230,7 +268,7 @@ export default {
       searchLoading: false,
       addLoading: false,
       addOrEditDialog: false,
-      addOrEdit: "",
+      addOrEdit: "新增",
       filterText: "",
       totalCount: "",
       keyWordInput: "",
@@ -343,31 +381,41 @@ export default {
         vm.orgsData = res.data;
       });
     },
-    addAdminUser() {
+    async addHandler() {
       const vm = this;
-      vm.addLoading = true;
-      let unitCode =
-        vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
-      let loginName = vm.userNameSelect;
-      let roles = vm.userRoleSelect;
-      let ctrlUnits = vm.userControlSelect;
-      let ctrlType = vm.eventTypeSelect;
-      let params = {
-        unitCode,
-        loginName,
-        roles,
-        ctrlUnits,
-        ctrlType
-      };
-      vm.$api.AddAdminUser(params).then(res => {
-        vm.addOrEditDialog = false;
-        vm.addLoading = false;
-        vm.getAdminUsers();
-        vm.$message({
-          type: "success",
-          message: `用戶 ${loginName} 添加成功 ! `
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
+        vm.$notify({
+          title: "失敗",
+          type: "error",
+          message: "請確認欄位是否正確填寫!"
         });
-      });
+      } else {
+        vm.addLoading = true;
+        let unitCode =
+          vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
+        let loginName = vm.userNameSelect;
+        let roles = vm.userRoleSelect;
+        let ctrlUnits = vm.userControlSelect;
+        let ctrlType = vm.eventTypeSelect;
+        let params = {
+          unitCode,
+          loginName,
+          roles,
+          ctrlUnits,
+          ctrlType
+        };
+        vm.$api.AddAdminUser(params).then(res => {
+          vm.addOrEditDialog = false;
+          vm.addLoading = false;
+          vm.getAdminUsers();
+          vm.$notify({
+            title: "成功",
+            type: "success",
+            message: `用戶 ${loginName} 添加成功 ! `
+          });
+        });
+      }
     },
     deleteHandler(user) {
       const vm = this;
@@ -384,13 +432,15 @@ export default {
           vm.$api.DeleteAdminUser(params).then(res => {
             vm.getAdminUsers();
           });
-          vm.$message({
+          vm.$notify({
+            title: "成功",
             type: "success",
-            message: `角色 ${user.LoginName} 删除成功`
+            message: `用戶 ${user.LoginName} 删除成功`
           });
         })
         .catch(() => {
-          vm.$message({
+          vm.$notify({
+            title: "提醒",
             type: "info",
             message: "已取消刪除"
           });
@@ -413,34 +463,47 @@ export default {
         vm.currentPage = 1;
       });
     },
-    editHandler() {
+    async editHandler() {
       const vm = this;
-      vm.$store.dispatch("loadingHandler", true);
-      let id = vm.editUserId;
-      let unitCode =
-        vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
-      let loginName = vm.userNameSelect;
-      let roles = vm.userRoleSelect;
-      let ctrlUnits = vm.userControlSelect;
-      let ctrlType = vm.eventTypeSelect;
-      let params = {
-        id,
-        unitCode,
-        loginName,
-        roles,
-        ctrlUnits,
-        ctrlType
-      };
-      vm.$api.EditAdminUserById(params).then(res => {
-        console.log(res);
-        vm.$store.dispatch("loadingHandler", false);
-        vm.addOrEditDialog = false;
-        vm.getAdminUsers();
-        vm.$message({
-          type: "success",
-          message: `更新成功 ! `
+      const isValid = await vm.$refs.obs.validate();
+      if (!isValid) {
+        vm.$notify({
+          title: "失敗",
+          type: "error",
+          message: "請確認欄位是否正確填寫!"
         });
-      });
+      } else {
+        vm.$store.dispatch("loadingHandler", true);
+        let id = vm.editUserId;
+        let unitCode =
+          vm.userUnit3Select || vm.userUnit2Select || vm.userUnit1Select;
+        let loginName = vm.userNameSelect;
+        let roles = vm.userRoleSelect;
+        let ctrlUnits = vm.userControlSelect;
+        let ctrlType = vm.eventTypeSelect;
+        let params = {
+          id,
+          unitCode,
+          loginName,
+          roles,
+          ctrlUnits,
+          ctrlType
+        };
+        vm.$api.EditAdminUserById(params).then(res => {
+          console.log(res);
+          vm.$store.dispatch("loadingHandler", false);
+          vm.addOrEditDialog = false;
+          vm.getAdminUsers();
+          vm.$notify({
+            title: "成功",
+            type: "success",
+            message: `用戶${loginName}更新成功 ! `
+          });
+        });
+      }
+    },
+    scrollToTop() {
+      this.$refs.scrollBox.wrap.scrollTop = 0;
     },
     lv1Change() {
       const vm = this;
@@ -471,8 +534,11 @@ export default {
       };
       vm.getUsers(params);
     },
-    handleAddOrEdit(act, info = "") {
+    async handleAddOrEdit(act, info = "") {
       const vm = this;
+      if (vm.$refs.obs) {
+        await vm.$refs.obs.reset();
+      }
       (vm.userUnit3Select = ""),
         (vm.userUnit2Select = ""),
         (vm.userUnit1Select = ""),
@@ -482,7 +548,7 @@ export default {
         (vm.eventTypeSelect = []);
 
       if (act === "add") {
-        vm.addOrEdit = "add";
+        vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
 
         vm.$nextTick(function() {
@@ -492,7 +558,7 @@ export default {
         vm.$store.dispatch("loadingHandler", true);
         vm.editUserId = info.Id;
         vm.addOrEditDialog = true;
-        vm.addOrEdit = "edit";
+        vm.addOrEdit = "編輯";
         let params = {
           id: info.Id
         };
