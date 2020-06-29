@@ -40,6 +40,7 @@
       v-if="totalCount"
       :keyWord="keyWordInput"
       :total="totalCount"
+      :pageSize="pageSize"
       :currentPage="currentPage"
       @changePage="getEventType"
     ></Pagination>
@@ -101,6 +102,7 @@ export default {
       keyWordInput: "",
       categoryName: "",
       totalCount: "",
+      pageSize: "",
       startEndDate: "",
       buttonList: [],
       addOrEditDialog: false,
@@ -141,7 +143,9 @@ export default {
       await vm.$api.SearchEventType(params).then(res => {
         vm.totalCount = res.data.response.dataCount;
         vm.eventTypeData = res.data.response.data;
+        vm.pageSize = res.data.response.PageSize;
         vm.currentPage = page;
+        vm.$store.dispatch("loadingHandler", false);
       });
     },
     searchHandler({ page, key }) {
@@ -155,6 +159,7 @@ export default {
       vm.$api.SearchEventType(params).then(res => {
         vm.totalCount = res.data.response.dataCount;
         vm.eventTypeData = res.data.response.data;
+        vm.pageSize = res.data.response.PageSize;
         vm.searchLoading = false;
         vm.currentPage = 1;
       });

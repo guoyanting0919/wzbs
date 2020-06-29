@@ -345,7 +345,10 @@ export default {
         console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
+        vm.pageSize = res.data.response.PageSize;
         vm.currentPage = page;
+
+        vm.$store.dispatch("loadingHandler", false);
       });
     },
     getAdminUsers() {
@@ -459,6 +462,7 @@ export default {
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
         vm.currentPage = res.data.response.page;
+        vm.pageSize = res.data.response.PageSize;
         vm.searchLoading = false;
         vm.currentPage = 1;
       });

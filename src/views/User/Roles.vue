@@ -71,6 +71,7 @@
       :total="totalCount"
       :currentPage="currentPage"
       @changePage="getRoles"
+      :page-size="pageSize"
     ></Pagination>
 
     <!-- addOrEditDialog -->
@@ -114,7 +115,6 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-
         <el-button v-if="addOrEdit==='新增'" type="primary" @click="addHandler">新 增</el-button>
         <el-button v-else type="primary" @click="editHandler">編 輯</el-button>
       </span>
@@ -140,6 +140,7 @@ export default {
       rolesData: "",
       currentPage: 1,
       totalCount: "",
+      pageSize: "",
       searchLoading: false,
       addLoading: false,
       editLoading: false,
@@ -243,7 +244,9 @@ export default {
         page
       };
       vm.$api.SearchRoles(params).then(res => {
+        console.log(res);
         vm.totalCount = res.data.response.dataCount;
+        vm.pageSize = res.data.response.PageSize;
         vm.rolesData = res.data.response.data;
         vm.searchLoading = false;
         vm.currentPage = 1;
@@ -323,8 +326,10 @@ export default {
       };
       await vm.$api.GetRoles(params).then(res => {
         vm.totalCount = res.data.response.dataCount;
+        vm.pageSize = res.data.response.PageSize;
         vm.rolesData = res.data.response.data;
         vm.currentPage = page;
+        vm.$store.dispatch("loadingHandler", false);
       });
     }
   },

@@ -36,6 +36,7 @@ export const setRefreshToken = (error) => {
   let refreshtime = new Date(Date.parse(window.localStorage.refreshtime));
   // 在用戶操作的活躍期內
   if (window.localStorage.refreshtime && curTime <= refreshtime) {
+    console.log("換新token");
     return Vue.prototype.$api
       .RefreshToken({ token: window.localStorage.Token })
       .then((res) => {
@@ -61,6 +62,7 @@ export const setRefreshToken = (error) => {
           return axios(error.config);
         } else {
           // 刷新token失敗 清除token信息並跳轉到登錄頁面
+          console.log("刷新失敗");
           toLogin();
         }
       });

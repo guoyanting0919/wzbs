@@ -23,7 +23,7 @@
         class="searchBtn"
         :loading="searchLoading"
         type="primary"
-        @click="setSearchHandlerDate"
+        @click="setSearchHandler"
       >搜尋</el-button>
       <el-button
         v-if="hasBtn('btnSearch') && isEvent"
@@ -115,13 +115,15 @@ export default {
       const vm = this;
       let page = 1;
       let key = vm.keyWordInput;
-
       console.log(vm.searchDate);
-      if (vm.searchDate !== null || vm.searchDate) {
+
+      if (vm.searchDate !== null && vm.searchDate) {
+        console.log("y");
         let startDate = moment(vm.searchDate[0]).format("YYYY-MM-DD");
         let endDate = moment(vm.searchDate[1]).format("YYYY-MM-DD");
         vm.$emit("searchHandlerDate", { page, key, startDate, endDate });
       } else {
+        console.log("n");
         let startDate = "";
         let endDate = "";
         vm.$emit("searchHandlerDate", { page, key, startDate, endDate });

@@ -43,10 +43,10 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="EventAddr" label="地址" sortable></el-table-column>
+          <el-table-column prop="EventAddr" label="地點" sortable></el-table-column>
           <el-table-column width="250" prop="emit" label="操作">
             <template slot-scope="scope">
-              <el-button class="outline" size="mini" @click="handleCopy(scope.row)">複製</el-button>
+              <el-button class="outline" size="mini" @click="copyHandler(scope.row)">複製</el-button>
               <el-button
                 v-if="hasBtn('btnEdit')"
                 class="outline"
@@ -73,6 +73,7 @@
       :start="startDate"
       :end="endDate"
       :total="totalCount"
+      :page-size="pageSize"
       :currentPage="currentPage"
       @changePage="getEvents"
     ></Pagination>
@@ -220,14 +221,27 @@
           <div class="inputBox">
             <div class="inputTitle">上傳文件</div>
             <el-upload
+              ref="upload"
               class="upload-demo"
-              action="https://cors-anywhere.herokuapp.com/https://scan.1966.org.tw/images/Upload/Pic"
-              list-type="picture"
+              action="https://scan.1966.org.tw/api/Img"
+              list-type="text"
               :headers="uploadHeader"
+              :on-success="successUpload"
             >
-              <el-button size="small" type="primary">選擇上傳文件</el-button>
-              <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png 檔案大小限制:10MB"
+                placement="top-start"
+              >
+                <el-button size="small" type="primary">選擇上傳文件</el-button>
+              </el-tooltip>
             </el-upload>
+            <el-button class="downloadBtn" size="mini" type="primary" v-if="uploadUrl">
+              <a target="_blank" :href="`https://scan.1966.org.tw/${uploadUrl}`">
+                <i class="fas fa-download"></i>檔案下載
+              </a>
+            </el-button>
           </div>
 
           <div class="inputBox" style="align-items:flex-start">
@@ -343,7 +357,8 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
         <el-button v-if="addOrEdit==='新增'" type="primary" @click="addHandler">新 增</el-button>
-        <el-button v-else type="primary" @click="editHandler">編 輯</el-button>
+        <el-button v-if="addOrEdit==='編輯'" type="primary" @click="editHandler">編 輯</el-button>
+        <el-button v-if="addOrEdit==='複製'" type="primary" @click="addHandler">複 製</el-button>
       </div>
     </el-dialog>
 
@@ -463,6 +478,7 @@ export default {
       eventSiteInput: "",
       eventUrlInput: "",
       unitSelete: "",
+      uploadUrl: "",
       unit1: "",
       unit2: "",
       unit3: "",
@@ -478,10 +494,14 @@ export default {
       newChangeMember: "",
       allMembersData: "",
 
+      // copy
+      copyEventId: "",
+
       //全域變數
       searchLoading: false,
       addLoading: false,
       totalCount: "",
+      pageSize: "",
       currentPage: 1,
       addOrEdit: "新增",
       editEventId: "",
@@ -558,6 +578,7 @@ export default {
       vm.$api.GetEventsPage(params).then(res => {
         console.log(res);
         vm.totalCount = res.data.response.dataCount;
+        vm.pageSize = res.data.response.PageSize;
         vm.currentPage = page;
         let arr = res.data.response.data;
         arr.map(event => {
@@ -575,6 +596,7 @@ export default {
           );
         });
         vm.eventsData = arr;
+        vm.$store.dispatch("loadingHandler", false);
       });
     },
     getEventType() {
@@ -648,6 +670,9 @@ export default {
           vm.userNameLoading = false;
         });
       }
+    },
+    successUpload(res) {
+      this.uploadUrl = res.response;
     },
     addToTable() {
       const vm = this;
@@ -863,7 +888,7 @@ export default {
           let eventAddr = vm.eventSiteInput;
           let pushData = true;
           let unitCode = vm.unitSelete;
-          let attachDoc = "EA00";
+          let attachDoc = vm.uploadUrl;
           let linkUrl = vm.eventUrlInput;
           let joinUsers = vm.usersTableData;
           let params = {
@@ -888,7 +913,7 @@ export default {
               vm.$notify({
                 title: "成功",
                 type: "success",
-                message: `成功新增${eventName}`
+                message: `成功${vm.addOrEdit}${eventName}`
               });
               vm.getEvents();
             } else {
@@ -896,7 +921,7 @@ export default {
               vm.$notify({
                 title: "失敗",
                 type: "error",
-                message: `新增失敗`
+                message: `${vm.addOrEdit}失敗`
               });
             }
           });
@@ -919,6 +944,7 @@ export default {
         vm.eventDate = [];
         vm.eventSiteInput = "";
         vm.eventUrlInput = "";
+        vm.uploadUrl = "";
         vm.unit1 = "";
         vm.unit2 = "";
         vm.unit3 = "";
@@ -926,6 +952,9 @@ export default {
         vm.unitSelete = "";
         vm.rloeSelect = "";
         vm.usersTable = [];
+        vm.$nextTick(() => {
+          vm.$refs.upload.clearFiles();
+        });
       } else {
         vm.addOrEdit = "編輯";
         vm.editEventId = info.Id;
@@ -942,6 +971,7 @@ export default {
           vm.eventDate = [];
           vm.eventNameInput = event.EventName;
           vm.inputDescription = event.Summary;
+          vm.uploadUrl = event.AttachDoc;
           vm.eventCategorySelete = event.EventTypeId;
           vm.showDate[0] = moment(event.ShowStartDate).format(
             "YYYY-MM-DD HH:mm:ss"
@@ -966,6 +996,9 @@ export default {
           vm.usersTable = event.JoinUsers;
           vm.$nextTick(() => {
             vm.addOrEditDialog = true;
+            vm.$nextTick(() => {
+              vm.$refs.upload.clearFiles();
+            });
           });
         });
       }
@@ -1048,20 +1081,21 @@ export default {
       };
       vm.$api.SearchEvent(params).then(res => {
         vm.totalCount = res.data.response.dataCount;
+        vm.pageSize = res.data.response.PageSize;
         // vm.eventsData = res.data.response.data;
         let arr = res.data.response.data;
         arr.map(event => {
           event.EventEndDate = moment(event.EventEndDate).format(
-            "YYYY-MM-DD HH:mm:ss"
+            "YYYY-MM-DD HH:mm"
           );
           event.EventStartDate = moment(event.EventStartDate).format(
-            "YYYY-MM-DD HH:mm:ss"
+            "YYYY-MM-DD HH:mm"
           );
           event.ShowEndDate = moment(event.ShowEndDate).format(
-            "YYYY-MM-DD HH:mm:ss"
+            "YYYY-MM-DD HH:mm"
           );
           event.ShowStartDate = moment(event.ShowStartDate).format(
-            "YYYY-MM-DD HH:mm:ss"
+            "YYYY-MM-DD HH:mm"
           );
         });
         vm.eventsData = arr;
@@ -1069,7 +1103,55 @@ export default {
         vm.currentPage = 1;
       });
     },
-    handleCopy() {},
+    copyHandler(info) {
+      console.log(info);
+      const vm = this;
+      vm.addOrEdit = "複製";
+      vm.copyEventId = info.Id;
+      vm.$store.dispatch("loadingHandler", true);
+      let params = {
+        Id: info.Id
+      };
+      vm.$api.GetEventById(params).then(res => {
+        let event = res.data.response;
+
+        vm.$store.dispatch("loadingHandler", false);
+        console.log(event);
+        vm.showDate = [];
+        vm.eventDate = [];
+        vm.eventNameInput = event.EventName;
+        vm.inputDescription = event.Summary;
+        vm.eventCategorySelete = event.EventTypeId;
+        vm.uploadUrl = event.AttachDoc;
+        vm.showDate[0] = moment(event.ShowStartDate).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        vm.showDate[1] = moment(event.ShowEndDate).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        vm.eventDate[0] = moment(event.EventStartDate).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        vm.eventDate[1] = moment(event.EventEndDate).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        vm.eventSiteInput = event.EventAddr;
+        vm.eventUrlInput = event.LinkUrl;
+        vm.unitSelete = event.UnitCode;
+        vm.unit1 = "";
+        vm.unit2 = "";
+        vm.unit3 = "";
+        vm.userNameSelect = "";
+        vm.rloeSelect = "";
+        vm.usersTable = event.JoinUsers;
+        vm.$nextTick(() => {
+          vm.addOrEditDialog = true;
+          vm.$nextTick(() => {
+            vm.$refs.upload.clearFiles();
+          });
+        });
+      });
+    },
     async editHandler() {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
@@ -1106,7 +1188,7 @@ export default {
           let eventAddr = vm.eventSiteInput;
           let pushData = true;
           let unitCode = vm.unitSelete;
-          let attachDoc = "EA00";
+          let attachDoc = vm.uploadUrl;
           let linkUrl = vm.eventUrlInput;
           let joinUsers = vm.usersTableData;
           let params = {

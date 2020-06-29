@@ -12,7 +12,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 140px;
+    width: 117px;
   }
 
   .dateLine {
@@ -46,6 +46,19 @@
 
   .changeInputTitle {
     width: 100px;
+  }
+
+  .downloadBtn {
+    align-self: flex-end;
+    margin: 0 1rem;
+
+    a {
+      color: #fff;
+    }
+
+    .fas {
+      margin-right: 0.5rem;
+    }
   }
 
   // element UI

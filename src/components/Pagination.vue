@@ -14,6 +14,7 @@
 
 <script>
 import moment from "moment";
+import store from "../store/index";
 export default {
   name: "Pagination",
   data() {
@@ -63,6 +64,7 @@ export default {
   },
   methods: {
     handleCurrentChange(page) {
+      store.dispatch("loadingHandler", true);
       this.setCurrentPage = page;
       if (!this.$props.end) {
         // console.log("NOEND");
