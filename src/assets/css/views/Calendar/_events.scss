@@ -48,17 +48,33 @@
     width: 100px;
   }
 
-  .downloadBtn {
-    align-self: flex-end;
-    margin: 0 1rem;
+  .fileName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    a {
-      color: #fff;
+  .downloadBtn {
+    width: 100px;
+    padding: 0;
+
+    p {
+      padding: 8px 8px;
     }
 
     .fas {
       margin-right: 0.5rem;
+      // transition: 0.3s;
+
+      &:hover {
+        transform: scale(1.2);
+      }
     }
+  }
+
+  .noFiles {
+    color: red;
+    font-size: 13px;
   }
 
   // element UI

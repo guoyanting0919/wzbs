@@ -228,20 +228,40 @@
               :headers="uploadHeader"
               :on-success="successUpload"
             >
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png 檔案大小限制:10MB"
-                placement="top-start"
-              >
+              <el-tooltip class="item" effect="dark" placement="top-start">
+                <div slot="content">
+                  檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
+                  <br />檔案大小限制:10MB
+                </div>
                 <el-button size="small" type="primary">選擇上傳文件</el-button>
               </el-tooltip>
             </el-upload>
-            <el-button class="downloadBtn" size="mini" type="primary" v-if="uploadUrl">
-              <a target="_blank" :href="`https://scan.1966.org.tw/${uploadUrl}`">
-                <i class="fas fa-download"></i>檔案下載
-              </a>
-            </el-button>
+          </div>
+
+          <div class="inputBox" v-if="uploadUrl">
+            <div class="inputTitle">已上傳文件</div>
+            <p class="noFiles" v-if="uploadUrl.length === 0 || uploadUrl[0] ==''">尚未上傳文件</p>
+
+            <div v-else>
+              <el-button
+                v-for="(url,index) in uploadUrl"
+                :key="index"
+                class="downloadBtn"
+                size="mini"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="fileName(url)"
+                  placement="top-start"
+                >
+                  <p class="fileName" v-if="url">
+                    <i @click.capture="delFile(index)" class="fas fa-trash-alt"></i>
+                    {{fileName(url)}}
+                  </p>
+                </el-tooltip>
+              </el-button>
+            </div>
           </div>
 
           <div class="inputBox" style="align-items:flex-start">
@@ -672,7 +692,22 @@ export default {
       }
     },
     successUpload(res) {
-      this.uploadUrl = res.response;
+      const vm = this;
+      vm.uploadUrl.push(res.response);
+      vm.$nextTick(() => {
+        vm.$refs.upload.clearFiles();
+      });
+    },
+    delFile(id) {
+      console.log(id);
+      this.uploadUrl.splice(id, 1);
+    },
+    fileName(url) {
+      if (url) {
+        return url.split("\\")[1].split(".")[0];
+      }
+      // return url.split('\')[1].split('.')[0];
+      //return url;
     },
     addToTable() {
       const vm = this;
@@ -944,7 +979,7 @@ export default {
         vm.eventDate = [];
         vm.eventSiteInput = "";
         vm.eventUrlInput = "";
-        vm.uploadUrl = "";
+        vm.uploadUrl = [];
         vm.unit1 = "";
         vm.unit2 = "";
         vm.unit3 = "";

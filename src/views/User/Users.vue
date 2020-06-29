@@ -33,7 +33,7 @@
           </el-table-column>
           <el-table-column prop="CtrlUnits" label="組織" sortable>
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="dark" placement="top-start">
+              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
                 <div slot="content">
                   <span
                     v-for="(unit,index) in scope.row.CtrlUnits"
