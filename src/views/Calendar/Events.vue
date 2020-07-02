@@ -238,11 +238,11 @@
             </el-upload>
           </div>
 
-          <div class="inputBox" v-if="uploadUrl">
+          <div class="inputBox">
             <div class="inputTitle">已上傳文件</div>
-            <p class="noFiles" v-if="uploadUrl.length === 0 || uploadUrl[0] ==''">尚未上傳文件</p>
+            <p class="noFiles" v-if="uploadUrl.length === 0 ">尚未上傳文件</p>
 
-            <div v-else>
+            <div v-if="uploadUrl">
               <el-button
                 v-for="(url,index) in uploadUrl"
                 :key="index"

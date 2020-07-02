@@ -131,7 +131,7 @@ function saveRefreshtime(params) {
     : new Date(-1);
   let expiretime = new Date(Date.parse(window.localStorage.TokenExpire));
 
-  let refreshCount = 1; //滑動係數
+  let refreshCount = 1;
   if (lastRefreshtime >= nowtime) {
     lastRefreshtime = nowtime > expiretime ? nowtime : expiretime;
     lastRefreshtime.setMinutes(lastRefreshtime.getMinutes() + refreshCount);
