@@ -23,28 +23,39 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
-          <el-table-column width="180" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
-          <el-table-column width="280" prop="ShowStartDate" label="公告時間" sortable>
+          <el-table-column width="150" prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
+          <el-table-column width="120" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
+          <el-table-column width="180" prop="ShowStartDate" label="公告時間" sortable>
             <template slot-scope="scope">
               <div class="showDateBox">
-                <span>{{ scope.row.ShowStartDate }}</span>
+                <span class="dateFz">{{ scope.row.ShowStartDate }}</span>
                 <div class="dateLine"></div>
-                <span>{{ scope.row.ShowEndDate }}</span>
+                <span class="dateFz">{{ scope.row.ShowEndDate }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="280" prop="EventStartDate" label="活動 / 會議時間" sortable>
+          <el-table-column width="180" prop="EventStartDate" label="活動 / 會議時間" sortable>
             <template slot-scope="scope">
               <div class="eventDateBox">
-                <span>{{ scope.row.EventStartDate }}</span>
+                <span class="dateFz">{{ scope.row.EventStartDate }}</span>
                 <div class="dateLine"></div>
-                <span>{{ scope.row.EventEndDate }}</span>
+                <span class="dateFz">{{ scope.row.EventEndDate }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="EventAddr" label="地點" sortable></el-table-column>
-          <el-table-column width="250" prop="emit" label="操作">
+          <el-table-column prop="EventAddr" label="地點" sortable>
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
+                <div slot="content">
+                  <span>{{ scope.row.EventAddr }}</span>
+                </div>
+                <p class="textOverflow">
+                  <span>{{ scope.row.EventAddr }}</span>
+                </p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column width="220" prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button class="outline" size="mini" @click="copyHandler(scope.row)">複製</el-button>
               <el-button
@@ -82,11 +93,10 @@
 
     <el-dialog
       @opened="scrollToTop"
-      :close-on-click-modal="true"
+      :close-on-click-modal="false"
       :title="addOrEdit"
       :visible.sync="addOrEditDialog"
       v-if="unitsData"
-      width="70%"
     >
       <ValidationObserver ref="obs">
         <el-scrollbar class="scrollbar-handle" ref="scrollBox">
@@ -228,7 +238,7 @@
               :headers="uploadHeader"
               :on-success="successUpload"
             >
-              <el-tooltip class="item" effect="dark" placement="top-start">
+              <el-tooltip :open-delay="500" class="item" effect="dark" placement="top-start">
                 <div slot="content">
                   檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
                   <br />檔案大小限制:10MB
@@ -250,6 +260,7 @@
                 size="mini"
               >
                 <el-tooltip
+                  :open-delay="500"
                   class="item"
                   effect="dark"
                   :content="fileName(url)"

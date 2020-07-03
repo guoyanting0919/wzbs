@@ -20,8 +20,8 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="UnitName" width="180" label="單位" sortable></el-table-column>
-          <el-table-column prop="LoginName" width="180" label="名稱" sortable></el-table-column>
+          <el-table-column prop="UnitName" width="100" label="單位" sortable></el-table-column>
+          <el-table-column prop="LoginName" width="100" label="名稱" sortable></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
             <template slot-scope="scope">
               <span
@@ -50,7 +50,7 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="emit" width="200" label="操作">
+          <el-table-column prop="emit" width="150" label="操作">
             <template slot-scope="scope">
               <el-button
                 v-if="hasBtn('btnEdit')"
@@ -86,7 +86,6 @@
       @opened="scrollToTop"
       :title="addOrEdit"
       :visible.sync="addOrEditDialog"
-      width="50%"
       v-if="unitsData"
     >
       <ValidationObserver ref="obs">

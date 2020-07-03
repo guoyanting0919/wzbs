@@ -24,7 +24,7 @@ const errorHandle = (status, msg, response) => {
       break;
 
     case 500:
-      console.log("500");
+      to404Page();
       break;
 
     default:
@@ -35,8 +35,8 @@ const errorHandle = (status, msg, response) => {
 
 // 設定 baseURL
 let instance = axios.create({
-  baseURL: "/api",
-  // baseURL: "https://cors-anywhere.herokuapp.com/https://scan.1966.org.tw/api/",
+  // baseURL: "/api",
+  baseURL: "https://scan.1966.org.tw/api/",
 });
 
 // request 攔截

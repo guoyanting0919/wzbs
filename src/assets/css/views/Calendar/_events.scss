@@ -6,6 +6,16 @@
     margin-top: 2rem;
   }
 
+  .textOverflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .el-dialog {
+    width: 1000px;
+  }
+
   .eventDateBox,
   .showDateBox {
     display: flex;
@@ -13,6 +23,12 @@
     justify-content: center;
     align-items: center;
     width: 117px;
+  }
+
+  .dateFz {
+    @include rwd($lg) {
+      font-size: 12px;
+    }
   }
 
   .dateLine {
