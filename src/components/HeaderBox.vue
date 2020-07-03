@@ -12,11 +12,18 @@
         @change="setSearchDate"
       ></el-date-picker>
       <el-input
-        v-if="hasBtn('btnSearch')"
+        v-if="hasBtn('btnSearch') && !isEvent"
         class="keyWordInput"
         v-model="keyWordInput"
         placeholder="請輸入關鍵字"
         @keyup.enter.native="setSearchHandler "
+      ></el-input>
+      <el-input
+        v-if="hasBtn('btnSearch') && isEvent"
+        class="keyWordInput"
+        v-model="keyWordInput"
+        placeholder="請輸入關鍵字"
+        @keyup.enter.native="setSearchHandlerDate "
       ></el-input>
       <el-button
         v-if="hasBtn('btnSearch') && !isEvent"

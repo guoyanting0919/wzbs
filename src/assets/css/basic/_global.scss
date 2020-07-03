@@ -22,10 +22,6 @@
   @include btn_outline($background-color-theme1);
 }
 
-.el-notification__closeBtn {
-  display: none;
-}
-
 .el-tooltip__popper {
   max-width: 400px;
 }
@@ -71,6 +67,22 @@
 .el-select__tags input,
 .el-date-editor input {
   box-shadow: none;
+}
+
+.el-notification {
+  // background-color: red;
+}
+
+.el-notification__content {
+  position: static;
+}
+
+.el-dialog__wrapper {
+  z-index: 10 !important;
+}
+
+.v-modal {
+  z-index: 9 !important;
 }
 
 // .el-button--default:hover {

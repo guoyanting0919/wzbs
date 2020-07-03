@@ -25,7 +25,7 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column width="150" prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
           <el-table-column width="120" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
-          <el-table-column width="180" prop="ShowStartDate" label="公告時間" sortable>
+          <el-table-column width="200" prop="ShowStartDate" label="公告時間" sortable>
             <template slot-scope="scope">
               <div class="showDateBox">
                 <span class="dateFz">{{ scope.row.ShowStartDate }}</span>
@@ -34,7 +34,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="180" prop="EventStartDate" label="活動 / 會議時間" sortable>
+          <el-table-column width="200" prop="EventStartDate" label="活動 / 會議時間" sortable>
             <template slot-scope="scope">
               <div class="eventDateBox">
                 <span class="dateFz">{{ scope.row.EventStartDate }}</span>
@@ -57,7 +57,12 @@
           </el-table-column>
           <el-table-column width="220" prop="emit" label="操作">
             <template slot-scope="scope">
-              <el-button class="outline" size="mini" @click="copyHandler(scope.row)">複製</el-button>
+              <el-button
+                v-if="hasBtn('btnEdit')"
+                class="outline"
+                size="mini"
+                @click="copyHandler(scope.row)"
+              >複製</el-button>
               <el-button
                 v-if="hasBtn('btnEdit')"
                 class="outline"
@@ -92,297 +97,298 @@
     <!-- addOrEditDialog -->
 
     <el-dialog
-      @opened="scrollToTop"
       :close-on-click-modal="false"
       :title="addOrEdit"
       :visible.sync="addOrEditDialog"
       v-if="unitsData"
+      custom-class="addOrEditDialog"
     >
       <ValidationObserver ref="obs">
-        <el-scrollbar class="scrollbar-handle" ref="scrollBox">
-          <div class="inputBox" style="margin-top: 1rem;">
-            <div class="inputTitle">活動 / 會議名稱</div>
-            <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{  errors,classes }">
-              <el-input
-                :class="classes"
-                type="textarea"
-                :rows="2"
-                style="width:550px"
-                v-model="eventNameInput"
-                placeholder="請輸入活動 / 會議名稱"
-              ></el-input>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
+        <!-- <el-scrollbar class="scrollbar-handle" ref="scrollBox"> -->
+        <div class="inputBox" style="margin-top: 3rem;">
+          <div class="inputTitle">活動 / 會議名稱</div>
+          <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              type="textarea"
+              :rows="2"
+              style="width:550px"
+              v-model="eventNameInput"
+              placeholder="請輸入活動 / 會議名稱"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
 
-          <div class="inputBox">
-            <div class="inputTitle">活動 / 會議描述</div>
-            <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{  errors,classes }">
-              <el-input
-                :class="classes"
-                type="textarea"
-                :rows="2"
-                style="width:550px"
-                v-model="inputDescription"
-                placeholder="請輸入活動 / 會議描述"
-              ></el-input>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
+        <div class="inputBox">
+          <div class="inputTitle">活動 / 會議描述</div>
+          <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              type="textarea"
+              :rows="2"
+              style="width:550px"
+              v-model="inputDescription"
+              placeholder="請輸入活動 / 會議描述"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
 
-          <div class="inputBox">
-            <div class="inputTitle">行事曆類別</div>
-            <ValidationProvider name="請選擇類別!!" rules="required" v-slot="{  errors,classes }">
-              <el-select
-                :class="classes"
-                v-if="eventTypeData"
-                v-model="eventCategorySelete"
-                placeholder="請選擇行事曆類別"
-              >
-                <el-option
-                  v-for="type in eventTypeData"
-                  :key="type.Value"
-                  :label="type.Text"
-                  :value="type.Value"
-                ></el-option>
-              </el-select>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">公告時間</div>
-            <ValidationProvider name="請選擇公告時間!!" rules="required" v-slot="{  errors,classes }">
-              <el-date-picker
-                :class="classes"
-                v-model="showDate"
-                type="datetimerange"
-                range-separator="~"
-                start-placeholder="公告時間開始"
-                end-placeholder="公告時間結束"
-              ></el-date-picker>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">會議 / 活動時間</div>
-            <ValidationProvider name="請選擇活動時間!!" rules="required" v-slot="{  errors,classes }">
-              <el-date-picker
-                :class="classes"
-                v-model="eventDate"
-                type="datetimerange"
-                range-separator="~"
-                start-placeholder="開始時間"
-                end-placeholder="結束時間"
-              ></el-date-picker>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">會議 / 活動地點</div>
-            <ValidationProvider name="請輸入會議 / 活動地點!!" rules="required" v-slot="{  errors,classes }">
-              <el-input
-                :class="classes"
-                style="width:700px"
-                v-model="eventSiteInput"
-                placeholder="請輸入會議 / 活動地點"
-              ></el-input>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">連結</div>
-            <ValidationProvider name="請輸入會議 / 活動連結!!" rules="required" v-slot="{  errors,classes }">
-              <el-input
-                :class="classes"
-                style="width:700px"
-                v-model="eventUrlInput"
-                placeholder="請輸入會議 / 活動連結"
-              ></el-input>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">單位</div>
-            <ValidationProvider name="請選擇單位!!" rules="required" v-slot="{  errors,classes }">
-              <el-select
-                filterable
-                no-match-text="暫無資料"
-                :class="classes"
-                v-if="userControlUnit"
-                v-model="unitSelete"
-                placeholder="請選擇單位"
-              >
-                <el-option
-                  v-for="unit in userControlUnit"
-                  :key="unit.UntId"
-                  :label="unit.UntNameFull"
-                  :value="unit.UntId"
-                ></el-option>
-              </el-select>
-              <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-
-          <div class="inputBox">
-            <div class="inputTitle">上傳文件</div>
-            <el-upload
-              ref="upload"
-              class="upload-demo"
-              action="https://scan.1966.org.tw/api/Img"
-              list-type="text"
-              :headers="uploadHeader"
-              :on-success="successUpload"
+        <div class="inputBox">
+          <div class="inputTitle">行事曆類別</div>
+          <ValidationProvider name="請選擇類別!!" rules="required" v-slot="{  errors,classes }">
+            <el-select
+              :class="classes"
+              v-if="eventTypeData"
+              v-model="eventCategorySelete"
+              placeholder="請選擇行事曆類別"
             >
-              <el-tooltip :open-delay="500" class="item" effect="dark" placement="top-start">
-                <div slot="content">
-                  檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
-                  <br />檔案大小限制:10MB
-                </div>
-                <el-button size="small" type="primary">選擇上傳文件</el-button>
-              </el-tooltip>
-            </el-upload>
-          </div>
+              <el-option
+                v-for="type in eventTypeData"
+                :key="type.Value"
+                :label="type.Text"
+                :value="type.Value"
+              ></el-option>
+            </el-select>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
 
-          <div class="inputBox">
-            <div class="inputTitle">已上傳文件</div>
-            <p class="noFiles" v-if="uploadUrl.length === 0 ">尚未上傳文件</p>
+        <div class="inputBox">
+          <div class="inputTitle">公告時間</div>
+          <ValidationProvider name="請選擇公告時間!!" rules="required" v-slot="{  errors,classes }">
+            <el-date-picker
+              :class="classes"
+              v-model="showDate"
+              type="datetimerange"
+              range-separator="~"
+              start-placeholder="公告時間開始"
+              end-placeholder="公告時間結束"
+              placeholder="請選擇時間"
+            ></el-date-picker>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
 
-            <div v-if="uploadUrl">
-              <el-button
-                v-for="(url,index) in uploadUrl"
-                :key="index"
-                class="downloadBtn"
-                size="mini"
-              >
-                <el-tooltip
-                  :open-delay="500"
-                  class="item"
-                  effect="dark"
-                  :content="fileName(url)"
-                  placement="top-start"
-                >
-                  <p class="fileName" v-if="url">
-                    <i @click.capture="delFile(index)" class="fas fa-trash-alt"></i>
-                    {{fileName(url)}}
-                  </p>
-                </el-tooltip>
-              </el-button>
-            </div>
-          </div>
+        <div class="inputBox">
+          <div class="inputTitle">會議 / 活動時間</div>
+          <ValidationProvider name="請選擇活動時間!!" rules="required" v-slot="{  errors,classes }">
+            <el-date-picker
+              :class="classes"
+              v-model="eventDate"
+              type="datetimerange"
+              range-separator="~"
+              start-placeholder="開始時間"
+              end-placeholder="結束時間"
+            ></el-date-picker>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
 
-          <div class="inputBox" style="align-items:flex-start">
-            <div class="inputTitle">參與人員</div>
-            <div>
-              <el-checkbox class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
-              <div class="selectBox">
-                <el-select
-                  filterable
-                  no-match-text="暫無資料"
-                  @change="lv1Change"
-                  class="unitSelect"
-                  v-model="unit1"
-                  placeholder="請選擇最高單位"
-                >
-                  <el-option
-                    :value="unit.UntId"
-                    :label="unit.UntNameFull"
-                    v-for="unit in unitLv1"
-                    :key="unit.UntId"
-                  >{{unit.UntNameFull}}</el-option>
-                </el-select>
-                <el-select
-                  filterable
-                  no-match-text="暫無資料"
-                  @change="lv2Change"
-                  class="unitSelect"
-                  v-model="unit2"
-                  placeholder="請選擇次高單位"
-                  v-if="unit1 && unitLv2.length > 0"
-                >
-                  <el-option
-                    v-for="unit in unitLv2"
-                    :key="unit.UntId"
-                    :value="unit.UntId"
-                    :label="unit.UntNameFull"
-                  >{{unit.UntNameFull}}</el-option>
-                </el-select>
-                <el-select
-                  filterable
-                  no-match-text="暫無資料"
-                  class="unitSelect"
-                  @change="lv3Change"
-                  v-model="unit3"
-                  placeholder="請選擇單位"
-                  v-if="unit2 && unitLv3.length > 0"
-                >
-                  <el-option
-                    v-for="unit in unitLv3"
-                    :key="unit.UntId"
-                    :value="unit.UntId"
-                    :label="unit.UntNameFull"
-                  >{{unit.UntNameFull}}</el-option>
-                </el-select>
+        <div class="inputBox">
+          <div class="inputTitle">會議 / 活動地點</div>
+          <ValidationProvider name="請輸入會議 / 活動地點!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              style="width:600px"
+              v-model="eventSiteInput"
+              placeholder="請輸入會議 / 活動地點"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+
+        <div class="inputBox">
+          <div class="inputTitle">連結</div>
+          <ValidationProvider name="請輸入會議 / 活動連結!!" rules="required" v-slot="{  errors,classes }">
+            <el-input
+              :class="classes"
+              style="width:600px"
+              v-model="eventUrlInput"
+              placeholder="請輸入會議 / 活動連結"
+            ></el-input>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+
+        <div class="inputBox">
+          <div class="inputTitle">單位</div>
+          <ValidationProvider name="請選擇單位!!" rules="required" v-slot="{  errors,classes }">
+            <el-select
+              filterable
+              no-match-text="暫無資料"
+              :class="classes"
+              v-if="userControlUnit"
+              v-model="unitSelete"
+              placeholder="請選擇單位"
+            >
+              <el-option
+                v-for="unit in userControlUnit"
+                :key="unit.UntId"
+                :label="unit.UntNameFull"
+                :value="unit.UntId"
+              ></el-option>
+            </el-select>
+            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+
+        <div class="inputBox">
+          <div class="inputTitle">上傳文件</div>
+          <el-upload
+            ref="upload"
+            class="upload-demo"
+            action="https://scan.1966.org.tw/api/Img"
+            list-type="text"
+            :headers="uploadHeader"
+            :on-success="successUpload"
+          >
+            <el-tooltip :open-delay="500" class="item" effect="dark" placement="top-start">
+              <div slot="content">
+                檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
+                <br />檔案大小限制:10MB
               </div>
-            </div>
-          </div>
+              <el-button size="small" type="primary">選擇上傳文件</el-button>
+            </el-tooltip>
+          </el-upload>
+        </div>
 
-          <div class="inputBox" style="align-items:flex-start">
-            <div class="inputTitle"></div>
+        <div class="inputBox">
+          <div class="inputTitle">已上傳文件</div>
+          <p class="noFiles" v-if="uploadUrl.length === 0 ">尚未上傳文件</p>
+
+          <div v-if="uploadUrl">
+            <el-button
+              v-for="(url,index) in uploadUrl"
+              :key="index"
+              class="downloadBtn"
+              size="mini"
+            >
+              <el-tooltip
+                :open-delay="500"
+                class="item"
+                effect="dark"
+                :content="fileName(url)"
+                placement="top-start"
+              >
+                <p class="fileName" v-if="url">
+                  <i @click.capture="delFile(index)" class="fas fa-trash-alt"></i>
+                  {{fileName(url)}}
+                </p>
+              </el-tooltip>
+            </el-button>
+          </div>
+        </div>
+
+        <div class="inputBox" style="align-items:flex-start">
+          <div class="inputTitle">參與人員</div>
+          <div>
+            <el-checkbox class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
             <div class="selectBox">
               <el-select
                 filterable
                 no-match-text="暫無資料"
-                :loading="userNameLoading"
-                loading-text="Loading..."
-                no-data-text="暫無資料"
-                v-model="userNameSelect"
-                placeholder="請選擇名稱"
-                @change="setUser"
+                @change="lv1Change"
+                class="unitSelect"
+                v-model="unit1"
+                placeholder="請選擇最高單位"
               >
                 <el-option
-                  v-for="user in usersData"
-                  :key="user.Account"
-                  :value="user.Account"
-                  :label="user.Name"
-                ></el-option>
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                  v-for="unit in unitLv1"
+                  :key="unit.UntId"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
-              <el-select v-model="memberTitle" placeholder="職稱">
-                <el-option :value="userData.Title">{{userData.Title}}</el-option>
+              <el-select
+                filterable
+                no-match-text="暫無資料"
+                @change="lv2Change"
+                class="unitSelect"
+                v-model="unit2"
+                placeholder="請選擇次高單位"
+                v-if="unit1 && unitLv2.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv2"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
-              <el-select v-model="rloeSelect" placeholder="Role">
-                <el-option v-for="role in rolesData" :key="role" :value="role"></el-option>
+              <el-select
+                filterable
+                no-match-text="暫無資料"
+                class="unitSelect"
+                @change="lv3Change"
+                v-model="unit3"
+                placeholder="請選擇單位"
+                v-if="unit2 && unitLv3.length > 0"
+              >
+                <el-option
+                  v-for="unit in unitLv3"
+                  :key="unit.UntId"
+                  :value="unit.UntId"
+                  :label="unit.UntNameFull"
+                >{{unit.UntNameFull}}</el-option>
               </el-select>
             </div>
-            <el-button :loading="addLoading" @click="addToTable">加入</el-button>
           </div>
-          <div class="inputBox" style="align-items:flex-start">
-            <div class="inputTitle"></div>
-            <el-table
-              v-if="usersTableData"
-              empty-text="暫無資料"
-              :data="usersTableData"
-              style="width: 100%"
+        </div>
+
+        <div class="inputBox" style="align-items:flex-start">
+          <div class="inputTitle"></div>
+          <div class="selectBox">
+            <el-select
+              filterable
+              no-match-text="暫無資料"
+              :loading="userNameLoading"
+              loading-text="Loading..."
+              no-data-text="暫無資料"
+              v-model="userNameSelect"
+              placeholder="請選擇名稱"
+              @change="setUser"
             >
-              <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
-              <el-table-column prop="usertitle" label="職稱" width="180"></el-table-column>
-              <el-table-column prop="unit" label="單位"></el-table-column>
-              <el-table-column prop label="刪除">
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    @click.native.prevent="deleteRow(scope.$index, usersTableData)"
-                  >刪除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+              <el-option
+                v-for="user in usersData"
+                :key="user.Account"
+                :value="user.Account"
+                :label="user.Name"
+              ></el-option>
+            </el-select>
+            <el-select v-model="memberTitle" placeholder="職稱">
+              <el-option :value="userData.Title">{{userData.Title}}</el-option>
+            </el-select>
+            <el-select v-model="rloeSelect" placeholder="Role">
+              <el-option v-for="role in rolesData" :key="role" :value="role"></el-option>
+            </el-select>
           </div>
-        </el-scrollbar>
+          <el-button :loading="addLoading" @click="addToTable">加入</el-button>
+        </div>
+        <div class="inputBox" style="align-items:flex-start">
+          <div class="inputTitle"></div>
+          <el-table
+            v-if="usersTableData"
+            empty-text="暫無資料"
+            :data="usersTableData"
+            style="width: 100%"
+          >
+            <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
+            <el-table-column prop="usertitle" label="職稱" width="180"></el-table-column>
+            <el-table-column prop="unit" label="單位"></el-table-column>
+            <el-table-column prop label="刪除">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click.native.prevent="deleteRow(scope.$index, usersTableData)"
+                >刪除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <!-- </el-scrollbar> -->
       </ValidationObserver>
 
       <div slot="footer" class="dialog-footer">
@@ -395,7 +401,7 @@
 
     <!-- changeDialog -->
 
-    <el-dialog title="替換人員" :visible.sync="changeDialog" width="30%">
+    <el-dialog title="替換人員" custom-class="changeDialog" :visible.sync="changeDialog">
       <ValidationObserver ref="obs2">
         <div class="changeInputBox">
           <p class="changeInputTitle">原始人員</p>
@@ -460,7 +466,7 @@
 <script>
 import HeaderBox from "../../components/HeaderBox";
 import Pagination from "../../components/Pagination";
-import moment from "moment";
+import moment, { duration } from "moment";
 export default {
   name: "CalendarEvents",
   components: {
@@ -723,10 +729,9 @@ export default {
     addToTable() {
       const vm = this;
       if (!vm.userData) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: `請確認是否正確選擇參與人員及會議 / 活動時間`
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認是否正確選擇參與人員及會議 / 活動時間"
         });
       } else {
         vm.addLoading = true;
@@ -757,12 +762,11 @@ export default {
           };
           vm.$api.CheckUserHasEvent(params).then(res => {
             if (res.data.success) {
-              vm.addLoading = false;
-              vm.$notify({
-                title: "成功",
-                type: "success",
-                message: `成功加入${UserName}`
+              vm.$alertT.fire({
+                icon: "success",
+                title: `成功加入${UserName}`
               });
+              vm.addLoading = false;
               vm.usersTable.push(userData);
               vm.unit1 = "";
               vm.unit2 = "";
@@ -773,21 +777,21 @@ export default {
               vm.userData = "";
               vm.usersData = "";
             } else {
-              vm.$confirm(
-                `${userName} 已於同時間參與 ${res.data.response} 活動，是否依舊將加入活動參與人員 ?`,
-                "提示",
-                {
-                  confirmButtonText: "確定",
-                  cancelButtonText: "取消",
-                  type: "warning"
-                }
-              )
-                .then(() => {
+              vm.$swal({
+                title: "重複參與活動/會議提示",
+                text: `${userName} 已於同時間參與 ${res.data.response} 活動，是否依舊將加入活動參與人員 ?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2f3e52",
+                cancelButtonColor: "#522f2f",
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+              }).then(result => {
+                if (result.value) {
                   vm.addLoading = false;
-                  vm.$notify({
-                    title: "成功",
-                    type: "success",
-                    message: `成功加入${UserName}`
+                  vm.$alertT.fire({
+                    icon: "success",
+                    title: `成功加入${UserName}`
                   });
                   vm.usersTable.push(userData);
                   vm.unit1 = "";
@@ -798,15 +802,14 @@ export default {
                   vm.userNameSelect = "";
                   vm.userData = "";
                   vm.usersData = "";
-                })
-                .catch(() => {
+                } else {
                   vm.addLoading = false;
-                  vm.$notify({
-                    title: "提醒",
-                    type: "info",
-                    message: "已取消加入"
+                  vm.$alertT.fire({
+                    icon: "info",
+                    title: `已取消加入`
                   });
-                });
+                }
+              });
             }
           });
         } else {
@@ -842,10 +845,9 @@ export default {
             console.log(res);
             if (res.data.success) {
               vm.addLoading = false;
-              vm.$notify({
-                title: "成功",
-                type: "success",
-                message: `成功加入${UserName}`
+              vm.$alertT.fire({
+                icon: "success",
+                title: `成功加入${UserName}`
               });
               vm.usersTable.push(userData);
               vm.unit1 = "";
@@ -857,21 +859,21 @@ export default {
               vm.userData = "";
               vm.usersData = "";
             } else {
-              vm.$confirm(
-                `${userName} 已於同時間參與 ${res.data.response} 等...活動 / 會議，是否依舊將 ${userName} 加入會議 / 活動參與人員 ?`,
-                "提示",
-                {
-                  confirmButtonText: "確定",
-                  cancelButtonText: "取消",
-                  type: "warning"
-                }
-              )
-                .then(() => {
+              vm.$swal({
+                title: "重複參與活動/會議提示",
+                text: `${userName} 已於同時間參與 ${res.data.response} 活動，是否依舊將加入活動參與人員 ?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2f3e52",
+                cancelButtonColor: "#522f2f",
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+              }).then(result => {
+                if (result.value) {
                   vm.addLoading = false;
-                  vm.$notify({
-                    title: "成功",
-                    type: "success",
-                    message: `成功加入${UserName}`
+                  vm.$alertT.fire({
+                    icon: "success",
+                    title: `成功加入${UserName}`
                   });
                   vm.usersTable.push(userData);
                   vm.unit1 = "";
@@ -882,15 +884,14 @@ export default {
                   vm.userNameSelect = "";
                   vm.userData = "";
                   vm.usersData = "";
-                })
-                .catch(() => {
+                } else {
                   vm.addLoading = false;
-                  vm.$notify({
-                    title: "提醒",
-                    type: "info",
-                    message: "已取消加入"
+                  vm.$alertT.fire({
+                    icon: "info",
+                    title: `已取消加入`
                   });
-                });
+                }
+              });
             }
           });
         }
@@ -903,17 +904,16 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認欄位是否正確填寫"
         });
+        // Vue.swal("Hello Vue world!!!");
       } else {
         if (vm.usersTableData.length == 0) {
-          vm.$notify({
-            title: "失敗",
-            type: "error",
-            message: "請確實新增參與人員!"
+          vm.$alertM.fire({
+            icon: "error",
+            title: `請確實新增參與人員!`
           });
         } else {
           let eventName = vm.eventNameInput;
@@ -956,18 +956,17 @@ export default {
           vm.$api.AddEvent(params).then(res => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
-              vm.$notify({
-                title: "成功",
-                type: "success",
-                message: `成功${vm.addOrEdit}${eventName}`
+
+              vm.$alertM.fire({
+                icon: "success",
+                title: `成功${vm.addOrEdit}${eventName}`
               });
               vm.getEvents();
             } else {
               vm.addOrEditDialog = false;
-              vm.$notify({
-                title: "失敗",
-                type: "error",
-                message: `${vm.addOrEdit}失敗`
+              vm.$alertM.fire({
+                icon: "error",
+                title: `${vm.addOrEdit}失敗`
               });
             }
           });
@@ -979,7 +978,6 @@ export default {
       if (vm.$refs.obs) {
         await vm.$refs.obs.reset();
       }
-
       if (act === "add") {
         vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
@@ -1061,10 +1059,9 @@ export default {
       let eventIds = vm.eventIds;
       if (!eventIds) {
         vm.$store.dispatch("loadingHandler", false);
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請勾選欲替換人員之活動!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: `請勾選欲替換人員之活動`
         });
       } else {
         let params = {
@@ -1082,17 +1079,15 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs2.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: `請確認欄位是否正確填寫`
         });
       } else {
         if (!vm.changeMember) {
-          vm.$notify({
-            title: "失敗",
-            type: "error",
-            message: "請確認欄位是否正確填寫!"
+          vm.$alertM.fire({
+            icon: "error",
+            title: `請確認欄位是否正確填寫`
           });
         } else {
           let eventIds = vm.eventIds;
@@ -1103,10 +1098,9 @@ export default {
             vm.changeDialog = false;
             console.log(res);
             vm.getEvents();
-            vm.$notify({
-              title: "成功",
-              type: "success",
-              message: `人員替換成功! ${res.data.response}。`
+            vm.$alertM.fire({
+              icon: "success",
+              title: `人員替換成功! ${res.data.response}`
             });
           });
         }
@@ -1202,17 +1196,15 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: `請確認欄位是否正確填寫!`
         });
       } else {
         if (vm.usersTableData.length == 0) {
-          vm.$notify({
-            title: "失敗",
-            type: "error",
-            message: "請確實新增參與人員!"
+          vm.$alertM.fire({
+            icon: "error",
+            title: `請確實新增參與人員!`
           });
         } else {
           let id = vm.editEventId;
@@ -1257,18 +1249,16 @@ export default {
           vm.$api.EditEvent(params).then(res => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
-              vm.$notify({
-                title: "成功",
-                type: "success",
-                message: `${eventName} 編輯成功`
+              vm.$alertM.fire({
+                icon: "success",
+                title: `${eventName} 編輯成功`
               });
               vm.getEvents();
             } else {
               vm.addOrEditDialog = false;
-              vm.$notify({
-                title: "失敗",
-                type: "error",
-                message: `編輯失敗`
+              vm.$alertM.fire({
+                icon: "error",
+                title: `編輯失敗`
               });
             }
           });
@@ -1282,35 +1272,35 @@ export default {
     deleteHandler(event) {
       console.log(event);
       const vm = this;
-      vm.$confirm(
-        `確認刪除 ${event.EventName} (${event.EventTypeName}) ?`,
-        "提示",
-        {
-          confirmButtonText: "確定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
+      vm.$swal({
+        title: "刪除提示",
+        text: `確認刪除 ${event.EventName} (${event.EventTypeName}) ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2f3e52",
+        cancelButtonColor: "#522f2f",
+        confirmButtonText: "確定",
+        cancelButtonText: "取消"
+      }).then(result => {
+        if (result.value) {
           let params = {
             id: event.Id
           };
           vm.$api.DeleteEvent(params).then(res => {
             vm.getEvents();
           });
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `${event.EventName} (${event.EventTypeName}) 删除成功`
+          vm.$alertM.fire({
+            icon: "success",
+            title: `${event.EventName} (${event.EventTypeName}) 删除成功`
           });
-        })
-        .catch(() => {
-          vm.$notify({
-            title: "提醒",
-            type: "info",
-            message: "已取消刪除"
+        } else {
+          vm.addLoading = false;
+          vm.$alertT.fire({
+            icon: "info",
+            title: `已取消刪除`
           });
-        });
+        }
+      });
     },
     handleSelectionChange(val) {
       const vm = this;
@@ -1320,20 +1310,12 @@ export default {
       });
       vm.eventIds = arr.join(",");
     },
-    addOrEditConfirm() {
-      this.addOrEditDialog = false;
-      this.$notify({
-        title: "成功",
-        message: "添加成功",
-        type: "success"
-      });
-    },
     getSearchDate(dateArr) {
       this.searchDate = dateArr;
     },
-    scrollToTop() {
-      this.$refs.scrollBox.wrap.scrollTop = 0;
-    },
+    // scrollToTop() {
+    //   this.$refs.scrollBox.wrap.scrollTop = 0;
+    // },
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];
@@ -1382,7 +1364,4 @@ export default {
 </script>
 
 <style lang="scss">
-.el-notification__closeBtn {
-  display: none !important;
-}
 </style>
