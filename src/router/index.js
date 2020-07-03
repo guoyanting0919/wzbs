@@ -217,7 +217,15 @@ router.beforeEach((to, from, next) => {
   // 檢查 token
   {
     if (!store.state.token) {
-      store.commit("SAVE_TOKEN", window.localStorage.Token);
+      if (
+        window.localStorage.Token &&
+        window.localStorage.Token != "undefined"
+      ) {
+        store.commit("SAVE_TOKEN", window.localStorage.Token);
+      } else {
+        console.log("LOCAL NO TOKEN");
+        window.localStorage.removeItem("Token");
+      }
     }
     if (!store.state.tokenExpire) {
       store.commit("SAVE_TOKEN_EXPIRE", window.localStorage.TokenExpire);
