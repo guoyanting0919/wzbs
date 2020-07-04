@@ -100,10 +100,9 @@ export default {
       await vm.getRoles();
 
       vm.$store.dispatch("loadingHandler", false);
-      vm.$notify({
-        title: "成功",
-        type: "success",
-        message: `角色列表刷新成功 ! `
+      vm.$alertM.fire({
+        icon: "success",
+        title: `角色列表刷新成功 ! `
       });
     },
     getPermissionByRid(id, name) {
@@ -127,35 +126,41 @@ export default {
     editHandler() {
       const vm = this;
       if (!vm.roleName) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: `請選擇欲修改角色 ! `
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請選擇欲修改角色 ! "
         });
       } else {
-        vm.$confirm(`確認修改角色 ${vm.roleName} 權限 ?`, "提示", {
+        vm.$swal({
+          title: "修改提示",
+          text: `確認修改角色 ${vm.roleName} 權限 ?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#2f3e52",
+          cancelButtonColor: "#522f2f",
           confirmButtonText: "確定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
+          cancelButtonText: "取消"
+        }).then(result => {
+          if (result.value) {
             vm.$store.dispatch("loadingHandler", true);
             let rid = vm.roleid;
             let pids = vm.$refs.tree.getCheckedKeys();
             let params = { rid, pids };
             console.log(params);
             vm.$api.EditPermissionByRid(params).then(res => {
-              vm.$notify({
-                title: "成功",
-                type: "success",
-                message: `角色 ${vm.roleName} 權限修改成功 ! `
+              vm.$alertT.fire({
+                icon: "success",
+                title: `角色 ${vm.roleName} 權限修改成功 ! `
               });
               vm.$store.dispatch("loadingHandler", false);
             });
-          })
-          .catch(() => {
-            vm.$notify({ title: "提醒", type: "info", message: "已取消修改" });
-          });
+          } else {
+            vm.$alertT.fire({
+              icon: "warning",
+              title: `已取消修改`
+            });
+          }
+        });
       }
     },
     getCheckedKeys() {
