@@ -71,3 +71,8 @@ export const setRefreshToken = (error) => {
     toLogin();
   }
 };
+
+// token 過期
+export const tokenExpire = (error) => {
+  console.log(error);
+};

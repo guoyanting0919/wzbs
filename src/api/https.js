@@ -1,7 +1,7 @@
 import axios from "axios";
 import router from "../router/index";
 import store from "../store/index";
-import { toLogin, to404Page, setRefreshToken } from "./utils";
+import { toLogin, to404Page, setRefreshToken, tokenExpire } from "./utils";
 
 // 錯誤捕捉
 const errorHandle = (status, msg, response) => {
@@ -12,7 +12,7 @@ const errorHandle = (status, msg, response) => {
 
     case 401:
       console.log(response);
-      setRefreshToken(response);
+      tokenExpire(response);
       break;
 
     case 403:

@@ -45,14 +45,14 @@
       @changePage="getEventType"
     ></Pagination>
 
-    <!-- addDialog -->
-    <el-dialog :title="addOrEdit" :visible.sync="addOrEditDialog" width="30%">
+    <!-- addOrEditDialog -->
+    <el-dialog custom-class="addOrEditDialog" :title="addOrEdit" :visible.sync="addOrEditDialog">
       <ValidationObserver ref="obs">
         <div class="inputBox">
           <p class="inputTitle">類別名稱:</p>
           <ValidationProvider name="請輸入類別名!!" rules="required" v-slot="{  errors,classes }">
             <el-input
-              style="width:250px"
+              style="width:350px"
               :class="classes"
               v-model="categoryName"
               placeholder="請輸入行事曆類別名稱"
@@ -168,10 +168,9 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認欄位是否正確填寫"
         });
       } else {
         vm.addLoading = true;
@@ -187,10 +186,9 @@ export default {
           vm.getEventType();
           vm.addOrEditDialog = false;
           vm.addLoading = false;
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `類別 ${eventTypeName} 添加成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `類別 ${eventTypeName} 添加成功 ! `
           });
         });
       }
@@ -199,10 +197,9 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認欄位是否正確填寫!"
         });
       } else {
         vm.editLoading = true;
@@ -219,10 +216,9 @@ export default {
           vm.getEventType();
           this.addOrEditDialog = false;
           vm.editLoading = false;
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `類別 ${eventTypeName} 更新成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `類別 ${eventTypeName} 更新成功 ! `
           });
         });
       }
@@ -230,31 +226,35 @@ export default {
     deleteHandler(type) {
       const vm = this;
       // console.log(type);
-      vm.$confirm(`確認刪除 ${type.EventTypeName} ?`, "提示", {
+      vm.$swal({
+        title: "刪除提示",
+        text: `確認刪除 ${type.EventTypeName} ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2f3e52",
+        cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
+        cancelButtonText: "取消"
+      }).then(result => {
+        if (result.value) {
           let params = {
             id: type.Id
           };
           vm.$api.DeleteEventType(params).then(res => {
             vm.getEventType();
           });
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `類別 ${type.EventTypeName} 删除成功`
+          vm.$alertT.fire({
+            icon: "success",
+            title: `類別 ${type.EventTypeName} 删除成功`
           });
-        })
-        .catch(() => {
-          vm.$notify({
-            title: "提醒",
-            type: "info",
-            message: "已取消刪除"
+        } else {
+          vm.addLoading = false;
+          vm.$alertT.fire({
+            icon: "warning",
+            title: `已取消刪除`
           });
-        });
+        }
+      });
     },
     hasBtn(btnType) {
       const vm = this;

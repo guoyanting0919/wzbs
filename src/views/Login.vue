@@ -40,7 +40,7 @@ import { resetRouter, filterAsyncRouter } from "@/router/index";
 export default {
   data() {
     return {
-      account: "admin",
+      account: "87042",
       password: "1qaz@WSX"
     };
   },
