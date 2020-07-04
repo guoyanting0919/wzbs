@@ -87,11 +87,12 @@
       :title="addOrEdit"
       :visible.sync="addOrEditDialog"
       v-if="unitsData"
+      custom-class="addOrEditDialog"
     >
       <ValidationObserver ref="obs">
         <el-scrollbar ref="scrollBox" class="scrollbar-handle">
           <!-- unit -->
-          <div class="inputBox" style="margin-top:1rem">
+          <div class="inputBox" style="margin-top:3rem">
             <p class="inputTitle">單位</p>
             <ValidationProvider name="請選擇最高單位" rules="required" v-slot="{  errors,classes }">
               <el-select
@@ -205,7 +206,7 @@
           <!-- organization -->
           <div class="inputBox">
             <p class="inputTitle">組織</p>
-            <el-input style="width:200px" placeholder="輸入關鍵字搜尋" v-model="filterText"></el-input>
+            <el-input style="width:220px" placeholder="輸入關鍵字搜尋" v-model="filterText"></el-input>
           </div>
           <div class="inputBox">
             <p class="inputTitle"></p>
@@ -387,10 +388,9 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認欄位是否正確填寫"
         });
       } else {
         vm.addLoading = true;
@@ -411,10 +411,9 @@ export default {
           vm.addOrEditDialog = false;
           vm.addLoading = false;
           vm.getAdminUsers();
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `用戶 ${loginName} 添加成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `用戶 ${loginName} 添加成功 ! `
           });
         });
       }
@@ -422,31 +421,34 @@ export default {
     deleteHandler(user) {
       const vm = this;
       console.log(user);
-      vm.$confirm(`確認刪除 ${user.LoginName} ?`, "提示", {
+      vm.$swal({
+        title: "刪除提示",
+        text: `確認刪除 ${user.LoginName} ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2f3e52",
+        cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
+        cancelButtonText: "取消"
+      }).then(result => {
+        if (result.value) {
           let params = {
             id: user.Id
           };
           vm.$api.DeleteAdminUser(params).then(res => {
             vm.getAdminUsers();
           });
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `用戶 ${user.LoginName} 删除成功`
+          vm.$alertT.fire({
+            icon: "success",
+            title: `用戶 ${user.LoginName} 删除成功`
           });
-        })
-        .catch(() => {
-          vm.$notify({
-            title: "提醒",
-            type: "info",
-            message: "已取消刪除"
+        } else {
+          vm.$alertT.fire({
+            icon: "info",
+            title: `已取消刪除`
           });
-        });
+        }
+      });
     },
     searchHandler({ page, key }) {
       const vm = this;
@@ -470,10 +472,9 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertT.fire({
+          icon: "error",
+          title: `請確認欄位是否正確填寫`
         });
       } else {
         vm.$store.dispatch("loadingHandler", true);
@@ -497,10 +498,9 @@ export default {
           vm.$store.dispatch("loadingHandler", false);
           vm.addOrEditDialog = false;
           vm.getAdminUsers();
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `用戶${loginName}更新成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `用戶${loginName}更新成功 ! `
           });
         });
       }

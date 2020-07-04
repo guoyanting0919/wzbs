@@ -25,6 +25,7 @@
               <el-tooltip
                 class="item"
                 effect="dark"
+                :open-delay="500"
                 :content="scope.row.Description"
                 placement="top-end"
               >

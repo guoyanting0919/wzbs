@@ -75,4 +75,28 @@ export const setRefreshToken = (error) => {
 // token 過期
 export const tokenExpire = (error) => {
   console.log(error);
+  let timerInterval;
+  store.dispatch("loadingHandler", false);
+  Vue.prototype.$swal({
+    title: "帳號時效逾期,請重新登入",
+    html: "頁面將於 <b></b> ms後跳轉",
+    timer: 3000,
+    timerProgressBar: true,
+    onBeforeOpen: () => {
+      Vue.prototype.$swal.showLoading();
+      timerInterval = window.setInterval(() => {
+        const content = Vue.prototype.$swal.getContent();
+        if (content) {
+          const b = content.querySelector("b");
+          if (b) {
+            b.textContent = Vue.prototype.$swal.getTimerLeft();
+          }
+        }
+      }, 100);
+    },
+    onClose: () => {
+      clearInterval(timerInterval);
+      toLogin();
+    },
+  });
 };
