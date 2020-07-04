@@ -33,18 +33,18 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="CreateTime" label="創建時間" sortable>
+          <el-table-column width="150" prop="CreateTime" label="創建時間" sortable>
             <template slot-scope="scope">
               <span>{{scope.row.CreateTime}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="Enabled" label="狀態" sortable>
+          <el-table-column width="100" prop="Enabled" label="狀態" sortable>
             <template slot-scope="scope">
               <span v-if="scope.row.Enabled" class="status1">啟用</span>
               <span v-else class="status2">禁用</span>
             </template>
           </el-table-column>
-          <el-table-column prop="emit" label="操作">
+          <el-table-column width="200" prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button
                 class="outline"
@@ -76,7 +76,7 @@
     ></Pagination>
 
     <!-- addOrEditDialog -->
-    <el-dialog :title="addOrEdit" :visible.sync="addOrEditDialog" width="40%">
+    <el-dialog custom-class="addOrEditDialog" :title="addOrEdit" :visible.sync="addOrEditDialog">
       <ValidationObserver ref="obs">
         <div class="inputBox">
           <p class="inputTitle">角色名</p>
@@ -206,10 +206,9 @@ export default {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫!"
+        vm.$alertM.fire({
+          icon: "error",
+          title: "請確認欄位是否正確填寫"
         });
       } else {
         vm.addLoading = true;
@@ -228,10 +227,9 @@ export default {
           console.log(res);
           vm.addOrEditDialog = false;
           vm.addLoading = false;
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `角色 ${Name} 添加成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `角色 ${Name} 添加成功 ! `
           });
         });
       }
@@ -256,40 +254,42 @@ export default {
     deleteHandler(role) {
       const vm = this;
       console.log(role);
-      vm.$confirm(`確認刪除角色 ${role.Name} ?`, "提示", {
+      vm.$swal({
+        title: "刪除提示",
+        text: `確認刪除角色 ${role.Name} ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2f3e52",
+        cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
+        cancelButtonText: "取消"
+      }).then(result => {
+        if (result.value) {
           let params = {
             id: role.Id
           };
           vm.$api.DeleteRole(params).then(res => {
             vm.getRoles();
           });
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `角色 ${role.Name} 删除成功`
+          vm.$alertT.fire({
+            icon: "success",
+            title: `角色 ${role.Name} 删除成功`
           });
-        })
-        .catch(() => {
-          vm.$notify({
-            title: "提醒",
-            type: "info",
-            message: "已取消刪除"
+        } else {
+          vm.$alertT.fire({
+            icon: "info",
+            title: `已取消刪除`
           });
-        });
+        }
+      });
     },
     async editHandler() {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
-        vm.$notify({
-          title: "失敗",
-          type: "error",
-          message: "請確認欄位是否正確填寫"
+        vm.$alertM.fire({
+          icon: "error",
+          title: `請確認欄位是否正確填寫`
         });
       } else {
         vm.editLoading = true;
@@ -307,10 +307,9 @@ export default {
           vm.getRoles();
           this.addOrEditDialog = false;
           vm.editLoading = false;
-          vm.$notify({
-            title: "成功",
-            type: "success",
-            message: `角色 ${Name} 更新成功 ! `
+          vm.$alertM.fire({
+            icon: "success",
+            title: `角色 ${Name} 更新成功 ! `
           });
         });
       }
