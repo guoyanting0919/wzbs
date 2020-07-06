@@ -569,9 +569,6 @@ export default {
           options: {
             resourceType: "Images"
             // 限定類型為圖片
-          },
-          config: {
-            connectorInfo: "token=7901a26e4bc422aef54eb45"
           }
         }
       },
