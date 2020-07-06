@@ -93,6 +93,10 @@
   border-radius: 0;
 }
 
+.swal2-cancel {
+  order: -1;
+}
+
 .tableHeader {
   background-color: lighten(
     $color: $background-color-theme1,
