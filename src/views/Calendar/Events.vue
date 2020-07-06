@@ -82,6 +82,7 @@
       </div>
     </div>
 
+    <!-- <ckeditor :editor="editor" v-model="inputDescription" :config="editorConfig"></ckeditor> -->
     <!-- pagination -->
     <Pagination
       v-if="totalCount"
@@ -123,14 +124,22 @@
         <div class="inputBox">
           <div class="inputTitle">活動 / 會議描述</div>
           <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{  errors,classes }">
-            <el-input
+            <!-- <el-input
               :class="classes"
               type="textarea"
               :rows="2"
               style="width:550px"
               v-model="inputDescription"
               placeholder="請輸入活動 / 會議描述"
-            ></el-input>
+            ></el-input>-->
+            <div class="personalContainer mt-5 ck" ref="ck">
+              <ckeditor
+                :class="classes"
+                :editor="editor"
+                v-model="inputDescription"
+                :config="editorConfig"
+              ></ckeditor>
+            </div>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
@@ -467,6 +476,28 @@
 import HeaderBox from "../../components/HeaderBox";
 import Pagination from "../../components/Pagination";
 import moment, { duration } from "moment";
+// ck
+import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
+import BoldPlugin from "@ckeditor/ckeditor5-basic-styles/src/bold";
+import ItalicPlugin from "@ckeditor/ckeditor5-basic-styles/src/italic";
+import LinkPlugin from "@ckeditor/ckeditor5-link/src/link";
+import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
+import Heading from "@ckeditor/ckeditor5-heading/src/heading.js";
+import FontBackgroundColor from "@ckeditor/ckeditor5-font/src/fontbackgroundcolor.js";
+import FontColor from "@ckeditor/ckeditor5-font/src/fontcolor.js";
+import FontFamily from "@ckeditor/ckeditor5-font/src/fontfamily.js";
+import FontSize from "@ckeditor/ckeditor5-font/src/fontsize.js";
+import MediaEmbed from "@ckeditor/ckeditor5-media-embed/src/mediaembed.js";
+import List from "@ckeditor/ckeditor5-list/src/list.js";
+import Image from "@ckeditor/ckeditor5-image/src/image.js";
+import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption.js";
+import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize.js";
+import ImageStyle from "@ckeditor/ckeditor5-image/src/imagestyle.js";
+import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar.js";
+import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload.js";
+import CKFinder from "@ckeditor/ckeditor5-ckfinder/src/ckfinder";
 export default {
   name: "CalendarEvents",
   components: {
@@ -475,6 +506,77 @@ export default {
   },
   data() {
     return {
+      // ck
+      editor: ClassicEditor,
+      editorData:
+        '<h1>司機標題</h1>\n<img\nsrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"\n/>',
+      editorConfig: {
+        plugins: [
+          EssentialsPlugin,
+          BoldPlugin,
+          ItalicPlugin,
+          LinkPlugin,
+          ParagraphPlugin,
+          Alignment,
+          Heading,
+          FontBackgroundColor,
+          FontColor,
+          FontFamily,
+          FontSize,
+          MediaEmbed,
+          List,
+          Image,
+          ImageResize,
+          ImageUpload,
+          ImageToolbar,
+          ImageCaption,
+          ImageStyle,
+          CKFinder
+        ],
+
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "|",
+            "fontBackgroundColor",
+            "fontColor",
+            "fontSize",
+            "|",
+            "link",
+            "imageUpload",
+            "mediaEmbed",
+            "|",
+            "alignment",
+            "numberedList",
+            "|",
+            "undo",
+            "redo"
+          ]
+        },
+        image: {
+          toolbar: [
+            "imageTextAlternative",
+            "|",
+            "imageStyle:full",
+            "imageStyle:side"
+          ]
+        },
+        ckfinder: {
+          uploadUrl: `https://scan.1966.org.tw/images/Upload/Pic`,
+          // 後端的上傳圖片 API 路徑
+          options: {
+            resourceType: "Images"
+            // 限定類型為圖片
+          },
+          config: {
+            connectorInfo: "token=7901a26e4bc422aef54eb45"
+          }
+        }
+      },
+
       userNameLoading: false,
       // 全域資料
       eventsData: "",
@@ -598,6 +700,11 @@ export default {
     }
   },
   methods: {
+    onReady(editor) {
+      let ck = this.$refs.ck;
+      console.log(ck);
+      this.$refs.ck.prepend(editor.ui.view.toolbar.element);
+    },
     async getUnits() {
       const vm = this;
       await vm.$api.GetUnits().then(res => {

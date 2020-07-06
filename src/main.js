@@ -11,6 +11,7 @@ import { extend, ValidationProvider, ValidationObserver } from "vee-validate";
 import { required, email } from "vee-validate/dist/rules";
 import { configure } from "vee-validate";
 import VueSweetalert2 from "vue-sweetalert2";
+import CKEditor from "@ckeditor/ckeditor5-vue";
 
 import "element-ui/lib/theme-chalk/index.css";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -32,6 +33,7 @@ Vue.use(VueAxios, axios);
 
 Vue.use(ElementUI, { locale });
 Vue.use(VueSweetalert2);
+Vue.use(CKEditor);
 
 const alertT = Vue.prototype.$swal.mixin({
   toast: true,
