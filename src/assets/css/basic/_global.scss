@@ -69,14 +69,6 @@
   box-shadow: none;
 }
 
-.el-notification {
-  // background-color: red;
-}
-
-.el-notification__content {
-  position: static;
-}
-
 .el-dialog__wrapper {
   z-index: 10 !important;
 }
@@ -89,8 +81,31 @@
   box-shadow: 5px 5px 10px black;
 }
 
-// .el-button--default:hover {
-//   color: rgb(56, 55, 55);
-//   background-color: #ebebeb;
-//   border-color: #e2dfdf;
-// }
+.el-submenu__title:focus,
+.el-submenu__title:hover {
+  background-color: $background-color-theme1;
+}
+
+.swal2-timer-progress-bar-container {
+  width: 95%;
+  margin: auto;
+  margin-bottom: 3px;
+  border-radius: 0;
+}
+
+.swal2-popup.swal2-toast {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.swal2-popup.swal2-toast {
+  background: #fffcee;
+}
+
+// safari 相容
+input {
+  line-height: normal;
+}
+
+javascript .el-table__body {
+  width: 100%;
+}
