@@ -10,6 +10,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .addOrEditDialog {
@@ -67,10 +71,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 117px;
+    width: 125px;
   }
 
   .dateFz {
+    font-size: 12px;
     @include rwd($lg) {
       font-size: 12px;
     }

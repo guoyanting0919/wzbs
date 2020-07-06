@@ -10,6 +10,7 @@
 
     <!-- mainTable -->
     <el-table
+      header-cell-class-name="tableHeader"
       v-if="eventTypeData"
       :data="eventTypeData"
       empty-text="暫無資料"

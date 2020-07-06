@@ -16,6 +16,7 @@
     <div class="mainTable" v-if="eventsData">
       <div class="tableContainer mt-5">
         <el-table
+          header-cell-class-name="tableHeader"
           empty-text="暫無資料"
           :data="eventsData"
           style="width: 100%"
@@ -378,6 +379,7 @@
         <div class="inputBox" style="align-items:flex-start">
           <div class="inputTitle"></div>
           <el-table
+            header-cell-class-name="tableHeader"
             v-if="usersTableData"
             empty-text="暫無資料"
             :data="usersTableData"

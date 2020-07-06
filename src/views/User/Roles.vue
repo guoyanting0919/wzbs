@@ -12,6 +12,7 @@
     <div class="mainTable">
       <div class="tableContainer mt-5" v-if="rolesData">
         <el-table
+          header-cell-class-name="tableHeader"
           :data="rolesDataFilter"
           empty-text="暫無資料"
           style="width: 100%"

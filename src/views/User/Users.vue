@@ -12,6 +12,7 @@
     <div class="mainTable">
       <div class="tableContainer mt-5">
         <el-table
+          header-cell-class-name="tableHeader"
           v-if="adminUsersData"
           :data="adminUsersData"
           empty-text="暫無資料"

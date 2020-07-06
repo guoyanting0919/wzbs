@@ -93,6 +93,13 @@
   border-radius: 0;
 }
 
+.tableHeader {
+  background-color: lighten(
+    $color: $background-color-theme1,
+    $amount: 65
+  ) !important;
+}
+
 .swal2-popup.swal2-toast {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
