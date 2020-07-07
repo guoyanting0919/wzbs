@@ -4,6 +4,7 @@
     <HeaderBox
       @searchHandlerDate="searchHandlerDate"
       @changeHandler="changeHandler"
+      @exportHandler="exportHandler"
       @handleAddOrEdit="handleAddOrEdit"
       @getSearchDate="getSearchDate"
       :buttonList="buttonList"
@@ -125,14 +126,6 @@
         <div class="inputBox">
           <div class="inputTitle">活動 / 會議描述</div>
           <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{  errors,classes }">
-            <!-- <el-input
-              :class="classes"
-              type="textarea"
-              :rows="2"
-              style="width:550px"
-              v-model="inputDescription"
-              placeholder="請輸入活動 / 會議描述"
-            ></el-input>-->
             <div class="personalContainer mt-5 ck" ref="ck">
               <ckeditor
                 :class="classes"
@@ -416,7 +409,7 @@
       <ValidationObserver ref="obs2">
         <div class="changeInputBox">
           <p class="changeInputTitle">原始人員</p>
-          <ValidationProvider name="請選擇原始人員!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider name="請原始人員!!" rules="required" v-slot="{  errors,classes }">
             <el-select
               filterable
               :class="classes"
@@ -437,13 +430,13 @@
 
         <div class="changeInputBox">
           <p class="changeInputTitle">替換人員</p>
-          <ValidationProvider name="請選擇原始人員!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider name="請輸入欲替換人員!!" rules="required" v-slot="{  errors,classes }">
             <el-autocomplete
               class="inline-input"
               :class="classes"
               v-model="newChangeMember"
               :fetch-suggestions="querySearch"
-              placeholder="請選擇替換人員"
+              placeholder="請輸入欲替換人員"
               :trigger-on-focus="false"
             ></el-autocomplete>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
@@ -1248,6 +1241,37 @@ export default {
         vm.currentPage = 1;
       });
     },
+
+    exportHandler({ key, startDate, endDate }) {
+      console.log(key, startDate, endDate);
+      // window.open(
+      //   `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`
+      // );
+      this.$http
+        .get(
+          `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
+          {
+            headers: { "Content-Type": "application/json" }, //// 可根據傳遞資料的類型更換
+            responseType: "blob" //// 回應類型為 blob
+          }
+        )
+        .then(res => {
+          console.log(res);
+          var blob = new Blob([res.data], {
+            type: "application/" + res.headers["content-type"]
+          });
+          var downloadElement = document.createElement("a");
+          var href = window.URL.createObjectURL(blob); // 創建下載的鏈接
+          downloadElement.href = href;
+          downloadElement.download = "123.xlsx"; // 下載後文件名
+          // 此寫法兼容可火狐瀏覽器
+          document.body.appendChild(downloadElement);
+          downloadElement.click(); // 點擊下載
+          document.body.removeChild(downloadElement); // 下載完成移除元素
+          window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
+        });
+    },
+    // ?key=${key}&startDate=${startDate}&endDate=${endDate}
     copyHandler(info) {
       console.log(info);
       const vm = this;

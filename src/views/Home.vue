@@ -14,9 +14,7 @@ export default {
   computed: {},
   methods: {},
   created() {},
-  mounted() {
-    // console.log(process.env.VUE_APP_API);
-  }
+  mounted() {}
 };
 </script>
 <style lang='scss'>

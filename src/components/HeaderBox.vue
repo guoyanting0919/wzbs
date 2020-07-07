@@ -57,7 +57,12 @@
         class="importBtn"
         type="primary"
       >匯入</el-button>
-      <el-button v-if="hasBtn('btnExport')" class="exportBtn" type="primary">匯出</el-button>
+      <el-button
+        @click="setExportHandler"
+        v-if="hasBtn('btnExport')"
+        class="exportBtn"
+        type="primary"
+      >匯出</el-button>
     </div>
   </div>
 </template>
@@ -118,6 +123,19 @@ export default {
       let key = vm.keyWordInput;
       vm.$emit("searchHandler", { page, key });
     },
+    setExportHandler() {
+      const vm = this;
+      let key = vm.keyWordInput;
+      if (vm.searchDate !== null && vm.searchDate) {
+        let startDate = moment(vm.searchDate[0]).format("YYYY-MM-DD");
+        let endDate = moment(vm.searchDate[1]).format("YYYY-MM-DD");
+        vm.$emit("exportHandler", { key, startDate, endDate });
+      } else {
+        let startDate = "";
+        let endDate = "";
+        vm.$emit("exportHandler", { key, startDate, endDate });
+      }
+    },
     setSearchHandlerDate() {
       const vm = this;
       let page = 1;
@@ -135,11 +153,6 @@ export default {
         let endDate = "";
         vm.$emit("searchHandlerDate", { page, key, startDate, endDate });
       }
-
-      // console.log(vm.searchDate, "s");
-      // let endDate = vm.searchDate
-      //   ? moment(vm.searchDate[1]).format("YYYY-MM-DD")
-      //   : "";
     }
   }
 };

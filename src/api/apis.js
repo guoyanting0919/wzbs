@@ -127,6 +127,11 @@ const api = {
   UploadFile() {
     return req("get", "/images/Upload/Pic");
   },
+
+  // download
+  DownloadExcel() {
+    return req("get", "CalendarEvent/GetCalendarExcel");
+  },
 };
 
 export default api;
