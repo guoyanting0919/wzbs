@@ -22,7 +22,8 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="UnitName" width="100" label="單位" sortable></el-table-column>
-          <el-table-column prop="LoginName" width="100" label="名稱" sortable></el-table-column>
+          <el-table-column prop="RealName" width="100" label="名稱" sortable></el-table-column>
+          <el-table-column prop="LoginName" width="100" label="登入帳號" sortable></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
             <template slot-scope="scope">
               <span
@@ -401,13 +402,19 @@ export default {
         let roles = vm.userRoleSelect;
         let ctrlUnits = vm.userControlSelect;
         let ctrlType = vm.eventTypeSelect;
+        let realNameArr = vm.usersData.filter(user => {
+          return user.Account === vm.userNameSelect;
+        });
+        let realName = realNameArr[0].Name;
         let params = {
           unitCode,
           loginName,
           roles,
           ctrlUnits,
-          ctrlType
+          ctrlType,
+          realName
         };
+        console.log(params);
         vm.$api.AddAdminUser(params).then(res => {
           vm.addOrEditDialog = false;
           vm.addLoading = false;
@@ -486,16 +493,21 @@ export default {
         let roles = vm.userRoleSelect;
         let ctrlUnits = vm.userControlSelect;
         let ctrlType = vm.eventTypeSelect;
+        let realNameArr = vm.usersData.filter(user => {
+          return user.Account === vm.userNameSelect;
+        });
+        let realName = realNameArr[0].Name;
         let params = {
           id,
           unitCode,
           loginName,
           roles,
           ctrlUnits,
-          ctrlType
+          ctrlType,
+          realName
         };
+        console.log(params);
         vm.$api.EditAdminUserById(params).then(res => {
-          console.log(res);
           vm.$store.dispatch("loadingHandler", false);
           vm.addOrEditDialog = false;
           vm.getAdminUsers();
