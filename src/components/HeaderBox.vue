@@ -53,7 +53,7 @@
       >批次替換</el-button>
       <el-button
         v-if="hasBtn('btnImport')"
-        @click="importDialogVisible = true"
+        @click="setImportHandler"
         class="importBtn"
         type="primary"
       >匯入</el-button>
@@ -135,6 +135,9 @@ export default {
         let endDate = "";
         vm.$emit("exportHandler", { key, startDate, endDate });
       }
+    },
+    setImportHandler() {
+      this.$emit("importHandler", true);
     },
     setSearchHandlerDate() {
       const vm = this;

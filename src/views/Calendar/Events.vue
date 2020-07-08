@@ -5,6 +5,7 @@
       @searchHandlerDate="searchHandlerDate"
       @changeHandler="changeHandler"
       @exportHandler="exportHandler"
+      @importHandler="importHandler"
       @handleAddOrEdit="handleAddOrEdit"
       @getSearchDate="getSearchDate"
       :buttonList="buttonList"
@@ -20,7 +21,7 @@
           header-cell-class-name="tableHeader"
           empty-text="暫無資料"
           :data="eventsData"
-          style="width: 100%"
+          style="width: 100% ;overflow:auto"
           :default-sort="{ prop: 'date', order: 'descending' }"
           @selection-change="handleSelectionChange"
         >
@@ -450,18 +451,28 @@
     </el-dialog>
 
     <!-- importDialog -->
-    <el-dialog title="匯入報表" :visible.sync="importDialogVisible" width="30%">
+    <el-dialog title="匯入文件" :visible.sync="importDialogVisible" width="30%">
       <el-upload
+        ref="import"
         class="upload-demo"
-        action="https://cors-anywhere.herokuapp.com/https://scan.1966.org.tw/images/Upload/Pic"
-        list-type="picture"
+        :multiple="false"
+        action="https://scan.1966.org.tw/api/CalendarEvent/ImportExcel/xlsx"
+        list-type="text"
+        :headers="uploadHeader"
+        :before-upload="beforeAvatarUpload"
+        :on-success="successImport"
+        :on-error="errorImport"
+        :auto-upload="false"
+        :limit="1"
+        :on-exceed="importExceed"
       >
         <el-button size="small" type="primary">選擇上傳文件</el-button>
+        <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
       <span slot="footer" class="dialog-footer">
         <el-button @click="importDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="importDialogVisible = false">匯 入</el-button>
+        <el-button type="primary" @click="confireImport">匯 入</el-button>
       </span>
     </el-dialog>
   </div>
@@ -696,6 +707,10 @@ export default {
       console.log(ck);
       this.$refs.ck.prepend(editor.ui.view.toolbar.element);
     },
+    beforeUpload(file) {
+      console.log(file);
+      return false;
+    },
     async getUnits() {
       const vm = this;
       await vm.$api.GetUnits().then(res => {
@@ -821,8 +836,6 @@ export default {
       if (url) {
         return url.split("\\")[1].split(".")[0];
       }
-      // return url.split('\')[1].split('.')[0];
-      //return url;
     },
     addToTable() {
       const vm = this;
@@ -1243,35 +1256,129 @@ export default {
     },
 
     exportHandler({ key, startDate, endDate }) {
-      console.log(key, startDate, endDate);
-      // window.open(
-      //   `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`
-      // );
-      this.$http
-        .get(
-          `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
-          {
-            headers: { "Content-Type": "application/json" }, //// 可根據傳遞資料的類型更換
+      const vm = this;
+      let date = moment(new Date()).format("YYYYMMDDHHMM");
+      let sed;
+      let keytxt;
+      if (!startDate) {
+        sed = "所有";
+      } else {
+        sed = `${startDate} ~ ${endDate}`;
+      }
+      if (!key) {
+        keytxt = "";
+      } else {
+        keytxt = `關鍵字為${key}`;
+      }
+      vm.$swal({
+        title: "匯出提示",
+        html: `即將匯出${sed}${keytxt}的資料 <br /><p class='fontRed'>*匯出內容將與搜尋結果相同*</p>`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2f3e52",
+        cancelButtonColor: "#522f2f",
+        confirmButtonText: "確定匯出",
+        cancelButtonText: "取消"
+      }).then(result => {
+        if (result.value) {
+          let config = {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${vm.$store.state.token}`
+            },
             responseType: "blob" //// 回應類型為 blob
-          }
-        )
-        .then(res => {
-          console.log(res);
-          var blob = new Blob([res.data], {
-            type: "application/" + res.headers["content-type"]
+          };
+          this.$http
+            .get(
+              `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
+              config
+            )
+            .then(res => {
+              console.log(res);
+              let blob = new Blob([res.data], {
+                type: "application/" + res.headers["content-type"]
+              });
+              let downloadElement = document.createElement("a");
+              let href = window.URL.createObjectURL(blob); // 創建下載的鏈接
+              downloadElement.href = href;
+              downloadElement.download = `行事曆事件_${date}.xlsx`; // 下載後文件名
+              // 此寫法兼容可火狐瀏覽器
+              document.body.appendChild(downloadElement);
+              downloadElement.click(); // 點擊下載
+              document.body.removeChild(downloadElement); // 下載完成移除元素
+              window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
+              vm.$alertT.fire({
+                icon: "success",
+                title: `匯出成功`
+              });
+            });
+        } else {
+          vm.$alertT.fire({
+            icon: "info",
+            title: `已取消匯出`
           });
-          var downloadElement = document.createElement("a");
-          var href = window.URL.createObjectURL(blob); // 創建下載的鏈接
-          downloadElement.href = href;
-          downloadElement.download = "123.xlsx"; // 下載後文件名
-          // 此寫法兼容可火狐瀏覽器
-          document.body.appendChild(downloadElement);
-          downloadElement.click(); // 點擊下載
-          document.body.removeChild(downloadElement); // 下載完成移除元素
-          window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
-        });
+        }
+      });
     },
-    // ?key=${key}&startDate=${startDate}&endDate=${endDate}
+    importHandler(boolen) {
+      this.importDialogVisible = boolen;
+      this.$nextTick(() => {
+        this.$refs.import.clearFiles();
+      });
+    },
+    importExceed() {
+      const vm = this;
+      vm.$alertM.fire({
+        icon: "info",
+        title: "限制單檔上傳"
+      });
+    },
+    confireImport() {
+      this.$refs.import.submit();
+    },
+    beforeAvatarUpload(file) {
+      const vm = this;
+      // const isJPG = file.type === 'image/jpeg';
+      let testmsg = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const extension = testmsg === "xls";
+      const extension2 = testmsg === "xlsx";
+      // const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!extension && !extension2) {
+        vm.$alertM.fire({
+          icon: "error",
+          title: `僅接受檔案格式為 xlsx 或 xls !`
+        });
+        return false;
+      }
+      // if (!isLt2M) {
+      //   this.$message.error("大於2M!");
+      // }
+      // return isJPG && isLt2M;
+    },
+    successImport(res) {
+      const vm = this;
+      if (res.success) {
+        vm.$alertM.fire({
+          icon: "success",
+          title: res.msg
+        });
+        vm.importDialogVisible = false;
+        vm.getEvents();
+      } else {
+        vm.$alertM.fire({
+          icon: "error",
+          title: res.msg
+        });
+        vm.importDialogVisible = false;
+      }
+    },
+    errorImport(res) {
+      const vm = this;
+      vm.$alertM.fire({
+        icon: "error",
+        title: res.msg
+      });
+    },
     copyHandler(info) {
       console.log(info);
       const vm = this;
