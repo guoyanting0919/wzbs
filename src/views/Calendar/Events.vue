@@ -26,8 +26,8 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column width="150" prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
-          <el-table-column width="120" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
+          <el-table-column width="160" prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
+          <el-table-column width="130" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
           <el-table-column width="200" prop="ShowStartDate" label="公告時間" sortable>
             <template slot-scope="scope">
               <div class="showDateBox">

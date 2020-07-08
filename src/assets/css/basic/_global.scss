@@ -3,6 +3,12 @@
   @include btn_contain($background-color-theme1);
 }
 
+button {
+  font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+    "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica, Arial,
+    sans-serif;
+}
+
 .el-button--danger {
   background: #8a0909;
   border-color: #8a0909;
@@ -20,6 +26,9 @@
 
 .el-button--default {
   @include btn_outline($background-color-theme1);
+  font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+    "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica, Arial,
+    sans-serif;
 }
 
 .el-tooltip__popper {
@@ -86,6 +95,23 @@
   background-color: $background-color-theme1;
 }
 
+.el-table__row {
+  font-size: 15px;
+}
+
+.el-table td,
+.el-table th {
+  padding: 8px 0;
+}
+
+.el-submenu__title {
+  font-size: 16px;
+}
+
+// .el-table .cell{
+//   pa
+// }
+
 .swal2-timer-progress-bar-container {
   width: 95%;
   margin: auto;
@@ -98,10 +124,14 @@
 }
 
 .tableHeader {
-  background-color: lighten(
-    $color: $background-color-theme1,
-    $amount: 65
-  ) !important;
+  font-size: 16px;
+  color: rgb(88, 88, 88);
+  line-height: 34px;
+  // background-color: lighten(
+  //   $color: $background-color-theme1,
+  //   $amount: 65
+  // ) !important;
+  @include bg_color_light($background-color-theme1);
 }
 
 .swal2-popup.swal2-toast {

@@ -19,12 +19,30 @@
   }
 }
 
+@mixin bg_color_light($color) {
+  background-color: lighten($color: $color, $amount: 65) !important;
+  [data-theme="theme1"] & {
+    background-color: lighten(
+      $color: $background-color-theme1,
+      $amount: 65
+    ) !important;
+  }
+  [data-theme="theme2"] & {
+    background-color: lighten(
+      $color: $background-color-theme2,
+      $amount: 65
+    ) !important;
+  }
+}
+
 @mixin btn_outline($color) {
   background-color: #fff;
   color: $color;
   border-color: $color;
   transition: 0.5s;
-  font-family: "微軟正黑體";
+  font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+    "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica, Arial,
+    sans-serif;
 
   &:hover,
   &:focus {
@@ -37,7 +55,9 @@
     color: $background-color-theme1;
     border-color: $background-color-theme1;
     transition: 0.5s;
-    font-family: "微軟正黑體";
+    font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+      "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica,
+      Arial, sans-serif;
 
     &:hover,
     &:focus {
@@ -51,7 +71,9 @@
     color: $background-color-theme2;
     border-color: $background-color-theme2;
     transition: 0.5s;
-    font-family: "微軟正黑體";
+    font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+      "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica,
+      Arial, sans-serif;
 
     &:hover,
     &:focus {
@@ -67,7 +89,9 @@
   color: #fff;
   border-color: $color;
   transition: 0.5s;
-  font-family: "微軟正黑體";
+  font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+    "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica, Arial,
+    sans-serif;
 
   &:focus {
     background-color: $color;
@@ -85,7 +109,9 @@
     color: #fff;
     border-color: $background-color-theme1;
     transition: 0.5s;
-    font-family: "微軟正黑體";
+    font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+      "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica,
+      Arial, sans-serif;
 
     &:focus {
       background-color: $background-color-theme1;
@@ -104,7 +130,9 @@
     color: #fff;
     border-color: $background-color-theme2;
     transition: 0.5s;
-    font-family: "微軟正黑體";
+    font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
+      "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica,
+      Arial, sans-serif;
 
     &:focus {
       background-color: $background-color-theme2;

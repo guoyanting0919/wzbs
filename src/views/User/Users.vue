@@ -23,7 +23,7 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="UnitName" width="100" label="單位" sortable></el-table-column>
           <el-table-column prop="RealName" width="100" label="名稱" sortable></el-table-column>
-          <el-table-column prop="LoginName" width="100" label="登入帳號" sortable></el-table-column>
+          <el-table-column prop="LoginName" width="100" label="帳號" sortable></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
             <template slot-scope="scope">
               <span
