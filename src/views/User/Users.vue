@@ -170,6 +170,7 @@
                 no-match-text="暫無資料"
                 v-model="userNameSelect"
                 placeholder="請選擇名稱"
+                @change="setOrg"
               >
                 <el-option
                   v-for="user in usersData"
@@ -525,6 +526,7 @@ export default {
       const vm = this;
       vm.userUnit2Select = "";
       vm.userNameSelect = "";
+      vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit1Select;
       let params = {
         unitCode
@@ -535,6 +537,7 @@ export default {
       const vm = this;
       vm.userUnit3Select = "";
       vm.userNameSelect = "";
+      vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit2Select;
       let params = {
         unitCode
@@ -544,6 +547,7 @@ export default {
     lv3Change() {
       const vm = this;
       vm.userNameSelect = "";
+      vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit3Select;
       let params = {
         unitCode
@@ -643,6 +647,13 @@ export default {
     getCheckedKeys() {
       this.userControlSelect = this.$refs.tree.getCheckedKeys();
       console.log(this.userControlSelect);
+    },
+    setOrg() {
+      let org =
+        this.userUnit3Select || this.userUnit2Select || this.userUnit1Select;
+      let arr = [];
+      arr.push(org);
+      this.$refs.tree.setCheckedKeys(arr);
     },
     // setCheckedKeys() {
     //   this.$refs.tree.setCheckedKeys(["AA00", "EU00"]);
