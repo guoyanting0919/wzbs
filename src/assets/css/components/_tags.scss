@@ -5,11 +5,19 @@
 
   .tagsContainer {
     display: flex;
-    align-items: center;
+    // align-items: center;
     background: #f0f0f0;
     height: 44px;
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
     // margin-left: 1rem;
+  }
+
+  .el-scrollbar__wrap {
+    margin-bottom: -17px;
+    margin-right: -17px;
+    display: flex;
+    align-items: center;
+    width: 100%;
   }
 
   .tagsItem {

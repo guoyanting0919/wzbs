@@ -54,6 +54,13 @@ const api = {
   EditAdminUserById(params) {
     return req("put", "AdminUser/Put", params);
   },
+  PostBatchMeeting(params, data1) {
+    return req(
+      "post",
+      `AdminUser/PostBatchMeeting?setMeeting=${params.setMeeting}`,
+      data1
+    );
+  },
 
   // Authority
   GetAuthority(params) {

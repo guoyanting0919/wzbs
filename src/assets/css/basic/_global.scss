@@ -1,6 +1,16 @@
 .el-button--primary {
   //   @include btn_outline($background-color-theme1);
-  @include btn_contain($background-color-theme1);
+  @include btn_contain(#409eff);
+}
+
+.el-button--success {
+  //   @include btn_outline($background-color-theme1);
+  @include btn_contain(#00b561);
+}
+
+.el-button--info {
+  //   @include btn_outline($background-color-theme1);
+  @include btn_contain(#7089e7);
 }
 
 button {
@@ -9,23 +19,23 @@ button {
     sans-serif;
 }
 
-.el-button--danger {
-  background: #8a0909;
-  border-color: #8a0909;
+// .el-button--danger {
+//   background: #8a0909;
+//   border-color: #8a0909;
 
-  &:focus {
-    background: #8a0909;
-    border-color: #8a0909;
-  }
+//   &:focus {
+//     background: #8a0909;
+//     border-color: #8a0909;
+//   }
 
-  &:hover {
-    border-color: #aa0c0c;
-    background: #aa0c0c !important;
-  }
-}
+//   &:hover {
+//     border-color: #aa0c0c;
+//     background: #aa0c0c !important;
+//   }
+// }
 
 .el-button--default {
-  @include btn_outline($background-color-theme1);
+  @include btn_outline(#8b8b8b);
   font-family: "PingFang TC", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體",
     "Segoe UI Semibold", "Segoe UI", "Lucida Grande", Verdana, Helvetica, Arial,
     sans-serif;
@@ -131,7 +141,7 @@ button {
   //   $color: $background-color-theme1,
   //   $amount: 65
   // ) !important;
-  @include bg_color_light($background-color-theme1);
+  background-color: #f3f4f7 !important;
 }
 
 .swal2-popup.swal2-toast {

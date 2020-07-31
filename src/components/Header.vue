@@ -14,7 +14,7 @@
     </div>
 
     <!-- theme switch -->
-    <el-switch @change="changeTheme" class="themeSwitch" v-model="themeMode"></el-switch>
+    <el-switch disabled @change="changeTheme" class="themeSwitch" v-model="themeMode"></el-switch>
 
     <!-- user -->
     <div class="userBox" v-if="userInfo">

@@ -58,7 +58,7 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column width="220" prop="emit" label="操作">
+          <el-table-column width="350" prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button
                 v-if="hasBtn('btnEdit')"
@@ -72,6 +72,12 @@
                 size="mini"
                 @click="handleAddOrEdit('edit', scope.row)"
               >編輯</el-button>
+              <el-button
+                v-if="hasBtn('btnEdit')"
+                class="outline"
+                size="mini"
+                @click="memberImportHandler(scope.row)"
+              >匯入參與人員</el-button>
               <el-button
                 v-if="hasBtn('btnDelete')"
                 type="danger"
@@ -170,6 +176,7 @@
               start-placeholder="公告時間開始"
               end-placeholder="公告時間結束"
               placeholder="請選擇時間"
+              @change="setEventDate"
             ></el-date-picker>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -288,7 +295,7 @@
         <div class="inputBox" style="align-items:flex-start">
           <div class="inputTitle">參與人員</div>
           <div>
-            <el-checkbox class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
+            <el-checkbox @change="relatedChange" class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
             <div class="selectBox">
               <el-select
                 filterable
@@ -475,6 +482,32 @@
         <el-button type="primary" @click="confireImport">匯 入</el-button>
       </span>
     </el-dialog>
+
+    <!-- memberImportDialog -->
+    <el-dialog title="參與人員匯入" :visible.sync="memberImportDialogVisible" width="30%">
+      <el-upload
+        ref="memberImport"
+        class="upload-demo"
+        :multiple="false"
+        :action="memberImportUrl"
+        list-type="text"
+        :headers="uploadHeader"
+        :before-upload="beforeAvatarUpload"
+        :on-success="successImport"
+        :on-error="errorImport"
+        :auto-upload="false"
+        :limit="1"
+        :on-exceed="importExceed"
+      >
+        <el-button size="small" type="primary">選擇上傳文件</el-button>
+        <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
+        <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+      </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="memberImportDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confireMemberImport">匯 入</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -508,7 +541,7 @@ export default {
   name: "CalendarEvents",
   components: {
     HeaderBox,
-    Pagination
+    Pagination,
   },
   data() {
     return {
@@ -536,7 +569,7 @@ export default {
           ImageToolbar,
           ImageCaption,
           ImageStyle,
-          CKFinder
+          CKFinder,
         ],
 
         toolbar: {
@@ -558,25 +591,25 @@ export default {
             "numberedList",
             "|",
             "undo",
-            "redo"
-          ]
+            "redo",
+          ],
         },
         image: {
           toolbar: [
             "imageTextAlternative",
             "|",
             "imageStyle:full",
-            "imageStyle:side"
-          ]
+            "imageStyle:side",
+          ],
         },
         ckfinder: {
           uploadUrl: `https://scan.1966.org.tw/images/Upload/Pic`,
           // 後端的上傳圖片 API 路徑
           options: {
-            resourceType: "Images"
+            resourceType: "Images",
             // 限定類型為圖片
-          }
-        }
+          },
+        },
       },
 
       userNameLoading: false,
@@ -604,7 +637,7 @@ export default {
         "列席代表(人員)",
         "諮詢顧問",
         "社會公正人士",
-        "工作小組人員"
+        "工作小組人員",
       ],
       userData: "",
       usersTable: [],
@@ -638,6 +671,10 @@ export default {
       // copy
       copyEventId: "",
 
+      // 匯入參與人員
+      memberImportDialogVisible: false,
+      importId: "",
+
       //全域變數
       searchLoading: false,
       addLoading: false,
@@ -650,40 +687,40 @@ export default {
       endDate: "",
       keyWordInput: "",
       uploadHeader: {
-        Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+        Authorization: `Bearer ${window.localStorage.getItem("Token")}`,
       },
       member: "",
       buttonList: [],
       addOrEditDialog: false,
       importDialogVisible: false,
       changeDialog: false,
-      searchDate: ""
+      searchDate: "",
     };
   },
   computed: {
     unitLv1() {
       const vm = this;
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntLevelb === "1";
       });
     },
     unitLv2() {
       const vm = this;
-      let arrLv1 = vm.unitsData.filter(unit => {
+      let arrLv1 = vm.unitsData.filter((unit) => {
         return unit.UntId === vm.unit1;
       });
       let uintLv1 = arrLv1[0];
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntIdUp === uintLv1.UntId && unit.UntLevelb === "2";
       });
     },
     unitLv3() {
       const vm = this;
-      let arrLv2 = vm.unitsData.filter(unit => {
+      let arrLv2 = vm.unitsData.filter((unit) => {
         return unit.UntId === vm.unit2;
       });
       let uintLv2 = arrLv2[0];
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntIdUp === uintLv2.UntId && unit.UntLevelb === "3";
       });
     },
@@ -693,13 +730,18 @@ export default {
     userControlUnit() {
       const vm = this;
       let userCtrl = JSON.parse(window.localStorage.getItem("user")).CtrlUnits;
-      let arr = userCtrl.map(uc => {
-        return vm.unitsData.filter(unit => {
+      let arr = userCtrl.map((uc) => {
+        return vm.unitsData.filter((unit) => {
           return unit.UntId === uc;
         })[0];
       });
       return arr;
-    }
+    },
+    memberImportUrl() {
+      const vm = this;
+      let url = `https://scan.1966.org.tw/api/CalendarEvent/ImportJoinUserExcel/xlsx?EventId=${vm.importId}`;
+      return url;
+    },
   },
   methods: {
     onReady(editor) {
@@ -713,7 +755,7 @@ export default {
     },
     async getUnits() {
       const vm = this;
-      await vm.$api.GetUnits().then(res => {
+      await vm.$api.GetUnits().then((res) => {
         vm.unitsData = res.data;
       });
     },
@@ -723,15 +765,15 @@ export default {
         key: vm.keyWordInput,
         page,
         startDate: vm.startDate,
-        endDate: vm.endDate
+        endDate: vm.endDate,
       };
-      vm.$api.GetEventsPage(params).then(res => {
+      vm.$api.GetEventsPage(params).then((res) => {
         console.log(res);
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
         vm.currentPage = page;
         let arr = res.data.response.data;
-        arr.map(event => {
+        arr.map((event) => {
           event.EventEndDate = moment(event.EventEndDate).format(
             "YYYY-MM-DD HH:mm"
           );
@@ -756,8 +798,8 @@ export default {
     getAllUser() {
       const vm = this;
       let arr = [];
-      vm.$api.GetUsers({ unitCode: "" }).then(res => {
-        vm.allMembersData = res.data.map(u => {
+      vm.$api.GetUsers({ unitCode: "" }).then((res) => {
+        vm.allMembersData = res.data.map((u) => {
           u.value = u.Name;
           return u;
         });
@@ -770,7 +812,7 @@ export default {
       vm.userNameSelect = "";
       let unitCode = vm.unit1;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
@@ -780,7 +822,7 @@ export default {
       vm.userNameSelect = "";
       let unitCode = vm.unit2;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
@@ -789,14 +831,14 @@ export default {
       vm.userNameSelect = "";
       let unitCode = vm.unit3;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
     setUser() {
       const vm = this;
       let id = vm.userNameSelect;
-      let userArr = vm.usersData.filter(user => {
+      let userArr = vm.usersData.filter((user) => {
         return user.Account === id;
       });
       vm.userData = userArr[0];
@@ -807,19 +849,29 @@ export default {
       vm.userNameLoading = true;
       if (!vm.isRelated) {
         let params1 = {
-          unitCode: ""
+          unitCode: "",
         };
-        vm.$api.GetUsers(params1).then(res => {
+        vm.$api.GetUsers(params1).then((res) => {
           console.log(res);
           vm.usersData = res.data;
           vm.userNameLoading = false;
         });
       } else {
-        vm.$api.GetUsers(params).then(res => {
+        vm.$api.GetUsers(params).then((res) => {
           vm.usersData = res.data;
           vm.userNameLoading = false;
         });
       }
+    },
+    setEventDate() {
+      this.eventDate = this.showDate;
+    },
+    relatedChange() {
+      this.unit1 = "";
+      this.userNameSelect = "";
+      this.memberTitle = "";
+      this.rloeSelect = "";
+      this.userData = "";
     },
     successUpload(res) {
       const vm = this;
@@ -842,7 +894,7 @@ export default {
       if (!vm.userData) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請確認是否正確選擇參與人員及會議 / 活動時間"
+          title: "請確認是否正確選擇參與人員及會議 / 活動時間",
         });
       } else {
         vm.addLoading = true;
@@ -861,7 +913,7 @@ export default {
             unitCode,
             userName,
             usertitle,
-            unit
+            unit,
           };
           let startDate = moment(vm.eventDate[0]).format("YYYY-MM-DD HH:mm:ss");
           let EndDate = moment(vm.eventDate[1]).format("YYYY-MM-DD HH:mm:ss");
@@ -869,13 +921,13 @@ export default {
           let params = {
             startDate,
             EndDate,
-            UserName
+            UserName,
           };
-          vm.$api.CheckUserHasEvent(params).then(res => {
+          vm.$api.CheckUserHasEvent(params).then((res) => {
             if (res.data.success) {
               vm.$alertT.fire({
                 icon: "success",
-                title: `成功加入${UserName}`
+                title: `成功加入${UserName}`,
               });
               vm.addLoading = false;
               vm.usersTable.push(userData);
@@ -896,13 +948,13 @@ export default {
                 confirmButtonColor: "#2f3e52",
                 cancelButtonColor: "#522f2f",
                 confirmButtonText: "確定",
-                cancelButtonText: "取消"
-              }).then(result => {
+                cancelButtonText: "取消",
+              }).then((result) => {
                 if (result.value) {
                   vm.addLoading = false;
                   vm.$alertT.fire({
                     icon: "success",
-                    title: `成功加入${UserName}`
+                    title: `成功加入${UserName}`,
                   });
                   vm.usersTable.push(userData);
                   vm.unit1 = "";
@@ -917,7 +969,7 @@ export default {
                   vm.addLoading = false;
                   vm.$alertT.fire({
                     icon: "info",
-                    title: `已取消加入`
+                    title: `已取消加入`,
                   });
                 }
               });
@@ -930,7 +982,7 @@ export default {
           let unitCode = vm.unit3 || vm.unit2 || vm.unit1;
           let userName = vm.userData.Name;
           let usertitle = vm.memberTitle;
-          let unitArr = vm.unitsData.filter(u => {
+          let unitArr = vm.unitsData.filter((u) => {
             return u.UntId === unitCode;
           });
           let unit = unitArr[0].UntNameFull;
@@ -942,7 +994,7 @@ export default {
             unitCode,
             userName,
             usertitle,
-            unit
+            unit,
           };
           let startDate = moment(vm.eventDate[0]).format("YYYY-MM-DD HH:mm:ss");
           let EndDate = moment(vm.eventDate[1]).format("YYYY-MM-DD HH:mm:ss");
@@ -950,15 +1002,15 @@ export default {
           let params = {
             startDate,
             EndDate,
-            UserName
+            UserName,
           };
-          vm.$api.CheckUserHasEvent(params).then(res => {
+          vm.$api.CheckUserHasEvent(params).then((res) => {
             console.log(res);
             if (res.data.success) {
               vm.addLoading = false;
               vm.$alertT.fire({
                 icon: "success",
-                title: `成功加入${UserName}`
+                title: `成功加入${UserName}`,
               });
               vm.usersTable.push(userData);
               vm.unit1 = "";
@@ -978,13 +1030,13 @@ export default {
                 confirmButtonColor: "#2f3e52",
                 cancelButtonColor: "#522f2f",
                 confirmButtonText: "確定",
-                cancelButtonText: "取消"
-              }).then(result => {
+                cancelButtonText: "取消",
+              }).then((result) => {
                 if (result.value) {
                   vm.addLoading = false;
                   vm.$alertT.fire({
                     icon: "success",
-                    title: `成功加入${UserName}`
+                    title: `成功加入${UserName}`,
                   });
                   vm.usersTable.push(userData);
                   vm.unit1 = "";
@@ -999,7 +1051,7 @@ export default {
                   vm.addLoading = false;
                   vm.$alertT.fire({
                     icon: "info",
-                    title: `已取消加入`
+                    title: `已取消加入`,
                   });
                 }
               });
@@ -1017,14 +1069,14 @@ export default {
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請確認欄位是否正確填寫"
+          title: "請確認欄位是否正確填寫",
         });
         // Vue.swal("Hello Vue world!!!");
       } else {
         if (vm.usersTableData.length == 0) {
           vm.$alertM.fire({
             icon: "error",
-            title: `請確實新增參與人員!`
+            title: `請確實新增參與人員!`,
           });
         } else {
           let eventName = vm.eventNameInput;
@@ -1061,23 +1113,23 @@ export default {
             unitCode,
             attachDoc,
             linkUrl,
-            joinUsers
+            joinUsers,
           };
           console.log(params);
-          vm.$api.AddEvent(params).then(res => {
+          vm.$api.AddEvent(params).then((res) => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
 
               vm.$alertM.fire({
                 icon: "success",
-                title: `成功${vm.addOrEdit}${eventName}`
+                title: `成功${vm.addOrEdit}${eventName}`,
               });
               vm.getEvents();
             } else {
               vm.addOrEditDialog = false;
               vm.$alertM.fire({
                 icon: "error",
-                title: `${vm.addOrEdit}失敗`
+                title: `${vm.addOrEdit}失敗`,
               });
             }
           });
@@ -1115,9 +1167,9 @@ export default {
         vm.editEventId = info.Id;
         vm.$store.dispatch("loadingHandler", true);
         let params = {
-          Id: info.Id
+          Id: info.Id,
         };
-        vm.$api.GetEventById(params).then(res => {
+        vm.$api.GetEventById(params).then((res) => {
           let event = res.data.response;
 
           vm.$store.dispatch("loadingHandler", false);
@@ -1172,13 +1224,13 @@ export default {
         vm.$store.dispatch("loadingHandler", false);
         vm.$alertM.fire({
           icon: "error",
-          title: `請勾選欲替換人員之活動`
+          title: `請勾選欲替換人員之活動`,
         });
       } else {
         let params = {
-          eventIds
+          eventIds,
         };
-        vm.$api.GetJoinUserByEventIds(params).then(res => {
+        vm.$api.GetJoinUserByEventIds(params).then((res) => {
           console.log(res.data.response);
           vm.changeMemberData = res.data.response;
           vm.changeDialog = true;
@@ -1192,26 +1244,26 @@ export default {
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: `請確認欄位是否正確填寫`
+          title: `請確認欄位是否正確填寫`,
         });
       } else {
         if (!vm.changeMember) {
           vm.$alertM.fire({
             icon: "error",
-            title: `請確認欄位是否正確填寫`
+            title: `請確認欄位是否正確填寫`,
           });
         } else {
           let eventIds = vm.eventIds;
           let oldName = vm.changeMember;
           let newName = vm.newChangeMember;
           let params = { eventIds, oldName, newName };
-          vm.$api.ChangeMember(params).then(res => {
+          vm.$api.ChangeMember(params).then((res) => {
             vm.changeDialog = false;
             console.log(res);
             vm.getEvents();
             vm.$alertM.fire({
               icon: "success",
-              title: `人員替換成功! ${res.data.response}`
+              title: `人員替換成功! ${res.data.response}`,
             });
           });
         }
@@ -1228,14 +1280,14 @@ export default {
         key,
         page,
         startDate,
-        endDate
+        endDate,
       };
-      vm.$api.SearchEvent(params).then(res => {
+      vm.$api.SearchEvent(params).then((res) => {
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
         // vm.eventsData = res.data.response.data;
         let arr = res.data.response.data;
-        arr.map(event => {
+        arr.map((event) => {
           event.EventEndDate = moment(event.EventEndDate).format(
             "YYYY-MM-DD HH:mm"
           );
@@ -1278,25 +1330,25 @@ export default {
         confirmButtonColor: "#2f3e52",
         cancelButtonColor: "#522f2f",
         confirmButtonText: "確定匯出",
-        cancelButtonText: "取消"
-      }).then(result => {
+        cancelButtonText: "取消",
+      }).then((result) => {
         if (result.value) {
           let config = {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${vm.$store.state.token}`
+              Authorization: `Bearer ${vm.$store.state.token}`,
             },
-            responseType: "blob" //// 回應類型為 blob
+            responseType: "blob", //// 回應類型為 blob
           };
           this.$http
             .get(
               `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
               config
             )
-            .then(res => {
+            .then((res) => {
               console.log(res);
               let blob = new Blob([res.data], {
-                type: "application/" + res.headers["content-type"]
+                type: "application/" + res.headers["content-type"],
               });
               let downloadElement = document.createElement("a");
               let href = window.URL.createObjectURL(blob); // 創建下載的鏈接
@@ -1309,13 +1361,13 @@ export default {
               window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
               vm.$alertT.fire({
                 icon: "success",
-                title: `匯出成功`
+                title: `匯出成功`,
               });
             });
         } else {
           vm.$alertT.fire({
             icon: "info",
-            title: `已取消匯出`
+            title: `已取消匯出`,
           });
         }
       });
@@ -1330,11 +1382,14 @@ export default {
       const vm = this;
       vm.$alertM.fire({
         icon: "info",
-        title: "限制單檔上傳"
+        title: "限制單檔上傳",
       });
     },
     confireImport() {
       this.$refs.import.submit();
+    },
+    confireMemberImport() {
+      this.$refs.memberImport.submit();
     },
     beforeAvatarUpload(file) {
       const vm = this;
@@ -1346,7 +1401,7 @@ export default {
       if (!extension && !extension2) {
         vm.$alertM.fire({
           icon: "error",
-          title: `僅接受檔案格式為 xlsx 或 xls !`
+          title: `僅接受檔案格式為 xlsx 或 xls !`,
         });
         return false;
       }
@@ -1360,23 +1415,25 @@ export default {
       if (res.success) {
         vm.$alertM.fire({
           icon: "success",
-          title: res.msg
+          title: res.msg,
         });
         vm.importDialogVisible = false;
+        vm.memberImportDialogVisible = false;
         vm.getEvents();
       } else {
         vm.$alertM.fire({
           icon: "error",
-          title: res.msg
+          title: res.msg,
         });
         vm.importDialogVisible = false;
+        vm.memberImportDialogVisible = false;
       }
     },
     errorImport(res) {
       const vm = this;
       vm.$alertM.fire({
         icon: "error",
-        title: res.msg
+        title: res.msg,
       });
     },
     copyHandler(info) {
@@ -1386,9 +1443,9 @@ export default {
       vm.copyEventId = info.Id;
       vm.$store.dispatch("loadingHandler", true);
       let params = {
-        Id: info.Id
+        Id: info.Id,
       };
-      vm.$api.GetEventById(params).then(res => {
+      vm.$api.GetEventById(params).then((res) => {
         let event = res.data.response;
 
         vm.$store.dispatch("loadingHandler", false);
@@ -1428,19 +1485,28 @@ export default {
         });
       });
     },
+    memberImportHandler(info) {
+      console.log(info);
+      const vm = this;
+      vm.importId = info.Id;
+      vm.memberImportDialogVisible = true;
+      vm.$nextTick(() => {
+        vm.$refs.memberImport.clearFiles();
+      });
+    },
     async editHandler() {
       const vm = this;
       const isValid = await vm.$refs.obs.validate();
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: `請確認欄位是否正確填寫!`
+          title: `請確認欄位是否正確填寫!`,
         });
       } else {
         if (vm.usersTableData.length == 0) {
           vm.$alertM.fire({
             icon: "error",
-            title: `請確實新增參與人員!`
+            title: `請確實新增參與人員!`,
           });
         } else {
           let id = vm.editEventId;
@@ -1479,22 +1545,22 @@ export default {
             unitCode,
             attachDoc,
             linkUrl,
-            joinUsers
+            joinUsers,
           };
           console.log(params);
-          vm.$api.EditEvent(params).then(res => {
+          vm.$api.EditEvent(params).then((res) => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
               vm.$alertM.fire({
                 icon: "success",
-                title: `${eventName} 編輯成功`
+                title: `${eventName} 編輯成功`,
               });
               vm.getEvents();
             } else {
               vm.addOrEditDialog = false;
               vm.$alertM.fire({
                 icon: "error",
-                title: `編輯失敗`
+                title: `編輯失敗`,
               });
             }
           });
@@ -1503,7 +1569,7 @@ export default {
     },
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.iconCls == btnType);
+      return this.buttonList.some((btn) => btn.iconCls == btnType);
     },
     deleteHandler(event) {
       console.log(event);
@@ -1516,24 +1582,24 @@ export default {
         confirmButtonColor: "#2f3e52",
         cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消"
-      }).then(result => {
+        cancelButtonText: "取消",
+      }).then((result) => {
         if (result.value) {
           let params = {
-            id: event.Id
+            id: event.Id,
           };
-          vm.$api.DeleteEvent(params).then(res => {
+          vm.$api.DeleteEvent(params).then((res) => {
             vm.getEvents();
           });
           vm.$alertM.fire({
             icon: "success",
-            title: `${event.EventName} (${event.EventTypeName}) 删除成功`
+            title: `${event.EventName} (${event.EventTypeName}) 删除成功`,
           });
         } else {
           vm.addLoading = false;
           vm.$alertT.fire({
             icon: "info",
-            title: `已取消刪除`
+            title: `已取消刪除`,
           });
         }
       });
@@ -1541,7 +1607,7 @@ export default {
     handleSelectionChange(val) {
       const vm = this;
       let arr = [];
-      val.map(event => {
+      val.map((event) => {
         arr.push(event.Id);
       });
       vm.eventIds = arr.join(",");
@@ -1555,7 +1621,7 @@ export default {
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];
-      routers.forEach(element => {
+      routers.forEach((element) => {
         if (routePath && element.path) {
           let path = routePath.toLowerCase();
           if (element.path && element.path.toLowerCase() === path) {
@@ -1579,10 +1645,10 @@ export default {
       console.log(results);
     },
     createFilter(queryString) {
-      return str => {
+      return (str) => {
         return str.value.indexOf(queryString) === 0;
       };
-    }
+    },
   },
   async mounted() {
     this.$store.dispatch("loadingHandler", true);
@@ -1595,7 +1661,7 @@ export default {
     this.getAllUser();
     await this.getUnits();
     this.$store.dispatch("loadingHandler", false);
-  }
+  },
 };
 </script>
 

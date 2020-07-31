@@ -43,13 +43,25 @@
         v-if="hasBtn('btnAdd')"
         @click="setHandleAddOrEdit('add')"
         class="addBtn"
-        type="primary"
+        type="success"
       >新增</el-button>
+      <el-button
+        v-if="hasBtn('btnEdit') && isUser"
+        @click="setAddOrDelMeeting('add')"
+        class="changeBtn"
+        type="info"
+      >會議批次啟用</el-button>
+      <el-button
+        v-if="hasBtn('btnEdit') && isUser"
+        @click="setAddOrDelMeeting('del')"
+        class="changeBtn"
+        type="info"
+      >會議批次停用</el-button>
       <el-button
         v-if="hasBtn('btnEdit') && isEvent"
         @click="setChangeHandler"
         class="changeBtn"
-        type="primary"
+        type="info"
       >批次替換</el-button>
       <el-button
         v-if="hasBtn('btnImport')"
@@ -96,6 +108,11 @@ export default {
       required: false
     },
     isEvent: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    isUser: {
       type: Boolean,
       default: false,
       required: false
@@ -156,6 +173,9 @@ export default {
         let endDate = "";
         vm.$emit("searchHandlerDate", { page, key, startDate, endDate });
       }
+    },
+    setAddOrDelMeeting(act) {
+      this.$emit("changeHandler", act);
     }
   }
 };

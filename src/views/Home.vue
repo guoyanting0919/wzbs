@@ -14,7 +14,11 @@ export default {
   computed: {},
   methods: {},
   created() {},
-  mounted() {}
+  mounted() {
+    if (!window.localStorage.Token) {
+      this.$router.push("/Login");
+    }
+  }
 };
 </script>
 <style lang='scss'>

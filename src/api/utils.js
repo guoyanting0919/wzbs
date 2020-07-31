@@ -25,6 +25,7 @@ export const toLogin = () => {
 
 // 跳轉到404頁面
 export const to404Page = () => {
+  store.dispatch("loadingHandler", false);
   router.replace({
     name: "Err404",
   });

@@ -100,7 +100,7 @@
   }
 
   &:hover {
-    background-color: lighten($color, 10%);
+    background-color: lighten($color, 4%);
     color: #fff;
     border-color: $color;
   }

@@ -5,7 +5,9 @@
       @searchHandler="searchHandler"
       :searchLoading="searchLoading"
       @handleAddOrEdit="handleAddOrEdit"
+      @changeHandler="changeHandler"
       :buttonList="buttonList"
+      :isUser="true"
     ></HeaderBox>
 
     <!-- mainBox -->
@@ -21,7 +23,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="UnitName" width="100" label="單位" sortable></el-table-column>
+          <el-table-column prop="UnitName" width="130" label="單位" sortable></el-table-column>
           <el-table-column prop="RealName" width="100" label="名稱" sortable></el-table-column>
           <el-table-column prop="LoginName" width="100" label="帳號" sortable></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
@@ -33,6 +35,27 @@
               >{{role}}</span>
             </template>
           </el-table-column>
+
+          <el-table-column prop="DropCtrlTypes" label="控制類別" sortable>
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
+                <div slot="content">
+                  <span
+                    v-for="(type,index) in scope.row.DropCtrlTypes"
+                    :key="`da${type.Value}`"
+                  >{{index+1}}.{{type.Text}}</span>
+                </div>
+                <p class="textOverflow">
+                  <span
+                    v-for="(type,index) in scope.row.DropCtrlTypes"
+                    :key="`da${type.Value}`"
+                    class="unitBadge"
+                  >{{index+1}}.{{type.Text}}</span>
+                </p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
           <el-table-column prop="CtrlUnits" label="組織" sortable>
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
@@ -230,17 +253,13 @@
           <!-- category -->
           <div class="inputBox">
             <p class="inputTitle" style="align-self: flex-start;">行事曆類別</p>
-            <ValidationProvider name="請至少選擇一種類型" rules="required" v-slot="{  errors }">
-              <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
-                <el-checkbox
-                  v-for="type in eventTypeData"
-                  :key="type.Id"
-                  :label="type.Id"
-                >{{type.EventTypeName}}</el-checkbox>
-              </el-checkbox-group>
-
-              <span class="validateCheckSpan" v-if="errors[0]">{{ errors[0] }}</span>
-            </ValidationProvider>
+            <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
+              <el-checkbox
+                v-for="type in eventTypeData"
+                :key="type.Id"
+                :label="type.Id"
+              >{{type.EventTypeName}}</el-checkbox>
+            </el-checkbox-group>
           </div>
         </el-scrollbar>
       </ValidationObserver>
@@ -291,6 +310,7 @@ export default {
       userNameSelect: "",
       userRoleSelect: "",
       userControlSelect: "",
+      userIds: [],
       defaultProps: {
         children: "Children",
         label: "Label"
@@ -519,6 +539,35 @@ export default {
         });
       }
     },
+    changeHandler(act) {
+      const vm = this;
+      if (vm.userIds.length === 0) {
+        vm.$store.dispatch("loadingHandler", false);
+        vm.$alertM.fire({
+          icon: "error",
+          title: `請勾選欲更新User`
+        });
+      } else {
+        let setMeeting;
+        if (act === "add") {
+          setMeeting = true;
+        } else {
+          setMeeting = false;
+        }
+        let params = {
+          setMeeting: setMeeting
+        };
+        let data1 = vm.userIds;
+        vm.$api.PostBatchMeeting(params, data1).then(res => {
+          console.log(res);
+          vm.$alertM.fire({
+            icon: "success",
+            title: res.data.msg
+          });
+          vm.getUsersPage();
+        });
+      }
+    },
     scrollToTop() {
       this.$refs.scrollBox.wrap.scrollTop = 0;
     },
@@ -637,8 +686,13 @@ export default {
       return this.buttonList.some(btn => btn.iconCls == btnType);
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
-      // console.log(val);
+      const vm = this;
+      let arr = [];
+      val.map(user => {
+        arr.push(user.Id);
+      });
+      vm.userIds = arr;
+      // console.log(vm.userIds);
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -653,6 +707,7 @@ export default {
         this.userUnit3Select || this.userUnit2Select || this.userUnit1Select;
       let arr = [];
       arr.push(org);
+      this.userControlSelect = arr;
       this.$refs.tree.setCheckedKeys(arr);
     },
     // setCheckedKeys() {
