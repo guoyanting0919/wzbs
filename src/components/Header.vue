@@ -18,7 +18,7 @@
 
     <!-- user -->
     <div class="userBox" v-if="userInfo">
-      <el-dropdown trigger="hover">
+      <el-dropdown trigger="click">
         <span class="el-dropdown-link userinfo-inner userStyle">{{userInfo.LoginName}}</span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="logoutHandler">登出</el-dropdown-item>
@@ -35,13 +35,13 @@ export default {
   data() {
     return {
       isCollapse: false,
-      themeMode: true
+      themeMode: true,
     };
   },
   computed: {
     userInfo() {
       return JSON.parse(window.localStorage.getItem("user"));
-    }
+    },
   },
   methods: {
     setCollapse() {
@@ -52,7 +52,7 @@ export default {
       const vm = this;
       vm.$confirm("即將登出", "提示", {
         type: "info",
-        confirmButtonText: "確定"
+        confirmButtonText: "確定",
       })
         .then(() => {
           window.localStorage.removeItem("user");
@@ -76,8 +76,8 @@ export default {
       } else {
         window.document.documentElement.setAttribute("data-theme", "theme2");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -139,7 +139,7 @@
               <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
             </ValidationProvider>
 
-            <ValidationProvider v-slot="{  errors,classes }">
+            <ValidationProvider v-slot="{  classes }">
               <el-select
                 filterable
                 :class="classes"
@@ -159,7 +159,7 @@
               </el-select>
             </ValidationProvider>
 
-            <ValidationProvider v-slot="{  errors,classes }">
+            <ValidationProvider v-slot="{  classes }">
               <el-select
                 filterable
                 :class="classes"
@@ -313,48 +313,48 @@ export default {
       userIds: [],
       defaultProps: {
         children: "Children",
-        label: "Label"
-      }
+        label: "Label",
+      },
     };
   },
   computed: {
     unitLv1() {
       const vm = this;
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntLevelb === "1";
       });
     },
     unitLv2() {
       const vm = this;
-      let arrLv1 = vm.unitsData.filter(unit => {
+      let arrLv1 = vm.unitsData.filter((unit) => {
         return unit.UntId === vm.userUnit1Select;
       });
       let uintLv1 = arrLv1[0];
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntIdUp === uintLv1.UntId && unit.UntLevelb === "2";
       });
     },
     unitLv3() {
       const vm = this;
-      let arrLv2 = vm.unitsData.filter(unit => {
+      let arrLv2 = vm.unitsData.filter((unit) => {
         return unit.UntId === vm.userUnit2Select;
       });
       let uintLv2 = arrLv2[0];
-      return vm.unitsData.filter(unit => {
+      return vm.unitsData.filter((unit) => {
         return unit.UntIdUp === uintLv2.UntId && unit.UntLevelb === "3";
       });
-    }
+    },
   },
   methods: {
     async getUnits() {
       const vm = this;
-      await vm.$api.GetUnits().then(res => {
+      await vm.$api.GetUnits().then((res) => {
         this.unitsData = res.data;
       });
     },
     getRoles() {
       const vm = this;
-      vm.$api.GetAllRoles().then(res => {
+      vm.$api.GetAllRoles().then((res) => {
         this.rolesData = res.data.response;
       });
     },
@@ -362,9 +362,9 @@ export default {
       const vm = this;
       let params = {
         key: vm.keyWordInput,
-        page
+        page,
       };
-      vm.$api.GetAdminUsers(params).then(res => {
+      vm.$api.GetAdminUsers(params).then((res) => {
         console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
@@ -377,7 +377,7 @@ export default {
     getAdminUsers() {
       const vm = this;
       let params;
-      vm.$api.GetAdminUsers(params).then(res => {
+      vm.$api.GetAdminUsers(params).then((res) => {
         console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
@@ -388,7 +388,7 @@ export default {
     getUsers(params) {
       const vm = this;
       vm.userNameLoading = true;
-      vm.$api.GetUsers(params).then(res => {
+      vm.$api.GetUsers(params).then((res) => {
         // console.log(res);
         vm.usersData = res.data;
 
@@ -397,13 +397,13 @@ export default {
     },
     getEventType() {
       const vm = this;
-      vm.$api.GetEventType().then(res => {
+      vm.$api.GetEventType().then((res) => {
         vm.eventTypeData = res.data;
       });
     },
     getOrg() {
       const vm = this;
-      vm.$api.GetOrg().then(res => {
+      vm.$api.GetOrg().then((res) => {
         vm.orgsData = res.data;
       });
     },
@@ -413,7 +413,7 @@ export default {
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請確認欄位是否正確填寫"
+          title: "請確認欄位是否正確填寫",
         });
       } else {
         vm.addLoading = true;
@@ -423,7 +423,7 @@ export default {
         let roles = vm.userRoleSelect;
         let ctrlUnits = vm.userControlSelect;
         let ctrlType = vm.eventTypeSelect;
-        let realNameArr = vm.usersData.filter(user => {
+        let realNameArr = vm.usersData.filter((user) => {
           return user.Account === vm.userNameSelect;
         });
         let realName = realNameArr[0].Name;
@@ -433,16 +433,16 @@ export default {
           roles,
           ctrlUnits,
           ctrlType,
-          realName
+          realName,
         };
         console.log(params);
-        vm.$api.AddAdminUser(params).then(res => {
+        vm.$api.AddAdminUser(params).then((res) => {
           vm.addOrEditDialog = false;
           vm.addLoading = false;
           vm.getAdminUsers();
           vm.$alertM.fire({
             icon: "success",
-            title: `用戶 ${loginName} 添加成功 ! `
+            title: `用戶 ${loginName} 添加成功 ! `,
           });
         });
       }
@@ -458,23 +458,23 @@ export default {
         confirmButtonColor: "#2f3e52",
         cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消"
-      }).then(result => {
+        cancelButtonText: "取消",
+      }).then((result) => {
         if (result.value) {
           let params = {
-            id: user.Id
+            id: user.Id,
           };
-          vm.$api.DeleteAdminUser(params).then(res => {
+          vm.$api.DeleteAdminUser(params).then((res) => {
             vm.getAdminUsers();
           });
           vm.$alertT.fire({
             icon: "success",
-            title: `用戶 ${user.LoginName} 删除成功`
+            title: `用戶 ${user.LoginName} 删除成功`,
           });
         } else {
           vm.$alertT.fire({
             icon: "info",
-            title: `已取消刪除`
+            title: `已取消刪除`,
           });
         }
       });
@@ -485,9 +485,9 @@ export default {
       vm.keyWordInput = key;
       let params = {
         key,
-        page
+        page,
       };
-      vm.$api.GetAdminUsers(params).then(res => {
+      vm.$api.GetAdminUsers(params).then((res) => {
         console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
@@ -503,7 +503,7 @@ export default {
       if (!isValid) {
         vm.$alertT.fire({
           icon: "error",
-          title: `請確認欄位是否正確填寫`
+          title: `請確認欄位是否正確填寫`,
         });
       } else {
         vm.$store.dispatch("loadingHandler", true);
@@ -514,7 +514,7 @@ export default {
         let roles = vm.userRoleSelect;
         let ctrlUnits = vm.userControlSelect;
         let ctrlType = vm.eventTypeSelect;
-        let realNameArr = vm.usersData.filter(user => {
+        let realNameArr = vm.usersData.filter((user) => {
           return user.Account === vm.userNameSelect;
         });
         let realName = realNameArr[0].Name;
@@ -525,16 +525,16 @@ export default {
           roles,
           ctrlUnits,
           ctrlType,
-          realName
+          realName,
         };
         console.log(params);
-        vm.$api.EditAdminUserById(params).then(res => {
+        vm.$api.EditAdminUserById(params).then((res) => {
           vm.$store.dispatch("loadingHandler", false);
           vm.addOrEditDialog = false;
           vm.getAdminUsers();
           vm.$alertM.fire({
             icon: "success",
-            title: `用戶${loginName}更新成功 ! `
+            title: `用戶${loginName}更新成功 ! `,
           });
         });
       }
@@ -545,7 +545,7 @@ export default {
         vm.$store.dispatch("loadingHandler", false);
         vm.$alertM.fire({
           icon: "error",
-          title: `請勾選欲更新User`
+          title: `請勾選欲更新User`,
         });
       } else {
         let setMeeting;
@@ -555,14 +555,14 @@ export default {
           setMeeting = false;
         }
         let params = {
-          setMeeting: setMeeting
+          setMeeting: setMeeting,
         };
         let data1 = vm.userIds;
-        vm.$api.PostBatchMeeting(params, data1).then(res => {
+        vm.$api.PostBatchMeeting(params, data1).then((res) => {
           console.log(res);
           vm.$alertM.fire({
             icon: "success",
-            title: res.data.msg
+            title: res.data.msg,
           });
           vm.getUsersPage();
         });
@@ -578,7 +578,7 @@ export default {
       vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit1Select;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
@@ -589,7 +589,7 @@ export default {
       vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit2Select;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
@@ -599,7 +599,7 @@ export default {
       vm.$refs.tree.setCheckedKeys([]);
       let unitCode = vm.userUnit3Select;
       let params = {
-        unitCode
+        unitCode,
       };
       vm.getUsers(params);
     },
@@ -620,7 +620,7 @@ export default {
         vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
 
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           vm.$refs.tree.setCheckedKeys([]);
         });
       } else {
@@ -629,46 +629,46 @@ export default {
         vm.addOrEditDialog = true;
         vm.addOrEdit = "編輯";
         let params = {
-          id: info.Id
+          id: info.Id,
         };
-        vm.$api.GetAdminUserById(params).then(res => {
+        vm.$api.GetAdminUserById(params).then((res) => {
           let user = res.data.response;
-          vm.$nextTick(function() {
+          vm.$nextTick(function () {
             (vm.userRoleSelect = user.Roles),
               (vm.eventTypeSelect = user.CtrlType),
               (vm.userControlSelect = user.CtrlUnits),
               vm.$refs.tree.setCheckedKeys(vm.userControlSelect);
             vm.userNameSelect = user.LoginName;
-            let arr = vm.unitsData.filter(unit => {
+            let arr = vm.unitsData.filter((unit) => {
               return unit.UntId === user.UnitCode;
             });
             let userUnit = arr[0];
             if (userUnit.UntLevelb === "1") {
               vm.userUnit1Select = userUnit.UntId;
-              vm.$api.GetUsers({ unitCode: vm.userUnit1Select }).then(res => {
+              vm.$api.GetUsers({ unitCode: vm.userUnit1Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
             } else if (userUnit.UntLevelb === "2") {
               vm.userUnit1Select = userUnit.UntIdUp;
               vm.userUnit2Select = userUnit.UntId;
-              vm.$api.GetUsers({ unitCode: vm.userUnit2Select }).then(res => {
+              vm.$api.GetUsers({ unitCode: vm.userUnit2Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
             } else {
               vm.userUnit2Select = userUnit.UntIdUp;
               vm.userUnit3Select = userUnit.UntId;
-              let lv2Arr = vm.unitsData.filter(unit => {
+              let lv2Arr = vm.unitsData.filter((unit) => {
                 return (
                   unit.UntLevelb === "2" && unit.UntId === vm.userUnit2Select
                 );
               });
               let pId = lv2Arr[0].UntIdUp;
-              let lv1Arr = vm.unitsData.filter(unit => {
+              let lv1Arr = vm.unitsData.filter((unit) => {
                 return unit.UntLevelb === "1" && unit.UntId === pId;
               });
-              vm.$api.GetUsers({ unitCode: vm.userUnit3Select }).then(res => {
+              vm.$api.GetUsers({ unitCode: vm.userUnit3Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
@@ -683,12 +683,12 @@ export default {
 
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.iconCls == btnType);
+      return this.buttonList.some((btn) => btn.iconCls == btnType);
     },
     handleSelectionChange(val) {
       const vm = this;
       let arr = [];
-      val.map(user => {
+      val.map((user) => {
         arr.push(user.Id);
       });
       vm.userIds = arr;
@@ -716,7 +716,7 @@ export default {
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];
-      routers.forEach(element => {
+      routers.forEach((element) => {
         if (routePath && element.path) {
           let path = routePath.toLowerCase();
           if (element.path && element.path.toLowerCase() === path) {
@@ -729,12 +729,12 @@ export default {
         }
       });
       return buttonList;
-    }
+    },
   },
   watch: {
     filterText(val) {
       this.$refs.tree.filter(val);
-    }
+    },
   },
   async mounted() {
     this.$store.dispatch("loadingHandler", true);
@@ -748,7 +748,7 @@ export default {
     this.getAdminUsers();
     await this.getUnits();
     this.$store.dispatch("loadingHandler", false);
-  }
+  },
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="userRoles">
+  <div id="eventRoles">
     <!-- headerBox -->
     <HeaderBox
       @searchHandler="searchHandler"

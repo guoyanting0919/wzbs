@@ -65,7 +65,7 @@ export default {
     Loading,
     Header,
     Sidebar,
-    Tags
+    Tags,
   },
 
   data() {
@@ -73,20 +73,20 @@ export default {
       isCollapse: false,
       uniqueOp: true,
       routes: [],
-      transitionName: "slide-left"
+      transitionName: "slide-left",
     };
   },
 
   computed: {
     isLoading() {
       return this.$store.state.isLoading;
-    }
+    },
   },
 
   methods: {
     getCollapse(boolen) {
       this.isCollapse = boolen;
-    }
+    },
   },
 
   mounted() {
@@ -97,9 +97,10 @@ export default {
     if (this.routes.length <= 0 && NavigationBar && NavigationBar.length >= 0) {
       this.routes = NavigationBar;
     }
+    console.log(process.env.VUE_APP_ENV);
   },
 
-  watch: {}
+  watch: {},
 };
 </script>
 

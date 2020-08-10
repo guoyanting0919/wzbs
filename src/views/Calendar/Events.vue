@@ -212,7 +212,7 @@
 
         <div class="inputBox">
           <div class="inputTitle">連結</div>
-          <ValidationProvider name="請輸入會議 / 活動連結!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider name="請輸入會議 / 活動連結!!" rules v-slot="{  errors,classes }">
             <el-input
               :class="classes"
               style="width:600px"
@@ -224,7 +224,7 @@
         </div>
 
         <div class="inputBox">
-          <div class="inputTitle">單位</div>
+          <div class="inputTitle">管理單位</div>
           <ValidationProvider name="請選擇單位!!" rules="required" v-slot="{  errors,classes }">
             <el-select
               filterable
@@ -250,7 +250,7 @@
           <el-upload
             ref="upload"
             class="upload-demo"
-            action="https://scan.1966.org.tw/api/Img"
+            :action="`${baseUrl}Img`"
             list-type="text"
             :headers="uploadHeader"
             :on-success="successUpload"
@@ -295,8 +295,18 @@
         <div class="inputBox" style="align-items:flex-start">
           <div class="inputTitle">參與人員</div>
           <div>
-            <el-checkbox @change="relatedChange" class="relatedCheck" v-model="isRelated">是否關聯</el-checkbox>
-            <div class="selectBox">
+            <div>
+              <el-checkbox
+                @change="relatedChange"
+                class="relatedCheck"
+                v-model="isRelated"
+                v-if="!isOutSchool"
+              >是否關聯</el-checkbox>
+              <el-checkbox class="relatedCheck" v-model="isOutSchool">校外人士參與</el-checkbox>
+            </div>
+
+            <!-- 選擇單位(校內) -->
+            <div class="selectBox" v-if="!isOutSchool">
               <el-select
                 filterable
                 no-match-text="暫無資料"
@@ -345,10 +355,37 @@
                 >{{unit.UntNameFull}}</el-option>
               </el-select>
             </div>
+
+            <!-- 選擇單位(校外) -->
+            <div class="selectBox" v-if="isOutSchool">
+              <el-input
+                style="width:180px;margin-right:0.5rem"
+                v-model="outUnit"
+                placeholder="請輸入最高單位"
+              ></el-input>
+              <el-input
+                style="width:180px;margin-right:0.5rem"
+                v-model="outName"
+                placeholder="請輸入人員名稱"
+              ></el-input>
+              <el-input
+                style="width:180px;margin-right:0.5rem"
+                v-model="outTitle"
+                placeholder="請輸入職稱"
+              ></el-input>
+              <el-input
+                style="width:180px;margin-right:0.5rem"
+                v-model="outRole"
+                placeholder="請輸入參與角色"
+              ></el-input>
+
+              <el-button @click="outAddToTable" style="margin-top:0.5rem">加入</el-button>
+            </div>
           </div>
         </div>
 
-        <div class="inputBox" style="align-items:flex-start">
+        <!-- 參與人員資料(校內) -->
+        <div v-if="!isOutSchool" class="inputBox" style="align-items:flex-start">
           <div class="inputTitle"></div>
           <div class="selectBox">
             <el-select
@@ -377,6 +414,8 @@
           </div>
           <el-button :loading="addLoading" @click="addToTable">加入</el-button>
         </div>
+
+        <!-- table -->
         <div class="inputBox" style="align-items:flex-start">
           <div class="inputTitle"></div>
           <el-table
@@ -389,6 +428,7 @@
             <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
             <el-table-column prop="usertitle" label="職稱" width="180"></el-table-column>
             <el-table-column prop="unit" label="單位"></el-table-column>
+            <el-table-column prop="userType" label="參與角色"></el-table-column>
             <el-table-column prop label="刪除">
               <template slot-scope="scope">
                 <el-button
@@ -463,7 +503,7 @@
         ref="import"
         class="upload-demo"
         :multiple="false"
-        action="https://scan.1966.org.tw/api/CalendarEvent/ImportExcel/xlsx"
+        :action="`${baseUrl}CalendarEvent/ImportExcel/xlsx`"
         list-type="text"
         :headers="uploadHeader"
         :before-upload="beforeAvatarUpload"
@@ -477,6 +517,11 @@
         <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
+      <div class="downloadEx">
+        <a href="https://scan.1966.org.tw/Files/活動匯入範例_0803113952.xlsx">
+          <i class="fas fa-download"></i>範例檔案下載
+        </a>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="importDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="confireImport">匯 入</el-button>
@@ -501,8 +546,12 @@
       >
         <el-button size="small" type="primary">選擇上傳文件</el-button>
         <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
-        <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
+      <div class="downloadEx">
+        <a href="https://scan.1966.org.tw/Files/人員匯入範例_0803112906.xlsx">
+          <i class="fas fa-download"></i>範例檔案下載
+        </a>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="memberImportDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="confireMemberImport">匯 入</el-button>
@@ -545,6 +594,8 @@ export default {
   },
   data() {
     return {
+      // baseUrl
+      baseUrl: "",
       // ck
       editor: ClassicEditor,
       editorData: "",
@@ -603,8 +654,8 @@ export default {
           ],
         },
         ckfinder: {
-          uploadUrl: `https://scan.1966.org.tw/images/Upload/Pic`,
           // 後端的上傳圖片 API 路徑
+          uploadUrl: `https://scan.1966.org.tw/images/Upload/Pic`,
           options: {
             resourceType: "Images",
             // 限定類型為圖片
@@ -659,7 +710,14 @@ export default {
       userNameSelect: "",
       rloeSelect: "",
       isRelated: true,
+      isOutSchool: false,
       memberTitle: "",
+
+      // 校外人士欄位
+      outUnit: "",
+      outName: "",
+      outTitle: "",
+      outRole: "",
 
       // 替換
       eventIds: "",
@@ -739,7 +797,7 @@ export default {
     },
     memberImportUrl() {
       const vm = this;
-      let url = `https://scan.1966.org.tw/api/CalendarEvent/ImportJoinUserExcel/xlsx?EventId=${vm.importId}`;
+      let url = `${vm.baseUrl}CalendarEvent/ImportJoinUserExcel/xlsx?EventId=${vm.importId}`;
       return url;
     },
   },
@@ -885,7 +943,7 @@ export default {
       this.uploadUrl.splice(id, 1);
     },
     fileName(url) {
-      if (url) {
+      if (url && url !== " ") {
         return url.split("\\")[1].split(".")[0];
       }
     },
@@ -900,7 +958,7 @@ export default {
         vm.addLoading = true;
         if (vm.isRelated) {
           let userId = vm.userData.Account;
-          let userType = vm.userData.UserType;
+          let userType = vm.rloeSelect;
           let unitCode = vm.userData.UnitCode;
           let userName = vm.userData.Name;
           let usertitle = vm.memberTitle;
@@ -978,7 +1036,7 @@ export default {
         } else {
           console.log("nR");
           let userId = vm.userData.Account;
-          let userType = vm.userData.UserType;
+          let userType = vm.rloeSelect;
           let unitCode = vm.unit3 || vm.unit2 || vm.unit1;
           let userName = vm.userData.Name;
           let usertitle = vm.memberTitle;
@@ -1059,6 +1117,23 @@ export default {
           });
         }
       }
+    },
+    outAddToTable() {
+      const vm = this;
+      let userData = {
+        eventId: vm.eventCategorySelete,
+        unit: vm.outUnit,
+        unitCode: vm.outUnit,
+        userId: vm.outName,
+        userName: vm.outName,
+        userType: vm.outRole,
+        usertitle: vm.outTitle,
+      };
+      vm.usersTable.push(userData);
+      vm.outUnit = "";
+      vm.outName = "";
+      vm.outRole = "";
+      vm.outTitle = "";
     },
     deleteRow(index, rows) {
       rows.splice(index, 1);
@@ -1342,7 +1417,7 @@ export default {
           };
           this.$http
             .get(
-              `https://scan.1966.org.tw/api/CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
+              `${vm.baseUrl}CalendarEvent/GetCalendarExcel?key=${key}&startDate=${startDate}&endDate=${endDate}`,
               config
             )
             .then((res) => {
@@ -1651,6 +1726,7 @@ export default {
     },
   },
   async mounted() {
+    this.baseUrl = process.env.VUE_APP_BASE_URL;
     this.$store.dispatch("loadingHandler", true);
     let routers = JSON.parse(window.localStorage.router)
       ? JSON.parse(window.localStorage.router)

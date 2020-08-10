@@ -24,6 +24,7 @@
             class="outline"
             size="mini"
             @click="handleAddOrEdit('edit',scope.row)"
+            :disabled="scope.row.EventTypeName==='會議' || scope.row.EventTypeName==='活動'"
           >編輯</el-button>
           <el-button
             v-if="hasBtn('btnDelete')"
@@ -31,6 +32,7 @@
             class="outline"
             size="mini"
             @click="deleteHandler(scope.row)"
+            :disabled="scope.row.EventTypeName==='會議' || scope.row.EventTypeName==='活動'"
           >刪除</el-button>
         </template>
       </el-table-column>
@@ -116,32 +118,32 @@ export default {
       editLoading: false,
       tableData: [
         {
-          category: "重大會議"
+          category: "重大會議",
         },
         {
-          category: "活動"
+          category: "活動",
         },
         {
-          category: "節慶"
+          category: "節慶",
         },
         {
-          category: "其他事件"
-        }
-      ]
+          category: "其他事件",
+        },
+      ],
     };
   },
   components: {
     HeaderBox,
-    Pagination
+    Pagination,
   },
   methods: {
     async getEventType(page = 1, key) {
       const vm = this;
       let params = {
         key: vm.keyWordInput,
-        page
+        page,
       };
-      await vm.$api.SearchEventType(params).then(res => {
+      await vm.$api.SearchEventType(params).then((res) => {
         vm.totalCount = res.data.response.dataCount;
         vm.eventTypeData = res.data.response.data;
         vm.pageSize = res.data.response.PageSize;
@@ -155,9 +157,9 @@ export default {
       vm.keyWordInput = key;
       let params = {
         key,
-        page
+        page,
       };
-      vm.$api.SearchEventType(params).then(res => {
+      vm.$api.SearchEventType(params).then((res) => {
         vm.totalCount = res.data.response.dataCount;
         vm.eventTypeData = res.data.response.data;
         vm.pageSize = res.data.response.PageSize;
@@ -171,7 +173,7 @@ export default {
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請確認欄位是否正確填寫"
+          title: "請確認欄位是否正確填寫",
         });
       } else {
         vm.addLoading = true;
@@ -181,15 +183,15 @@ export default {
         let params = {
           eventTypeName,
           StartDate,
-          EndDate
+          EndDate,
         };
-        vm.$api.AddEventType(params).then(res => {
+        vm.$api.AddEventType(params).then((res) => {
           vm.getEventType();
           vm.addOrEditDialog = false;
           vm.addLoading = false;
           vm.$alertM.fire({
             icon: "success",
-            title: `類別 ${eventTypeName} 添加成功 ! `
+            title: `類別 ${eventTypeName} 添加成功 ! `,
           });
         });
       }
@@ -200,7 +202,7 @@ export default {
       if (!isValid) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請確認欄位是否正確填寫!"
+          title: "請確認欄位是否正確填寫!",
         });
       } else {
         vm.editLoading = true;
@@ -211,15 +213,15 @@ export default {
           id: vm.editId,
           eventTypeName,
           StartDate,
-          EndDate
+          EndDate,
         };
-        vm.$api.EditEventType(params).then(res => {
+        vm.$api.EditEventType(params).then((res) => {
           vm.getEventType();
           this.addOrEditDialog = false;
           vm.editLoading = false;
           vm.$alertM.fire({
             icon: "success",
-            title: `類別 ${eventTypeName} 更新成功 ! `
+            title: `類別 ${eventTypeName} 更新成功 ! `,
           });
         });
       }
@@ -235,31 +237,31 @@ export default {
         confirmButtonColor: "#2f3e52",
         cancelButtonColor: "#522f2f",
         confirmButtonText: "確定",
-        cancelButtonText: "取消"
-      }).then(result => {
+        cancelButtonText: "取消",
+      }).then((result) => {
         if (result.value) {
           let params = {
-            id: type.Id
+            id: type.Id,
           };
-          vm.$api.DeleteEventType(params).then(res => {
+          vm.$api.DeleteEventType(params).then((res) => {
             vm.getEventType();
           });
           vm.$alertT.fire({
             icon: "success",
-            title: `類別 ${type.EventTypeName} 删除成功`
+            title: `類別 ${type.EventTypeName} 删除成功`,
           });
         } else {
           vm.addLoading = false;
           vm.$alertT.fire({
             icon: "warning",
-            title: `已取消刪除`
+            title: `已取消刪除`,
           });
         }
       });
     },
     hasBtn(btnType) {
       const vm = this;
-      return this.buttonList.some(btn => btn.iconCls == btnType);
+      return this.buttonList.some((btn) => btn.iconCls == btnType);
     },
     async handleAddOrEdit(act, info = "") {
       const vm = this;
@@ -283,7 +285,7 @@ export default {
     getButtonList(routePath, routers) {
       const vm = this;
       let buttonList = [];
-      routers.forEach(element => {
+      routers.forEach((element) => {
         if (routePath && element.path) {
           let path = routePath.toLowerCase();
           if (element.path && element.path.toLowerCase() === path) {
@@ -296,7 +298,7 @@ export default {
         }
       });
       return buttonList;
-    }
+    },
   },
   async mounted() {
     this.$store.dispatch("loadingHandler", true);
@@ -307,7 +309,7 @@ export default {
     await this.getEventType();
 
     this.$store.dispatch("loadingHandler", false);
-  }
+  },
 };
 </script>
 

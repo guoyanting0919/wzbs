@@ -34,9 +34,9 @@ export const to404Page = () => {
 // refreshToken
 export const setRefreshToken = (error) => {
   let curTime = new Date();
-  let refreshtime = new Date(Date.parse(window.localStorage.refreshtime));
+  let TokenExpire = new Date(Date.parse(window.localStorage.TokenExpire));
   // 在用戶操作的活躍期內
-  if (window.localStorage.refreshtime && curTime <= refreshtime) {
+  if (TokenExpire >= curTime) {
     console.log("換新token");
     return Vue.prototype.$api
       .RefreshToken({ token: window.localStorage.Token })

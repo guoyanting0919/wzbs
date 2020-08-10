@@ -35,43 +35,50 @@ import { resetRouter, filterAsyncRouter } from "@/router/index";
 export default {
   data() {
     return {
-      account: "87042",
-      password: "45445145",
+      account: "NA099",
+      password: "XX12345678",
     };
   },
   methods: {
     loginHandler() {
       const vm = this;
-      let params = {
-        account: vm.account,
-        password: vm.password,
-        loginto: "Cal",
-      };
-      vm.$store.dispatch("loadingHandler", true);
-      vm.$api.GetAdminToken(params).then((res) => {
-        if (!res.data.success) {
-          vm.$store.dispatch("loadingHandler", false);
-          vm.$alertM.fire({
-            icon: "error",
-            title: res.data.message,
-          });
-        } else {
-          let token = res.data.token;
-          vm.$store.commit("SAVE_TOKEN", token);
+      if (vm.account === "" || vm.password === "") {
+        vm.$alertM.fire({
+          icon: "error",
+          title: "帳號密碼不得為空",
+        });
+      } else {
+        let params = {
+          account: vm.account,
+          password: vm.password,
+          loginto: "Cal",
+        };
+        vm.$store.dispatch("loadingHandler", true);
+        vm.$api.GetAdminToken(params).then((res) => {
+          if (!res.data.success) {
+            vm.$store.dispatch("loadingHandler", false);
+            vm.$alertM.fire({
+              icon: "error",
+              title: res.data.message,
+            });
+          } else {
+            let token = res.data.token;
+            vm.$store.commit("SAVE_TOKEN", token);
 
-          let curTime = new Date();
-          // 設定 token 過期時間
-          let expiredate = new Date(
-            curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
-          );
-          vm.$store.commit("SAVE_TOKEN_EXPIRE", expiredate);
+            let curTime = new Date();
+            // 設定 token 過期時間
+            let expiredate = new Date(
+              curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
+            );
+            vm.$store.commit("SAVE_TOKEN_EXPIRE", expiredate);
 
-          window.localStorage.refreshtime = expiredate;
-          window.localStorage.expires_in = res.data.expires_in;
+            window.localStorage.refreshtime = expiredate;
+            window.localStorage.expires_in = res.data.expires_in;
 
-          vm.GetInfoByToken(token);
-        }
-      });
+            vm.GetInfoByToken(token);
+          }
+        });
+      }
     },
     GetInfoByToken(token) {
       const vm = this;
