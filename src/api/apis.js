@@ -129,6 +129,32 @@ const api = {
   ChangeMember(params) {
     return req("get", "CalendarEvent/ReplaceJoinUser", params);
   },
+  GetUserTitle(params) {
+    return req("get", "CalendarEvent/GetUserTitle", params);
+  },
+
+  // calendar event roles
+  GetEventRolesPages(params) {
+    return req("get", "JoinUserRole/Get", params);
+  },
+  GetEventRoles(params) {
+    return req("get", "JoinUserRole/GetRoles", params);
+  },
+  GetEventRoleById(params) {
+    return req("get", "JoinUserRole/GetRoleById", params);
+  },
+  AddEventRoles(params) {
+    return req("post", "JoinUserRole/Post", params);
+  },
+  EditEventRoles(params) {
+    return req("put", "JoinUserRole/Put", params);
+  },
+  DeleteEventRoles(params) {
+    return req("delete", "JoinUserRole/Delete", params);
+  },
+  GetEventRolesExcel(params) {
+    return req("get", "JoinUserRole/GetCalendarExcel", params);
+  },
 
   // upload
   UploadFile() {
@@ -138,6 +164,9 @@ const api = {
   // download
   DownloadExcel() {
     return req("get", "CalendarEvent/GetCalendarExcel");
+  },
+  DownUnitExcel() {
+    return req("get", "School/GetUnitExcel");
   },
 };
 

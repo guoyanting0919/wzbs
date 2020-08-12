@@ -58,7 +58,7 @@
         type="info"
       >會議批次停用</el-button>
       <el-button
-        v-if="hasBtn('btnEdit') && isEvent"
+        v-if="hasBtn('btnChange') && isEvent"
         @click="setChangeHandler"
         class="changeBtn"
         type="info"
@@ -88,41 +88,41 @@ export default {
       keyWordInput: "",
       changeDialogVisible: false,
       importDialogVisible: false,
-      searchDate: ""
+      searchDate: "",
     };
   },
   props: {
     buttonList: {
       type: Array,
       required: true,
-      default: []
+      default: [],
     },
     showDatePicker: {
       type: Boolean,
       default: false,
-      required: false
+      required: false,
     },
     searchLoading: {
       type: Boolean,
       default: false,
-      required: false
+      required: false,
     },
     isEvent: {
       type: Boolean,
       default: false,
-      required: false
+      required: false,
     },
     isUser: {
       type: Boolean,
       default: false,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     hasBtn(btnType) {
       // return true;
       const vm = this;
-      return this.buttonList.some(btn => btn.iconCls == btnType);
+      return this.buttonList.some((btn) => btn.iconCls == btnType);
     },
     setHandleAddOrEdit(method) {
       //   console.log(method);
@@ -176,8 +176,8 @@ export default {
     },
     setAddOrDelMeeting(act) {
       this.$emit("changeHandler", act);
-    }
-  }
+    },
+  },
 };
 </script>
 

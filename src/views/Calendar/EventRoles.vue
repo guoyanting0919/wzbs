@@ -10,38 +10,21 @@
 
     <!-- mainBox -->
     <div class="mainTable">
-      <div class="tableContainer mt-5" v-if="rolesData">
+      <div class="tableContainer mt-5" v-if="eventRolesData">
         <el-table
           header-cell-class-name="tableHeader"
-          :data="rolesDataFilter"
+          :data="eventRolesData"
           empty-text="暫無資料"
           style="width: 100%"
           :default-sort="{prop: 'date', order: 'descending'}"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="Name" label="角色名" sortable></el-table-column>
-          <el-table-column prop="Description" label="說明" sortable>
+          <el-table-column prop="Name" label="參與角色名" sortable></el-table-column>
+
+          <el-table-column width="100" prop="Enable" label="狀態" sortable>
             <template slot-scope="scope">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :open-delay="500"
-                :content="scope.row.Description"
-                placement="top-end"
-              >
-                <p class="textOverflow">{{scope.row.Description}}</p>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-          <el-table-column width="150" prop="CreateTime" label="創建時間" sortable>
-            <template slot-scope="scope">
-              <span>{{scope.row.CreateTime}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column width="100" prop="Enabled" label="狀態" sortable>
-            <template slot-scope="scope">
-              <span v-if="scope.row.Enabled" class="status1">啟用</span>
+              <span v-if="scope.row.Enable" class="status1">啟用</span>
               <span v-else class="status2">禁用</span>
             </template>
           </el-table-column>
@@ -74,7 +57,7 @@
       :keyWord="keyWordInput"
       :total="totalCount"
       :currentPage="currentPage"
-      @changePage="getRoles"
+      @changePage="getEventRoles"
       :page-size="pageSize"
     ></Pagination>
 
@@ -82,13 +65,13 @@
     <el-dialog custom-class="addOrEditDialog" :title="addOrEdit" :visible.sync="addOrEditDialog">
       <ValidationObserver ref="obs">
         <div class="inputBox">
-          <p class="inputTitle">角色名</p>
-          <ValidationProvider name="請輸入角色名!!" rules="required" v-slot="{  errors,classes }">
+          <p class="inputTitle">參與角色名</p>
+          <ValidationProvider name="請輸入參與角色名!!" rules="required" v-slot="{  errors,classes }">
             <el-input
               :class="classes"
               style="width:300px"
               v-model="roleNameInput"
-              placeholder="請輸入角色名"
+              placeholder="請輸入參與角色名"
             ></el-input>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -102,18 +85,6 @@
             active-color="#13ce66"
             inactive-color="#ff4949"
           ></el-switch>
-        </div>
-        <div class="inputBox">
-          <p class="inputTitle">說明</p>
-          <ValidationProvider name="請輸入角色說明!!" rules="required" v-slot="{  errors,classes }">
-            <el-input
-              :class="classes"
-              style="width:300px"
-              v-model="roleDescription"
-              placeholder="說明欄位"
-            ></el-input>
-            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-          </ValidationProvider>
         </div>
       </ValidationObserver>
 
@@ -138,10 +109,9 @@ export default {
       addOrEditDialog: false,
       roleNameInput: "",
       roleStatusSelect: "",
-      roleDescription: "",
       buttonList: [],
       keyWordInput: "",
-      rolesData: "",
+      eventRolesData: "",
       currentPage: 1,
       totalCount: "",
       pageSize: "",
@@ -153,13 +123,13 @@ export default {
     };
   },
   computed: {
-    rolesDataFilter() {
-      let data = this.rolesData;
-      data.map((role) => {
-        role.CreateTime = moment(role.CreateTime).format("YYYY-MM-DD");
-      });
-      return data;
-    },
+    // rolesDataFilter() {
+    //   let data = this.eventRolesData;
+    //   data.map((role) => {
+    //     role.CreateTime = moment(role.CreateTime).format("YYYY-MM-DD");
+    //   });
+    //   return data;
+    // },
   },
   methods: {
     getButtonList(routePath, routers) {
@@ -190,7 +160,6 @@ export default {
         await vm.$refs.obs.reset();
       }
       vm.roleNameInput = "";
-      vm.roleDescription = "";
       vm.roleStatusSelect = true;
       vm.addOrEdit = "新增";
       if (act === "add") {
@@ -200,8 +169,7 @@ export default {
         vm.addOrEdit = "編輯";
         vm.addOrEditDialog = true;
         vm.roleNameInput = info.Name;
-        vm.roleDescription = info.Description;
-        vm.roleStatusSelect = info.Enabled;
+        vm.roleStatusSelect = info.Enable;
         vm.editId = info.Id;
       }
     },
@@ -216,23 +184,19 @@ export default {
       } else {
         vm.addLoading = true;
         let Name = vm.roleNameInput;
-        let Enabled = vm.roleStatusSelect;
-        let Description = vm.roleDescription;
-        let CreateTime = moment(new Date()).format("YYYY-MM-DD");
+        let Enable = vm.roleStatusSelect;
         let params = {
           Name,
-          Enabled,
-          Description,
-          CreateTime,
+          Enable,
         };
-        vm.$api.AddRole(params).then((res) => {
-          vm.getRoles();
+        vm.$api.AddEventRoles(params).then((res) => {
+          vm.getEventRoles();
           console.log(res);
           vm.addOrEditDialog = false;
           vm.addLoading = false;
           vm.$alertM.fire({
             icon: "success",
-            title: `角色 ${Name} 添加成功 ! `,
+            title: `參與角色 ${Name} 添加成功 ! `,
           });
         });
       }
@@ -245,11 +209,11 @@ export default {
         key,
         page,
       };
-      vm.$api.SearchRoles(params).then((res) => {
+      vm.$api.GetEventRolesPages(params).then((res) => {
         console.log(res);
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
-        vm.rolesData = res.data.response.data;
+        vm.eventRolesData = res.data.response.data;
         vm.searchLoading = false;
         vm.currentPage = 1;
       });
@@ -259,7 +223,7 @@ export default {
       console.log(role);
       vm.$swal({
         title: "刪除提示",
-        text: `確認刪除角色 ${role.Name} ?`,
+        text: `確認刪除參與角色 ${role.Name} ?`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#2f3e52",
@@ -271,8 +235,8 @@ export default {
           let params = {
             id: role.Id,
           };
-          vm.$api.DeleteRole(params).then((res) => {
-            vm.getRoles();
+          vm.$api.DeleteEventRoles(params).then((res) => {
+            vm.getEventRoles();
           });
           vm.$alertT.fire({
             icon: "success",
@@ -298,16 +262,14 @@ export default {
         vm.editLoading = true;
         let Id = vm.editId;
         let Name = vm.roleNameInput;
-        let Enabled = vm.roleStatusSelect;
-        let Description = vm.roleDescription;
+        let Enable = vm.roleStatusSelect;
         let params = {
           Id,
           Name,
-          Enabled,
-          Description,
+          Enable,
         };
-        vm.$api.EditRole(params).then((res) => {
-          vm.getRoles();
+        vm.$api.EditEventRoles(params).then((res) => {
+          vm.getEventRoles();
           this.addOrEditDialog = false;
           vm.editLoading = false;
           vm.$alertM.fire({
@@ -321,16 +283,16 @@ export default {
       this.multipleSelection = val;
       // console.log(val);
     },
-    async getRoles(page = 1, key) {
+    async getEventRoles(page = 1, key) {
       const vm = this;
       let params = {
         key: vm.keyWordInput,
         page,
       };
-      await vm.$api.GetRoles(params).then((res) => {
+      await vm.$api.GetEventRolesPages(params).then((res) => {
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
-        vm.rolesData = res.data.response.data;
+        vm.eventRolesData = res.data.response.data;
         vm.currentPage = page;
         vm.$store.dispatch("loadingHandler", false);
       });
@@ -343,7 +305,7 @@ export default {
       : [];
     this.getButtonList(this.$route.path, routers);
 
-    await this.getRoles();
+    await this.getEventRoles();
 
     this.$store.dispatch("loadingHandler", false);
   },

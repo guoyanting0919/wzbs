@@ -37,16 +37,14 @@ export const setRefreshToken = (error) => {
   let TokenExpire = new Date(Date.parse(window.localStorage.TokenExpire));
   // 在用戶操作的活躍期內
   if (TokenExpire >= curTime) {
-    console.log("換新token");
+    // Vue.prototype.$message({
+    //   message: "刷新token中 請稍候...",
+    //   type: "success",
+    // });
     return Vue.prototype.$api
-      .RefreshToken({ token: window.localStorage.Token })
+      .RefreshToken({ token: window.localStorage.Token, loginto: "Cal" })
       .then((res) => {
         if (res.data.success) {
-          Vue.prototype.$message({
-            message: "refreshToken success! loading data...",
-            type: "success",
-          });
-
           store.commit("SAVE_TOKEN", res.data.token);
 
           let curTime = new Date();
@@ -69,7 +67,31 @@ export const setRefreshToken = (error) => {
       });
   } else {
     // 返回 401，並且不知用戶操作活躍期內 清除token信息並跳轉到登錄頁面
-    toLogin();
+    // toLogin();
+    let timerInterval;
+    store.dispatch("loadingHandler", false);
+    Vue.prototype.$swal({
+      title: "帳號時效逾期,請重新登入",
+      html: "頁面將於 <b></b> ms後跳轉",
+      timer: 3000,
+      timerProgressBar: true,
+      onBeforeOpen: () => {
+        Vue.prototype.$swal.showLoading();
+        timerInterval = window.setInterval(() => {
+          const content = Vue.prototype.$swal.getContent();
+          if (content) {
+            const b = content.querySelector("b");
+            if (b) {
+              b.textContent = Vue.prototype.$swal.getTimerLeft();
+            }
+          }
+        }, 100);
+      },
+      onClose: () => {
+        clearInterval(timerInterval);
+        toLogin();
+      },
+    });
   }
 };
 

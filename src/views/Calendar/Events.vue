@@ -26,9 +26,24 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column width="160" prop="EventName" label="活動 / 會議名稱" sortable></el-table-column>
-          <el-table-column width="130" prop="EventTypeName" label="行事曆類別" sortable></el-table-column>
-          <el-table-column width="200" prop="ShowStartDate" label="公告時間" sortable>
+          <el-table-column
+            width="160"
+            prop="EventName"
+            label="活動 / 會議名稱"
+            sortable
+          ></el-table-column>
+          <el-table-column
+            width="130"
+            prop="EventTypeName"
+            label="行事曆類別"
+            sortable
+          ></el-table-column>
+          <el-table-column
+            width="200"
+            prop="ShowStartDate"
+            label="公告時間"
+            sortable
+          >
             <template slot-scope="scope">
               <div class="showDateBox">
                 <span class="dateFz">{{ scope.row.ShowStartDate }}</span>
@@ -37,7 +52,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="200" prop="EventStartDate" label="活動 / 會議時間" sortable>
+          <el-table-column
+            width="200"
+            prop="EventStartDate"
+            label="活動 / 會議時間"
+            sortable
+          >
             <template slot-scope="scope">
               <div class="eventDateBox">
                 <span class="dateFz">{{ scope.row.EventStartDate }}</span>
@@ -48,7 +68,12 @@
           </el-table-column>
           <el-table-column prop="EventAddr" label="地點" sortable>
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :open-delay="500"
+                placement="top-start"
+              >
                 <div slot="content">
                   <span>{{ scope.row.EventAddr }}</span>
                 </div>
@@ -65,26 +90,30 @@
                 class="outline"
                 size="mini"
                 @click="copyHandler(scope.row)"
-              >複製</el-button>
+                >複製</el-button
+              >
               <el-button
                 v-if="hasBtn('btnEdit')"
                 class="outline"
                 size="mini"
                 @click="handleAddOrEdit('edit', scope.row)"
-              >編輯</el-button>
+                >編輯</el-button
+              >
               <el-button
                 v-if="hasBtn('btnEdit')"
                 class="outline"
                 size="mini"
                 @click="memberImportHandler(scope.row)"
-              >匯入參與人員</el-button>
+                >匯入參與人員</el-button
+              >
               <el-button
                 v-if="hasBtn('btnDelete')"
                 type="danger"
                 class="outline"
                 size="mini"
                 @click="deleteHandler(scope.row)"
-              >刪除</el-button>
+                >刪除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -117,7 +146,11 @@
         <!-- <el-scrollbar class="scrollbar-handle" ref="scrollBox"> -->
         <div class="inputBox" style="margin-top: 3rem;">
           <div class="inputTitle">活動 / 會議名稱</div>
-          <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入活動會議名稱!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-input
               :class="classes"
               type="textarea"
@@ -132,7 +165,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">活動 / 會議描述</div>
-          <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入活動會議描述!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <div class="personalContainer mt-5 ck" ref="ck">
               <ckeditor
                 :class="classes"
@@ -147,7 +184,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">行事曆類別</div>
-          <ValidationProvider name="請選擇類別!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請選擇類別!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-select
               :class="classes"
               v-if="eventTypeData"
@@ -167,7 +208,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">公告時間</div>
-          <ValidationProvider name="請選擇公告時間!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請選擇公告時間!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-date-picker
               :class="classes"
               v-model="showDate"
@@ -184,7 +229,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動時間</div>
-          <ValidationProvider name="請選擇活動時間!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請選擇活動時間!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-date-picker
               :class="classes"
               v-model="eventDate"
@@ -199,7 +248,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動地點</div>
-          <ValidationProvider name="請輸入會議 / 活動地點!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入會議 / 活動地點!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-input
               :class="classes"
               style="width:600px"
@@ -212,7 +265,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">連結</div>
-          <ValidationProvider name="請輸入會議 / 活動連結!!" rules v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入會議 / 活動連結!!"
+            rules
+            v-slot="{ errors, classes }"
+          >
             <el-input
               :class="classes"
               style="width:600px"
@@ -225,7 +282,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">管理單位</div>
-          <ValidationProvider name="請選擇單位!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請選擇單位!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-select
               filterable
               no-match-text="暫無資料"
@@ -255,7 +316,12 @@
             :headers="uploadHeader"
             :on-success="successUpload"
           >
-            <el-tooltip :open-delay="500" class="item" effect="dark" placement="top-start">
+            <el-tooltip
+              :open-delay="500"
+              class="item"
+              effect="dark"
+              placement="top-start"
+            >
               <div slot="content">
                 檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
                 <br />檔案大小限制:10MB
@@ -267,11 +333,11 @@
 
         <div class="inputBox">
           <div class="inputTitle">已上傳文件</div>
-          <p class="noFiles" v-if="uploadUrl.length === 0 ">尚未上傳文件</p>
+          <p class="noFiles" v-if="uploadUrl.length === 0">尚未上傳文件</p>
 
           <div v-if="uploadUrl">
             <el-button
-              v-for="(url,index) in uploadUrl"
+              v-for="(url, index) in uploadUrl"
               :key="index"
               class="downloadBtn"
               size="mini"
@@ -284,8 +350,11 @@
                 placement="top-start"
               >
                 <p class="fileName" v-if="url">
-                  <i @click.capture="delFile(index)" class="fas fa-trash-alt"></i>
-                  {{fileName(url)}}
+                  <i
+                    @click.capture="delFile(index)"
+                    class="fas fa-trash-alt"
+                  ></i>
+                  {{ fileName(url) }}
                 </p>
               </el-tooltip>
             </el-button>
@@ -301,8 +370,11 @@
                 class="relatedCheck"
                 v-model="isRelated"
                 v-if="!isOutSchool"
-              >是否關聯</el-checkbox>
-              <el-checkbox class="relatedCheck" v-model="isOutSchool">校外人士參與</el-checkbox>
+                >是否關聯</el-checkbox
+              >
+              <el-checkbox class="relatedCheck" v-model="isOutSchool"
+                >校外人士參與</el-checkbox
+              >
             </div>
 
             <!-- 選擇單位(校內) -->
@@ -320,7 +392,8 @@
                   :label="unit.UntNameFull"
                   v-for="unit in unitLv1"
                   :key="unit.UntId"
-                >{{unit.UntNameFull}}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
               <el-select
                 filterable
@@ -336,7 +409,8 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{unit.UntNameFull}}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
               <el-select
                 filterable
@@ -352,7 +426,8 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{unit.UntNameFull}}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
             </div>
 
@@ -373,19 +448,31 @@
                 v-model="outTitle"
                 placeholder="請輸入職稱"
               ></el-input>
-              <el-input
+              <el-select
                 style="width:180px;margin-right:0.5rem"
                 v-model="outRole"
-                placeholder="請輸入參與角色"
-              ></el-input>
+                placeholder="參與角色"
+              >
+                <el-option
+                  v-for="role in rolesData"
+                  :key="role.Id"
+                  :value="role.Name"
+                ></el-option>
+              </el-select>
 
-              <el-button @click="outAddToTable" style="margin-top:0.5rem">加入</el-button>
+              <el-button @click="outAddToTable" style="margin-top:0.5rem"
+                >加入</el-button
+              >
             </div>
           </div>
         </div>
 
         <!-- 參與人員資料(校內) -->
-        <div v-if="!isOutSchool" class="inputBox" style="align-items:flex-start">
+        <div
+          v-if="!isOutSchool"
+          class="inputBox"
+          style="align-items:flex-start"
+        >
           <div class="inputTitle"></div>
           <div class="selectBox">
             <el-select
@@ -406,10 +493,19 @@
               ></el-option>
             </el-select>
             <el-select v-model="memberTitle" placeholder="職稱">
-              <el-option :value="userData.Title">{{userData.Title}}</el-option>
+              <el-option
+                v-for="(title, index) in memberTitleList"
+                :key="index"
+                :value="title"
+                >{{ title }}</el-option
+              >
             </el-select>
-            <el-select v-model="rloeSelect" placeholder="Role">
-              <el-option v-for="role in rolesData" :key="role" :value="role"></el-option>
+            <el-select v-model="rloeSelect" placeholder="參與角色">
+              <el-option
+                v-for="role in rolesData"
+                :key="role.Id"
+                :value="role.Name"
+              ></el-option>
             </el-select>
           </div>
           <el-button :loading="addLoading" @click="addToTable">加入</el-button>
@@ -425,8 +521,16 @@
             :data="usersTableData"
             style="width: 100%"
           >
-            <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
-            <el-table-column prop="usertitle" label="職稱" width="180"></el-table-column>
+            <el-table-column
+              prop="userName"
+              label="姓名"
+              width="180"
+            ></el-table-column>
+            <el-table-column
+              prop="usertitle"
+              label="職稱"
+              width="180"
+            ></el-table-column>
             <el-table-column prop="unit" label="單位"></el-table-column>
             <el-table-column prop="userType" label="參與角色"></el-table-column>
             <el-table-column prop label="刪除">
@@ -434,30 +538,67 @@
                 <el-button
                   size="mini"
                   type="danger"
-                  @click.native.prevent="deleteRow(scope.$index, usersTableData)"
-                >刪除</el-button>
+                  @click.native.prevent="
+                    deleteRow(scope.$index, usersTableData)
+                  "
+                  >刪除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
         </div>
+
+        <!-- modify -->
+        <div v-if="addOrEdit === '編輯' && modifyBy" class="inputBox">
+          <div class="inputTitle"></div>
+          <div class="modifyDiv">
+            <span class="modifyText"
+              >{{ modifyBy }} 於 {{ modifyTime }} 進行最後一次編輯</span
+            >
+          </div>
+        </div>
+
         <!-- </el-scrollbar> -->
       </ValidationObserver>
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button v-if="addOrEdit==='新增'" type="primary" @click="addHandler">新 增</el-button>
-        <el-button v-if="addOrEdit==='編輯'" type="primary" @click="editHandler">編 輯</el-button>
-        <el-button v-if="addOrEdit==='複製'" type="primary" @click="addHandler">複 製</el-button>
+        <el-button
+          v-if="addOrEdit === '新增'"
+          type="primary"
+          @click="addHandler"
+          >新 增</el-button
+        >
+        <el-button
+          v-if="addOrEdit === '編輯'"
+          type="primary"
+          @click="editHandler"
+          >編 輯</el-button
+        >
+        <el-button
+          v-if="addOrEdit === '複製'"
+          type="primary"
+          @click="addHandler"
+          >複 製</el-button
+        >
       </div>
     </el-dialog>
 
     <!-- changeDialog -->
 
-    <el-dialog title="替換人員" custom-class="changeDialog" :visible.sync="changeDialog">
+    <el-dialog
+      title="替換人員"
+      custom-class="changeDialog"
+      :visible.sync="changeDialog"
+    >
       <ValidationObserver ref="obs2">
         <div class="changeInputBox">
           <p class="changeInputTitle">原始人員</p>
-          <ValidationProvider name="請原始人員!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請原始人員!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-select
               filterable
               :class="classes"
@@ -467,7 +608,7 @@
               placeholder="請選擇原始人員"
             >
               <el-option
-                v-for="(member,index) in changeMemberData"
+                v-for="(member, index) in changeMemberData"
                 :key="`${member + index}`"
                 :value="member"
               ></el-option>
@@ -478,7 +619,11 @@
 
         <div class="changeInputBox">
           <p class="changeInputTitle">替換人員</p>
-          <ValidationProvider name="請輸入欲替換人員!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入欲替換人員!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-autocomplete
               class="inline-input"
               :class="classes"
@@ -514,13 +659,20 @@
         :on-exceed="importExceed"
       >
         <el-button size="small" type="primary">選擇上傳文件</el-button>
-        <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
+        <div slot="tip" class="el-upload__tip">
+          限制上傳 xlsx 或 xls 格式文件
+        </div>
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
-      <div class="downloadEx">
-        <a href="https://scan.1966.org.tw/Files/活動匯入範例_0803113952.xlsx">
+      <div class="downloadEx" style="margin-top:0.5rem">
+        <a href="http://140.127.170.229/行事曆匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
+      </div>
+      <div class="downloadEx">
+        <span @click="downloadUnitExcel" class="unitListDownload">
+          <i class="fas fa-download"></i>單位對照表下載
+        </span>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="importDialogVisible = false">取 消</el-button>
@@ -529,7 +681,11 @@
     </el-dialog>
 
     <!-- memberImportDialog -->
-    <el-dialog title="參與人員匯入" :visible.sync="memberImportDialogVisible" width="30%">
+    <el-dialog
+      title="參與人員匯入"
+      :visible.sync="memberImportDialogVisible"
+      width="30%"
+    >
       <el-upload
         ref="memberImport"
         class="upload-demo"
@@ -545,12 +701,24 @@
         :on-exceed="importExceed"
       >
         <el-button size="small" type="primary">選擇上傳文件</el-button>
-        <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
+        <div slot="tip" class="el-upload__tip">
+          限制上傳 xlsx 或 xls 格式文件
+        </div>
       </el-upload>
-      <div class="downloadEx">
-        <a href="https://scan.1966.org.tw/Files/人員匯入範例_0803112906.xlsx">
+      <div class="downloadEx" style="margin-top:0.5rem">
+        <a href="http://140.127.170.229/人員匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
+      </div>
+      <div class="downloadEx">
+        <span @click="downloadUnitExcel" class="unitListDownload">
+          <i class="fas fa-download"></i>單位對照表下載
+        </span>
+      </div>
+      <div class="downloadEx">
+        <span @click="downloadRolesExcel" class="unitListDownload">
+          <i class="fas fa-download"></i>參與角色對照表下載
+        </span>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="memberImportDialogVisible = false">取 消</el-button>
@@ -655,7 +823,7 @@ export default {
         },
         ckfinder: {
           // 後端的上傳圖片 API 路徑
-          uploadUrl: `https://scan.1966.org.tw/images/Upload/Pic`,
+          uploadUrl: `http://140.127.170.229/images/Upload/Pic`,
           options: {
             resourceType: "Images",
             // 限定類型為圖片
@@ -669,27 +837,7 @@ export default {
       eventTypeData: "",
       unitsData: "",
       usersData: "",
-      rolesData: [
-        "主席/主任委員",
-        "副主任委員",
-        "執行秘書",
-        "副執行秘書",
-        "當任委員/代表",
-        "選任委員/代表",
-        "系(中心)主任代表",
-        "導師代表",
-        "教師代表",
-        "學生代表",
-        "職員(工)代表",
-        "家長代表",
-        "業務單位代表",
-        "專家(學者)顧問代表",
-        "業界代表",
-        "列席代表(人員)",
-        "諮詢顧問",
-        "社會公正人士",
-        "工作小組人員",
-      ],
+      rolesData: [],
       userData: "",
       usersTable: [],
       allMembersData: "",
@@ -712,6 +860,11 @@ export default {
       isRelated: true,
       isOutSchool: false,
       memberTitle: "",
+      memberTitleList: [],
+
+      // modify
+      modifyBy: "",
+      modifyTime: "",
 
       // 校外人士欄位
       outUnit: "",
@@ -849,6 +1002,12 @@ export default {
         vm.$store.dispatch("loadingHandler", false);
       });
     },
+    getEventRolse() {
+      const vm = this;
+      vm.$api.GetEventRoles().then((res) => {
+        vm.rolesData = res.data.response;
+      });
+    },
     getEventType() {
       let user = JSON.parse(window.localStorage.user);
       this.eventTypeData = user.DropCtrlTypes;
@@ -868,6 +1027,8 @@ export default {
       vm.unit2 = "";
       vm.unit3 = "";
       vm.userNameSelect = "";
+      vm.memberTitleList = [];
+      vm.memberTitle = "";
       let unitCode = vm.unit1;
       let params = {
         unitCode,
@@ -878,6 +1039,8 @@ export default {
       const vm = this;
       vm.unit3 = "";
       vm.userNameSelect = "";
+      vm.memberTitleList = [];
+      vm.memberTitle = "";
       let unitCode = vm.unit2;
       let params = {
         unitCode,
@@ -887,6 +1050,8 @@ export default {
     lv3Change() {
       const vm = this;
       vm.userNameSelect = "";
+      vm.memberTitleList = [];
+      vm.memberTitle = "";
       let unitCode = vm.unit3;
       let params = {
         unitCode,
@@ -900,7 +1065,10 @@ export default {
         return user.Account === id;
       });
       vm.userData = userArr[0];
-      console.log(vm.userData);
+      vm.$api.GetUserTitle({ key: vm.userData.Account }).then((res) => {
+        vm.memberTitle = "";
+        vm.memberTitleList = res.data.response;
+      });
     },
     getUsers(params) {
       const vm = this;
@@ -993,6 +1161,7 @@ export default {
               vm.unit2 = "";
               vm.unit3 = "";
               vm.memberTitle = "";
+              vm.memberTitleList = [];
               vm.rloeSelect = "";
               vm.userNameSelect = "";
               vm.userData = "";
@@ -1019,6 +1188,7 @@ export default {
                   vm.unit2 = "";
                   vm.unit3 = "";
                   vm.memberTitle = "";
+                  vm.memberTitleList = [];
                   vm.rloeSelect = "";
                   vm.userNameSelect = "";
                   vm.userData = "";
@@ -1077,6 +1247,7 @@ export default {
               vm.memberTitle = "";
               vm.rloeSelect = "";
               vm.userNameSelect = "";
+              vm.memberTitleList = [];
               vm.userData = "";
               vm.usersData = "";
             } else {
@@ -1101,6 +1272,7 @@ export default {
                   vm.unit2 = "";
                   vm.unit3 = "";
                   vm.memberTitle = "";
+                  vm.memberTitleList = [];
                   vm.rloeSelect = "";
                   vm.userNameSelect = "";
                   vm.userData = "";
@@ -1123,8 +1295,8 @@ export default {
       let userData = {
         eventId: vm.eventCategorySelete,
         unit: vm.outUnit,
-        unitCode: vm.outUnit,
-        userId: vm.outName,
+        unitCode: "",
+        userId: "",
         userName: vm.outName,
         userType: vm.outRole,
         usertitle: vm.outTitle,
@@ -1230,10 +1402,15 @@ export default {
         vm.unit1 = "";
         vm.unit2 = "";
         vm.unit3 = "";
+        vm.usersTable = [];
         vm.userNameSelect = "";
         vm.unitSelete = "";
+        vm.memberTitle = "";
         vm.rloeSelect = "";
-        vm.usersTable = [];
+        vm.outUnit = "";
+        vm.outName = "";
+        vm.outRole = "";
+        vm.outTitle = "";
         vm.$nextTick(() => {
           vm.$refs.upload.clearFiles();
         });
@@ -1253,7 +1430,13 @@ export default {
           vm.eventDate = [];
           vm.eventNameInput = event.EventName;
           vm.inputDescription = event.Summary;
-          vm.uploadUrl = event.AttachDoc;
+          vm.uploadUrl = event.AttachDoc.filter((doc) => {
+            return doc !== " ";
+          });
+          vm.modifyBy = event.ModifyBy;
+          vm.modifyTime = moment(event.ModifyTime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
           vm.eventCategorySelete = event.EventTypeId;
           vm.showDate[0] = moment(event.ShowStartDate).format(
             "YYYY-MM-DD HH:mm:ss"
@@ -1268,7 +1451,7 @@ export default {
             "YYYY-MM-DD HH:mm:ss"
           );
           vm.eventSiteInput = event.EventAddr;
-          vm.eventUrlInput = event.LinkUrl;
+          vm.eventUrlInput = event.LinkUrl.trim();
           vm.unitSelete = event.UnitCode;
           vm.unit1 = "";
           vm.unit2 = "";
@@ -1380,6 +1563,70 @@ export default {
         vm.searchLoading = false;
         vm.currentPage = 1;
       });
+    },
+
+    downloadUnitExcel() {
+      const vm = this;
+      let date = moment(new Date()).format("YYYYMMDDHHMM");
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${vm.$store.state.token}`,
+        },
+        responseType: "blob", //// 回應類型為 blob
+      };
+      this.$http.get(`${vm.baseUrl}School/GetUnitExcel`, config).then((res) => {
+        console.log(res);
+        let blob = new Blob([res.data], {
+          type: "application/" + res.headers["content-type"],
+        });
+        let downloadElement = document.createElement("a");
+        let href = window.URL.createObjectURL(blob); // 創建下載的鏈接
+        downloadElement.href = href;
+        downloadElement.download = `單位對照表_${date}.xlsx`; // 下載後文件名
+        // 此寫法兼容可火狐瀏覽器
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 點擊下載
+        document.body.removeChild(downloadElement); // 下載完成移除元素
+        window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
+        vm.$alertT.fire({
+          icon: "success",
+          title: `匯出成功`,
+        });
+      });
+    },
+
+    downloadRolesExcel() {
+      const vm = this;
+      let date = moment(new Date()).format("YYYYMMDDHHMM");
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${vm.$store.state.token}`,
+        },
+        responseType: "blob", //// 回應類型為 blob
+      };
+      this.$http
+        .get(`${vm.baseUrl}JoinUserRole/GetCalendarExcel`, config)
+        .then((res) => {
+          console.log(res);
+          let blob = new Blob([res.data], {
+            type: "application/" + res.headers["content-type"],
+          });
+          let downloadElement = document.createElement("a");
+          let href = window.URL.createObjectURL(blob); // 創建下載的鏈接
+          downloadElement.href = href;
+          downloadElement.download = `參與角色對照表_${date}.xlsx`; // 下載後文件名
+          // 此寫法兼容可火狐瀏覽器
+          document.body.appendChild(downloadElement);
+          downloadElement.click(); // 點擊下載
+          document.body.removeChild(downloadElement); // 下載完成移除元素
+          window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
+          vm.$alertT.fire({
+            icon: "success",
+            title: `匯出成功`,
+          });
+        });
     },
 
     exportHandler({ key, startDate, endDate }) {
@@ -1733,6 +1980,7 @@ export default {
       : [];
     this.getButtonList(this.$route.path, routers);
     this.getEvents();
+    this.getEventRolse();
     this.getEventType();
     this.getAllUser();
     await this.getUnits();
@@ -1741,5 +1989,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

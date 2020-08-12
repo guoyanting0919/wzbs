@@ -1,0 +1,58 @@
+#eventRoles {
+  padding: 0 1.25rem;
+  height: 100%;
+
+  .status1,
+  .status2 {
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 14px;
+    display: inline-block;
+    // width: 50px;
+  }
+
+  .status1 {
+    color: #67c23a;
+    background: #f0f9eb;
+  }
+
+  .status2 {
+    color: #c23a3a;
+    background: #f9ebeb;
+  }
+
+  .inputBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .inputTitle {
+    width: 90px;
+    text-align: right;
+    margin-right: 1rem;
+  }
+
+  .textOverflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .addOrEditDialog {
+    border-radius: 10px;
+    width: 600px;
+  }
+
+  .el-switch__label {
+    color: #c9c8c8;
+  }
+
+  .el-switch__label.is-active {
+    color: #000;
+  }
+}
