@@ -118,7 +118,34 @@ export default {
       });
     },
   },
-  mounted() {},
+  mounted() {
+    const vm = this;
+    if (window.localStorage.user) {
+      let timerInterval;
+      vm.$swal({
+        title: "您目前仍屬於登入狀態",
+        html: "頁面將於 <b></b> ms後跳轉至後台首頁",
+        timer: 3000,
+        timerProgressBar: true,
+        onBeforeOpen: () => {
+          vm.$swal.showLoading();
+          timerInterval = window.setInterval(() => {
+            const content = vm.$swal.getContent();
+            if (content) {
+              const b = content.querySelector("b");
+              if (b) {
+                b.textContent = vm.$swal.getTimerLeft();
+              }
+            }
+          }, 100);
+        },
+        onClose: () => {
+          clearInterval(timerInterval);
+          vm.$router.push("/");
+        },
+      });
+    }
+  },
 };
 </script>
 
