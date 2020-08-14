@@ -324,8 +324,10 @@
               </el-select>
               <el-select
                 filterable
+                clearable
                 no-match-text="暫無資料"
                 @change="lv2Change"
+                @clear="lv2Clear"
                 class="unitSelect"
                 v-model="unit2"
                 placeholder="請選擇次高單位"
@@ -340,9 +342,11 @@
               </el-select>
               <el-select
                 filterable
+                clearable
                 no-match-text="暫無資料"
                 class="unitSelect"
                 @change="lv3Change"
+                @clear="lv3Clear"
                 v-model="unit3"
                 placeholder="請選擇單位"
                 v-if="unit2 && unitLv3.length > 0"
@@ -909,6 +913,16 @@ export default {
       let params = {
         unitCode,
       };
+      if (unitCode) {
+        vm.getUsers(params);
+      }
+    },
+    lv2Clear() {
+      const vm = this;
+      let unitCode = vm.unit1;
+      let params = {
+        unitCode,
+      };
       vm.getUsers(params);
     },
     lv3Change() {
@@ -917,6 +931,16 @@ export default {
       vm.memberTitleList = [];
       vm.memberTitle = "";
       let unitCode = vm.unit3;
+      let params = {
+        unitCode,
+      };
+      if (unitCode) {
+        vm.getUsers(params);
+      }
+    },
+    lv3Clear() {
+      const vm = this;
+      let unitCode = vm.unit2;
       let params = {
         unitCode,
       };
