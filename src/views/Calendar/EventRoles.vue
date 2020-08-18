@@ -21,6 +21,7 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="Name" label="參與角色名" sortable></el-table-column>
+          <el-table-column prop="Sort" width="100" label="排序"></el-table-column>
 
           <el-table-column width="100" prop="Enable" label="狀態" sortable>
             <template slot-scope="scope">
@@ -86,6 +87,10 @@
             inactive-color="#ff4949"
           ></el-switch>
         </div>
+        <div class="inputBox">
+          <p class="inputTitle">排序</p>
+          <el-input-number v-model="roleSort" :min="0" :max="999" label="排序"></el-input-number>
+        </div>
       </ValidationObserver>
 
       <span slot="footer" class="dialog-footer">
@@ -109,6 +114,7 @@ export default {
       addOrEditDialog: false,
       roleNameInput: "",
       roleStatusSelect: "",
+      roleSort: "",
       buttonList: [],
       keyWordInput: "",
       eventRolesData: "",
@@ -161,6 +167,7 @@ export default {
       }
       vm.roleNameInput = "";
       vm.roleStatusSelect = true;
+      vm.roleSort = "";
       vm.addOrEdit = "新增";
       if (act === "add") {
         vm.addOrEditDialog = true;
@@ -171,6 +178,7 @@ export default {
         vm.roleNameInput = info.Name;
         vm.roleStatusSelect = info.Enable;
         vm.editId = info.Id;
+        vm.roleSort = info.Sort || 0;
       }
     },
     async addHandler() {
@@ -185,9 +193,11 @@ export default {
         vm.addLoading = true;
         let Name = vm.roleNameInput;
         let Enable = vm.roleStatusSelect;
+        let Sort = vm.roleSort;
         let params = {
           Name,
           Enable,
+          Sort,
         };
         vm.$api.AddEventRoles(params).then((res) => {
           vm.getEventRoles();
@@ -263,10 +273,12 @@ export default {
         let Id = vm.editId;
         let Name = vm.roleNameInput;
         let Enable = vm.roleStatusSelect;
+        let Sort = vm.roleSort;
         let params = {
           Id,
           Name,
           Enable,
+          Sort,
         };
         vm.$api.EditEventRoles(params).then((res) => {
           vm.getEventRoles();
