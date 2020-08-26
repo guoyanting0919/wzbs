@@ -11,7 +11,7 @@ export const saveRefreshtime = (params) => {
     let expiretime = moment(nowtime)
       .add(60, "m")
       .toDate();
-    console.log(expiretime);
+    // console.log(expiretime);
     window.localStorage.TokenExpire = expiretime;
   } else {
     window.localStorage.TokenExpire = new Date(-1);
@@ -43,7 +43,7 @@ const errorHandle = (status, msg, response) => {
       break;
 
     case 401:
-      console.log(response);
+      // console.log(response);
       setRefreshToken(response);
       // tokenExpire(response);
       break;
