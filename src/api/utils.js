@@ -55,13 +55,13 @@ export const setRefreshToken = (error) => {
 
           error.config.__isRetryRequest = true;
           error.config.headers.Authorization = "Bearer " + res.data.token;
-          console.log("a");
+          // console.log("a");
           store.dispatch("loadingHandler", false);
           window.location.reload();
           return axios(error.config);
         } else {
           // 刷新token失敗 清除token信息並跳轉到登錄頁面
-          console.log("刷新失敗");
+          // console.log("刷新失敗");
           toLogin();
         }
       });
@@ -97,7 +97,7 @@ export const setRefreshToken = (error) => {
 
 // token 過期
 export const tokenExpire = (error) => {
-  console.log(error);
+  // console.log(error);
   let timerInterval;
   store.dispatch("loadingHandler", false);
   Vue.prototype.$swal({

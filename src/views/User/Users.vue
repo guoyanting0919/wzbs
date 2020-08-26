@@ -365,7 +365,7 @@ export default {
         page,
       };
       vm.$api.GetAdminUsers(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
@@ -378,7 +378,7 @@ export default {
       const vm = this;
       let params;
       vm.$api.GetAdminUsers(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
         vm.currentPage = res.data.response.page;
@@ -435,7 +435,7 @@ export default {
           ctrlType,
           realName,
         };
-        console.log(params);
+        // console.log(params);
         vm.$api.AddAdminUser(params).then((res) => {
           vm.addOrEditDialog = false;
           vm.addLoading = false;
@@ -449,7 +449,7 @@ export default {
     },
     deleteHandler(user) {
       const vm = this;
-      console.log(user);
+      // console.log(user);
       vm.$swal({
         title: "刪除提示",
         text: `確認刪除 ${user.LoginName} ?`,
@@ -488,7 +488,7 @@ export default {
         page,
       };
       vm.$api.GetAdminUsers(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         vm.adminUsersData = res.data.response.data;
         vm.totalCount = res.data.response.dataCount;
         vm.currentPage = res.data.response.page;
@@ -527,7 +527,7 @@ export default {
           ctrlType,
           realName,
         };
-        console.log(params);
+        // console.log(params);
         vm.$api.EditAdminUserById(params).then((res) => {
           vm.$store.dispatch("loadingHandler", false);
           vm.addOrEditDialog = false;
@@ -559,7 +559,7 @@ export default {
         };
         let data1 = vm.userIds;
         vm.$api.PostBatchMeeting(params, data1).then((res) => {
-          console.log(res);
+          // console.log(res);
           vm.$alertM.fire({
             icon: "success",
             title: res.data.msg,
@@ -677,7 +677,7 @@ export default {
           });
         });
 
-        console.log(info);
+        // console.log(info);
       }
     },
 
@@ -700,7 +700,7 @@ export default {
     },
     getCheckedKeys() {
       this.userControlSelect = this.$refs.tree.getCheckedKeys();
-      console.log(this.userControlSelect);
+      // console.log(this.userControlSelect);
     },
     setOrg() {
       let org =

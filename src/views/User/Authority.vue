@@ -53,44 +53,44 @@ export default {
       permissionId: [],
       defaultProps: {
         children: "children",
-        label: "label"
+        label: "label",
       },
       roles: [
         {
           Name: "Super_Admin",
-          Id: 1
+          Id: 1,
         },
         {
           Name: "Admin",
-          Id: 2
+          Id: 2,
         },
         {
           Name: "Master",
-          Id: 3
+          Id: 3,
         },
         {
           Name: "User",
-          Id: 4
-        }
+          Id: 4,
+        },
       ],
       rolesData: "",
-      authorityData: ""
+      authorityData: "",
     };
   },
   methods: {
     async getAuthority() {
       const vm = this;
       let params = {
-        needbtn: true
+        needbtn: true,
       };
-      await vm.$api.GetAuthority(params).then(res => {
+      await vm.$api.GetAuthority(params).then((res) => {
         vm.authorityData = res.data.response.children;
         console.log(vm.authorityData);
       });
     },
     async getRoles() {
       const vm = this;
-      await vm.$api.GetAllRoles().then(res => {
+      await vm.$api.GetAllRoles().then((res) => {
         vm.rolesData = res.data.response;
       });
     },
@@ -102,7 +102,7 @@ export default {
       vm.$store.dispatch("loadingHandler", false);
       vm.$alertM.fire({
         icon: "success",
-        title: `角色列表刷新成功 ! `
+        title: `角色列表刷新成功 ! `,
       });
     },
     getPermissionByRid(id, name) {
@@ -112,12 +112,12 @@ export default {
       vm.roleName = name;
       let rid = id;
       let params = {
-        rid
+        rid,
       };
-      vm.$api.GetPermissionByRid(params).then(res => {
+      vm.$api.GetPermissionByRid(params).then((res) => {
         // console.log(res.data.response.permissionids);
         vm.permissionId = res.data.response.permissionids;
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           this.$refs.tree.setCheckedKeys(vm.permissionId);
         });
         vm.$store.dispatch("loadingHandler", false);
@@ -128,7 +128,7 @@ export default {
       if (!vm.roleName) {
         vm.$alertM.fire({
           icon: "error",
-          title: "請選擇欲修改角色 ! "
+          title: "請選擇欲修改角色 ! ",
         });
       } else {
         vm.$swal({
@@ -139,25 +139,25 @@ export default {
           confirmButtonColor: "#2f3e52",
           cancelButtonColor: "#522f2f",
           confirmButtonText: "確定",
-          cancelButtonText: "取消"
-        }).then(result => {
+          cancelButtonText: "取消",
+        }).then((result) => {
           if (result.value) {
             vm.$store.dispatch("loadingHandler", true);
             let rid = vm.roleid;
             let pids = vm.$refs.tree.getCheckedKeys();
             let params = { rid, pids };
-            console.log(params);
-            vm.$api.EditPermissionByRid(params).then(res => {
+            // console.log(params);
+            vm.$api.EditPermissionByRid(params).then((res) => {
               vm.$alertT.fire({
                 icon: "success",
-                title: `角色 ${vm.roleName} 權限修改成功 ! `
+                title: `角色 ${vm.roleName} 權限修改成功 ! `,
               });
               vm.$store.dispatch("loadingHandler", false);
             });
           } else {
             vm.$alertT.fire({
               icon: "warning",
-              title: `已取消修改`
+              title: `已取消修改`,
             });
           }
         });
@@ -165,13 +165,13 @@ export default {
     },
     getCheckedKeys() {
       console.log(this.$refs.tree.getCheckedKeys());
-    }
+    },
   },
   computed: {
     data5() {
       let data = this.ogTree.response.children;
       return JSON.parse(JSON.stringify(data));
-    }
+    },
   },
   async mounted() {
     this.$store.dispatch("loadingHandler", true);
@@ -179,7 +179,7 @@ export default {
     await this.getAuthority();
 
     this.$store.dispatch("loadingHandler", false);
-  }
+  },
 };
 </script>
 

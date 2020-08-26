@@ -26,41 +26,41 @@ export default {
     total: {
       type: Number,
       default: 1,
-      required: true
+      required: true,
     },
     keyWord: {
       type: String,
       default: "",
-      required: false
+      required: false,
     },
     start: {
       type: String,
       default: "",
-      required: false
+      required: false,
     },
     end: {
       type: String,
       default: "",
-      required: false
+      required: false,
     },
     currentPage: {
       type: Number,
       default: 1,
-      required: false
+      required: false,
     },
     pageSize: {
       type: Number,
       default: 10,
-      required: false
-    }
+      required: false,
+    },
   },
   computed: {
     setCurrentPage: {
       get() {
         return this.$props.currentPage;
       },
-      set() {}
-    }
+      set() {},
+    },
   },
   methods: {
     handleCurrentChange(page) {
@@ -72,16 +72,16 @@ export default {
         this.$emit("changePage", page, key);
         window.scrollTo(0, 0);
       } else {
-        console.log("END");
+        // console.log("END");
         let key = this.$props.keyWord;
-        console.log(key);
+        // console.log(key);
         let startDate = this.$props.start;
         let endDate = this.$props.end;
         this.$emit("changePage", page, key, startDate, endDate);
         window.scrollTo(0, 0);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

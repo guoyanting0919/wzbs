@@ -825,11 +825,11 @@ export default {
   methods: {
     onReady(editor) {
       let ck = this.$refs.ck;
-      console.log(ck);
+      // console.log(ck);
       this.$refs.ck.prepend(editor.ui.view.toolbar.element);
     },
     beforeUpload(file) {
-      console.log(file);
+      // console.log(file);
       return false;
     },
     async getUnits() {
@@ -847,7 +847,7 @@ export default {
         endDate: vm.endDate,
       };
       vm.$api.GetEventsPage(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
         vm.currentPage = page;
@@ -966,7 +966,7 @@ export default {
           unitCode: "",
         };
         vm.$api.GetUsers(params1).then((res) => {
-          console.log(res);
+          // console.log(res);
           vm.usersData = res.data;
           vm.userNameLoading = false;
         });
@@ -995,7 +995,7 @@ export default {
       });
     },
     delFile(id) {
-      console.log(id);
+      // console.log(id);
       this.uploadUrl.splice(id, 1);
     },
     fileName(url) {
@@ -1092,7 +1092,7 @@ export default {
             }
           });
         } else {
-          console.log("nR");
+          // console.log("nR");
           let userId = vm.userData.Account;
           let userType = vm.rloeSelect;
           let unitCode = vm.unit3 || vm.unit2 || vm.unit1;
@@ -1121,7 +1121,7 @@ export default {
             UserName,
           };
           vm.$api.CheckUserHasEvent(params).then((res) => {
-            console.log(res);
+            // console.log(res);
             if (res.data.success) {
               vm.addLoading = false;
               vm.$alertT.fire({
@@ -1250,7 +1250,7 @@ export default {
             linkUrl,
             joinUsers,
           };
-          console.log(params);
+          // console.log(params);
           vm.$api.AddEvent(params).then((res) => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
@@ -1313,7 +1313,7 @@ export default {
           let event = res.data.response;
 
           vm.$store.dispatch("loadingHandler", false);
-          console.log(event);
+          // console.log(event);
           vm.showDate = [];
           vm.eventDate = [];
           vm.eventNameInput = event.EventName;
@@ -1377,7 +1377,7 @@ export default {
           eventIds,
         };
         vm.$api.GetJoinUserByEventIds(params).then((res) => {
-          console.log(res.data.response);
+          // console.log(res.data.response);
           vm.changeMemberData = res.data.response;
           vm.changeDialog = true;
           vm.$store.dispatch("loadingHandler", false);
@@ -1405,7 +1405,7 @@ export default {
           let params = { eventIds, oldName, newName };
           vm.$api.ChangeMember(params).then((res) => {
             vm.changeDialog = false;
-            console.log(res);
+            // console.log(res);
             vm.getEvents();
             vm.$alertM.fire({
               icon: "success",
@@ -1416,7 +1416,7 @@ export default {
       }
     },
     searchHandlerDate({ page, key, startDate, endDate }) {
-      console.log(page, key, startDate, endDate);
+      // console.log(page, key, startDate, endDate);
       const vm = this;
       vm.searchLoading = true;
       vm.keyWordInput = key;
@@ -1464,7 +1464,7 @@ export default {
         responseType: "blob", //// 回應類型為 blob
       };
       this.$http.get(`${vm.baseUrl}School/GetUnitExcel`, config).then((res) => {
-        console.log(res);
+        // console.log(res);
         let blob = new Blob([res.data], {
           type: "application/" + res.headers["content-type"],
         });
@@ -1497,7 +1497,7 @@ export default {
       this.$http
         .get(`${vm.baseUrl}JoinUserRole/GetCalendarExcel`, config)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           let blob = new Blob([res.data], {
             type: "application/" + res.headers["content-type"],
           });
@@ -1556,7 +1556,7 @@ export default {
               config
             )
             .then((res) => {
-              console.log(res);
+              // console.log(res);
               let blob = new Blob([res.data], {
                 type: "application/" + res.headers["content-type"],
               });
@@ -1647,7 +1647,7 @@ export default {
       });
     },
     copyHandler(info) {
-      console.log(info);
+      // console.log(info);
       const vm = this;
       vm.addOrEdit = "複製";
       vm.copyEventId = info.Id;
@@ -1659,7 +1659,7 @@ export default {
         let event = res.data.response;
 
         vm.$store.dispatch("loadingHandler", false);
-        console.log(event);
+        // console.log(event);
         vm.showDate = [];
         vm.eventDate = [];
         vm.eventNameInput = event.EventName;
@@ -1696,7 +1696,7 @@ export default {
       });
     },
     memberImportHandler(info) {
-      console.log(info);
+      // console.log(info);
       const vm = this;
       vm.importId = info.Id;
       vm.memberImportDialogVisible = true;
@@ -1757,7 +1757,7 @@ export default {
             linkUrl,
             joinUsers,
           };
-          console.log(params);
+          // console.log(params);
           vm.$api.EditEvent(params).then((res) => {
             if (res.data.success) {
               vm.addOrEditDialog = false;
@@ -1782,7 +1782,7 @@ export default {
       return this.buttonList.some((btn) => btn.iconCls == btnType);
     },
     deleteHandler(event) {
-      console.log(event);
+      // console.log(event);
       const vm = this;
       vm.$swal({
         title: "刪除提示",
@@ -1852,7 +1852,7 @@ export default {
         : allMembersDatas;
       // 调用 callback 返回建议列表的数据
       cb(results);
-      console.log(results);
+      // console.log(results);
     },
     createFilter(queryString) {
       return (str) => {

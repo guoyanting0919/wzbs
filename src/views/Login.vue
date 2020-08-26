@@ -35,8 +35,8 @@ import { resetRouter, filterAsyncRouter } from "@/router/index";
 export default {
   data() {
     return {
-      account: "NA099",
-      password: "XX12345678",
+      account: "",
+      password: "",
     };
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
       };
       vm.$api.GetInfoByToken(params).then((res) => {
         window.localStorage.user = JSON.stringify(res.data.response);
-        console.log(res.data.response);
+        // console.log(res.data.response);
 
         vm.GetNavigationBar(res.data.response.Id);
       });
@@ -98,13 +98,13 @@ export default {
         uid,
       };
       vm.$api.GetNavigationBar(params).then((res) => {
-        console.log(res, params);
+        // console.log(res, params);
         let route = res.data.response.children;
         window.localStorage.router = JSON.stringify(route);
 
         // 過濾拿到的router
         let getRouter = filterAsyncRouter(route);
-        console.log(getRouter);
+        // console.log(getRouter);
         // 動態添加router
         router.$addRoutes(getRouter);
 

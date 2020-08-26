@@ -274,7 +274,7 @@ export default {
       if (act === "add") {
         vm.addOrEditDialog = true;
       } else {
-        console.log(info);
+        // console.log(info);
         vm.addOrEdit = "編輯";
         vm.editId = info.Id;
         vm.startEndDate = [info.StartDate, info.EndDate];

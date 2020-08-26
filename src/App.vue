@@ -97,7 +97,7 @@ export default {
     if (this.routes.length <= 0 && NavigationBar && NavigationBar.length >= 0) {
       this.routes = NavigationBar;
     }
-    console.log(process.env.VUE_APP_ENV);
+    // console.log(process.env.VUE_APP_ENV);
   },
 
   watch: {},

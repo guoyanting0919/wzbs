@@ -196,7 +196,7 @@ export default {
       if (act === "add") {
         vm.addOrEditDialog = true;
       } else {
-        console.log(info);
+        // console.log(info);
         vm.addOrEdit = "編輯";
         vm.addOrEditDialog = true;
         vm.roleNameInput = info.Name;
@@ -227,7 +227,7 @@ export default {
         };
         vm.$api.AddRole(params).then((res) => {
           vm.getRoles();
-          console.log(res);
+          // console.log(res);
           vm.addOrEditDialog = false;
           vm.addLoading = false;
           vm.$alertM.fire({
@@ -246,7 +246,7 @@ export default {
         page,
       };
       vm.$api.SearchRoles(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         vm.totalCount = res.data.response.dataCount;
         vm.pageSize = res.data.response.PageSize;
         vm.rolesData = res.data.response.data;
@@ -256,7 +256,7 @@ export default {
     },
     deleteHandler(role) {
       const vm = this;
-      console.log(role);
+      // console.log(role);
       vm.$swal({
         title: "刪除提示",
         text: `確認刪除角色 ${role.Name} ?`,

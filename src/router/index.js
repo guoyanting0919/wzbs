@@ -155,7 +155,7 @@ function routerGo(to, next) {
   router.$addRoutes(getRouter);
 
   //將路由數據傳遞給全局變量，做側邊欄菜單渲染工作
-  console.log(to);
+  // console.log(to);
   global.antRouter = getRouter;
   next({ ...to, replace: true });
 }
@@ -173,7 +173,7 @@ if (!getRouter) {
       let params = { uid: user.uID };
       api.GetNavigationBar().then((data) => {
         if (data.success) {
-          console.log("已透過 api 獲取 router");
+          // console.log("已透過 api 獲取 router");
           getRouter = data.data[0];
           // 將 router 存到 localStorage
           saveObjArr("router", getRouter);
@@ -182,12 +182,12 @@ if (!getRouter) {
         }
       });
     } else {
-      console.log("未登入狀態");
+      // console.log("未登入狀態");
       // routerGo(to, next);
     }
   } else {
     // localStorage 中有 router
-    console.log("已從 localStorage 獲取路由");
+    // console.log("已從 localStorage 獲取路由");
     //獲取 router
     getRouter = getObjArr("router");
     // 過濾拿到的router
@@ -223,7 +223,7 @@ router.beforeEach((to, from, next) => {
       ) {
         store.commit("SAVE_TOKEN", window.localStorage.Token);
       } else {
-        console.log("LOCAL NO TOKEN");
+        // console.log("LOCAL NO TOKEN");
         window.localStorage.removeItem("Token");
       }
     }
@@ -271,7 +271,7 @@ router.beforeEach((to, from, next) => {
           let params = { uid: user.uID };
           api.GetNavigationBar().then((data) => {
             if (data.success) {
-              console.log("已透過 api 獲取 router");
+              // console.log("已透過 api 獲取 router");
 
               getRouter = data.data[0];
               // 將 router 存到 localStorage
