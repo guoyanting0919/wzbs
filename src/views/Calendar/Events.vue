@@ -199,7 +199,7 @@
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動地點</div>
-          <ValidationProvider name="請輸入會議 / 活動地點!!" rules="required" v-slot="{ errors, classes }">
+          <ValidationProvider name="請輸入會議 / 活動地點!!" rules v-slot="{ errors, classes }">
             <el-input
               :class="classes"
               style="width:600px"
