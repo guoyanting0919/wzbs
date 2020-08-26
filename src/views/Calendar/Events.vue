@@ -539,7 +539,7 @@
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
       <div class="downloadEx" style="margin-top:0.5rem">
-        <a href="http://140.127.170.229/行事曆匯入範例.xlsx">
+        <a href="../行事曆匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
       </div>
@@ -574,7 +574,7 @@
         <div slot="tip" class="el-upload__tip">限制上傳 xlsx 或 xls 格式文件</div>
       </el-upload>
       <div class="downloadEx" style="margin-top:0.5rem">
-        <a href="http://140.127.170.229/人員匯入範例.xlsx">
+        <a href="../人員匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
       </div>
@@ -691,7 +691,7 @@ export default {
         },
         ckfinder: {
           // 後端的上傳圖片 API 路徑
-          uploadUrl: `http://cal-rd.wzu.edu.tw/images/Upload/Pic`,
+          uploadUrl: `http://cal.wzu.edu.tw/images/Upload/Pic`,
           options: {
             resourceType: "Images",
             // 限定類型為圖片
