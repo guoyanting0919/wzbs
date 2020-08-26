@@ -703,7 +703,8 @@ export default {
       // console.log(this.userControlSelect);
     },
     setOrg() {
-      let org =
+      let org = "";
+      org =
         this.userUnit3Select || this.userUnit2Select || this.userUnit1Select;
       let arr = [];
       arr.push(org);
