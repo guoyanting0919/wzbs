@@ -16,14 +16,14 @@
         class="keyWordInput"
         v-model="keyWordInput"
         placeholder="請輸入關鍵字"
-        @keyup.enter.native="setSearchHandler "
+        @keyup.enter.native="setSearchHandler"
       ></el-input>
       <el-input
         v-if="hasBtn('btnSearch') && isEvent"
         class="keyWordInput"
         v-model="keyWordInput"
         placeholder="請輸入關鍵字"
-        @keyup.enter.native="setSearchHandlerDate "
+        @keyup.enter.native="setSearchHandlerDate"
       ></el-input>
       <el-button
         v-if="hasBtn('btnSearch') && !isEvent"
@@ -31,50 +31,65 @@
         :loading="searchLoading"
         type="primary"
         @click="setSearchHandler"
-      >搜尋</el-button>
+        >搜尋</el-button
+      >
       <el-button
         v-if="hasBtn('btnSearch') && isEvent"
         class="searchBtn"
         :loading="searchLoading"
         type="primary"
         @click="setSearchHandlerDate"
-      >搜尋</el-button>
+        >搜尋</el-button
+      >
       <el-button
         v-if="hasBtn('btnAdd')"
         @click="setHandleAddOrEdit('add')"
         class="addBtn"
         type="success"
-      >新增</el-button>
+        >新增</el-button
+      >
       <el-button
         v-if="hasBtn('btnEdit') && isUser"
         @click="setAddOrDelMeeting('add')"
         class="changeBtn"
         type="info"
-      >會議批次啟用</el-button>
+        >會議批次啟用</el-button
+      >
       <el-button
         v-if="hasBtn('btnEdit') && isUser"
         @click="setAddOrDelMeeting('del')"
         class="changeBtn"
         type="info"
-      >會議批次停用</el-button>
+        >會議批次停用</el-button
+      >
       <el-button
         v-if="hasBtn('btnChange') && isEvent"
         @click="setChangeHandler"
         class="changeBtn"
         type="info"
-      >批次替換</el-button>
+        >批次替換</el-button
+      >
+      <el-button
+        v-if="hasBtn('btnChange') && isEvent"
+        @click="setMutDeleteHandler"
+        class="changeBtn"
+        type="danger"
+        >批量刪除</el-button
+      >
       <el-button
         v-if="hasBtn('btnImport')"
         @click="setImportHandler"
         class="importBtn"
         type="primary"
-      >匯入</el-button>
+        >匯入</el-button
+      >
       <el-button
         @click="setExportHandler"
         v-if="hasBtn('btnExport')"
         class="exportBtn"
         type="primary"
-      >匯出</el-button>
+        >匯出</el-button
+      >
     </div>
   </div>
 </template>
@@ -131,6 +146,9 @@ export default {
     setChangeHandler() {
       this.$emit("changeHandler");
     },
+    setMutDeleteHandler() {
+      this.$emit("mutDeleteHandler");
+    },
     setSearchDate() {
       this.$emit("getSearchDate", this.searchDate);
     },
@@ -181,5 +199,4 @@ export default {
 };
 </script>
 
-<style lang='scss' >
-</style>
+<style lang="scss"></style>
