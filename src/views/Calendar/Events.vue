@@ -117,11 +117,9 @@
         <!-- <el-scrollbar class="scrollbar-handle" ref="scrollBox"> -->
         <div class="inputBox" style="margin-top: 3rem;">
           <div class="inputTitle">活動 / 會議名稱</div>
-          <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{ errors, classes }">
+          <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{ errors,classes  }">
             <el-input
               :class="classes"
-              type="textarea"
-              :rows="2"
               style="width:550px"
               v-model="eventNameInput"
               placeholder="請輸入活動 / 會議名稱"
@@ -132,15 +130,23 @@
 
         <div class="inputBox">
           <div class="inputTitle">活動 / 會議描述</div>
-          <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{ errors, classes }">
-            <div class="personalContainer mt-5 ck" ref="ck">
+          <ValidationProvider name="請輸入活動會議描述!!" rules="required" v-slot="{ errors }">
+            <!-- <div class="personalContainer mt-5 ck" ref="ck">
               <ckeditor
                 :class="classes"
                 :editor="editor"
                 v-model="inputDescription"
                 :config="editorConfig"
               ></ckeditor>
-            </div>
+            </div>-->
+            <vue-editor
+              id="editor"
+              useCustomImageHandler
+              @image-added="handleImageAdded"
+              :editor-toolbar="customToolbar"
+              v-model="inputDescription"
+              :editorOptions="editorSettings"
+            ></vue-editor>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
@@ -600,104 +606,131 @@
 import HeaderBox from "../../components/HeaderBox";
 import Pagination from "../../components/Pagination";
 import moment, { duration } from "moment";
+
+import { VueEditor, Quill } from "vue2-editor";
+import ImageResize from "quill-image-resize-vue";
+Quill.register("modules/imageResize", ImageResize);
+import axios from "axios";
 // ck
-import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
-import BoldPlugin from "@ckeditor/ckeditor5-basic-styles/src/bold";
-import ItalicPlugin from "@ckeditor/ckeditor5-basic-styles/src/italic";
-import LinkPlugin from "@ckeditor/ckeditor5-link/src/link";
-import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
-import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
-import Heading from "@ckeditor/ckeditor5-heading/src/heading.js";
-import FontBackgroundColor from "@ckeditor/ckeditor5-font/src/fontbackgroundcolor.js";
-import FontColor from "@ckeditor/ckeditor5-font/src/fontcolor.js";
-import FontFamily from "@ckeditor/ckeditor5-font/src/fontfamily.js";
-import FontSize from "@ckeditor/ckeditor5-font/src/fontsize.js";
-import MediaEmbed from "@ckeditor/ckeditor5-media-embed/src/mediaembed.js";
-import List from "@ckeditor/ckeditor5-list/src/list.js";
-import Image from "@ckeditor/ckeditor5-image/src/image.js";
-import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption.js";
-import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize.js";
-import ImageStyle from "@ckeditor/ckeditor5-image/src/imagestyle.js";
-import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar.js";
-import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload.js";
-import CKFinder from "@ckeditor/ckeditor5-ckfinder/src/ckfinder";
+// import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+// import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
+// import BoldPlugin from "@ckeditor/ckeditor5-basic-styles/src/bold";
+// import ItalicPlugin from "@ckeditor/ckeditor5-basic-styles/src/italic";
+// import LinkPlugin from "@ckeditor/ckeditor5-link/src/link";
+// import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+// import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
+// import Heading from "@ckeditor/ckeditor5-heading/src/heading.js";
+// import FontBackgroundColor from "@ckeditor/ckeditor5-font/src/fontbackgroundcolor.js";
+// import FontColor from "@ckeditor/ckeditor5-font/src/fontcolor.js";
+// import FontFamily from "@ckeditor/ckeditor5-font/src/fontfamily.js";
+// import FontSize from "@ckeditor/ckeditor5-font/src/fontsize.js";
+// import MediaEmbed from "@ckeditor/ckeditor5-media-embed/src/mediaembed.js";
+// import List from "@ckeditor/ckeditor5-list/src/list.js";
+// import Image from "@ckeditor/ckeditor5-image/src/image.js";
+// import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption.js";
+// import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize.js";
+// import ImageStyle from "@ckeditor/ckeditor5-image/src/imagestyle.js";
+// import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar.js";
+// import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload.js";
+// import CKFinder from "@ckeditor/ckeditor5-ckfinder/src/ckfinder";
 export default {
   name: "CalendarEvents",
   components: {
     HeaderBox,
     Pagination,
+    VueEditor,
   },
   data() {
     return {
       // baseUrl
       baseUrl: "",
-      // ck
-      editor: ClassicEditor,
-      editorData: "",
-      editorConfig: {
-        plugins: [
-          EssentialsPlugin,
-          BoldPlugin,
-          ItalicPlugin,
-          LinkPlugin,
-          ParagraphPlugin,
-          Alignment,
-          Heading,
-          FontBackgroundColor,
-          FontColor,
-          FontFamily,
-          FontSize,
-          MediaEmbed,
-          List,
-          Image,
-          ImageResize,
-          ImageUpload,
-          ImageToolbar,
-          ImageCaption,
-          ImageStyle,
-          CKFinder,
-        ],
 
-        toolbar: {
-          items: [
-            "heading",
-            "|",
-            "bold",
-            "italic",
-            "|",
-            "fontBackgroundColor",
-            "fontColor",
-            "fontSize",
-            "|",
-            "link",
-            "imageUpload",
-            "mediaEmbed",
-            "|",
-            "alignment",
-            "numberedList",
-            "|",
-            "undo",
-            "redo",
-          ],
-        },
-        image: {
-          toolbar: [
-            "imageTextAlternative",
-            "|",
-            "imageStyle:full",
-            "imageStyle:side",
-          ],
-        },
-        ckfinder: {
-          // 後端的上傳圖片 API 路徑
-          uploadUrl: `http://cal.wzu.edu.tw/images/Upload/Pic`,
-          options: {
-            resourceType: "Images",
-            // 限定類型為圖片
-          },
+      // editor
+      editorSettings: {
+        modules: {
+          imageResize: {},
         },
       },
+      customToolbar: [
+        [{ header: [false, 1, 2, 3, 4, 5, 6] }],
+        ["bold", "italic", "underline", "strike"],
+        [
+          { align: "" },
+          { align: "center" },
+          { align: "right" },
+          { align: "justify" },
+        ],
+        [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+        [{ color: [] }, { background: [] }],
+        ["link", "image", "video"],
+        ["clean"],
+      ],
+      // ck
+      // editor: ClassicEditor,
+      // editorData: "",
+      // editorConfig: {
+      //   plugins: [
+      //     EssentialsPlugin,
+      //     BoldPlugin,
+      //     ItalicPlugin,
+      //     LinkPlugin,
+      //     ParagraphPlugin,
+      //     Alignment,
+      //     Heading,
+      //     FontBackgroundColor,
+      //     FontColor,
+      //     FontFamily,
+      //     FontSize,
+      //     MediaEmbed,
+      //     List,
+      //     Image,
+      //     ImageResize,
+      //     ImageUpload,
+      //     ImageToolbar,
+      //     ImageCaption,
+      //     ImageStyle,
+      //     CKFinder,
+      //   ],
+
+      //   toolbar: {
+      //     items: [
+      //       "heading",
+      //       "|",
+      //       "bold",
+      //       "italic",
+      //       "|",
+      //       "fontBackgroundColor",
+      //       "fontColor",
+      //       "fontSize",
+      //       "|",
+      //       "link",
+      //       "imageUpload",
+      //       "mediaEmbed",
+      //       "|",
+      //       "alignment",
+      //       "numberedList",
+      //       "|",
+      //       "undo",
+      //       "redo",
+      //     ],
+      //   },
+      //   image: {
+      //     toolbar: [
+      //       "imageTextAlternative",
+      //       "|",
+      //       "imageStyle:full",
+      //       "imageStyle:side",
+      //     ],
+      //   },
+      //   ckfinder: {
+      //     // 後端的上傳圖片 API 路徑
+      //     uploadUrl: `http://cal.wzu.edu.tw/images/Upload/Pic`,
+      //     options: {
+      //       resourceType: "Images",
+      //       // 限定類型為圖片
+      //     },
+      //   },
+      // },
 
       userNameLoading: false,
       // 全域資料
@@ -831,6 +864,29 @@ export default {
     beforeUpload(file) {
       // console.log(file);
       return false;
+    },
+    handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
+      // An example of using FormData
+      // NOTE: Your key could be different such as:
+      // formData.append('file', file)
+      console.log("廢物IE");
+      var formData = new FormData();
+      formData.append("image", file);
+
+      axios({
+        url: "http://cal.wzu.edu.tw/images/Upload/Pic",
+        method: "POST",
+        data: formData,
+      })
+        .then((result) => {
+          console.log(result);
+          let url = result.data.url; // Get url from response
+          Editor.insertEmbed(cursorLocation, "image", url);
+          resetUploader();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     async getUnits() {
       const vm = this;
