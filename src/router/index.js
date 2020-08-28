@@ -211,7 +211,7 @@ router.beforeEach((to, from, next) => {
   // console.log(store);
   // 設定網頁 title
   if (to.meta.title) {
-    document.title = `文藻行事曆後臺-${to.meta.title}`;
+    document.title = `【活動/會議行事曆管理系統-${to.meta.title}】`;
   }
 
   // 檢查 token
