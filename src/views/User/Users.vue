@@ -242,6 +242,7 @@
               :data="orgsData"
               show-checkbox
               node-key="Id"
+              :check-strictly="true"
               empty-text="暫無資料!"
               :indent="32"
               :props="defaultProps"
