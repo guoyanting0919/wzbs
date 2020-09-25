@@ -19,11 +19,11 @@
           :data="adminUsersData"
           empty-text="暫無資料"
           style="width: 100%"
-          :default-sort="{prop: 'date', order: 'descending'}"
+          :default-sort="{ prop: 'date', order: 'descending' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="UnitName" width="130" label="單位" sortable></el-table-column>
+          <el-table-column prop="UnitName" width="150" label="單位" sortable></el-table-column>
           <el-table-column prop="RealName" width="100" label="名稱" sortable></el-table-column>
           <el-table-column prop="LoginName" width="100" label="帳號" sortable></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
@@ -32,7 +32,7 @@
                 v-for="role in scope.row.RoleNames"
                 :key="`da${role}`"
                 class="roleBadge"
-              >{{role}}</span>
+              >{{ role }}</span>
             </template>
           </el-table-column>
 
@@ -41,16 +41,16 @@
               <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
                 <div slot="content">
                   <span
-                    v-for="(type,index) in scope.row.DropCtrlTypes"
+                    v-for="(type, index) in scope.row.DropCtrlTypes"
                     :key="`da${type.Value}`"
-                  >{{index+1}}.{{type.Text}}</span>
+                  >{{ index + 1 }}.{{ type.Text }}</span>
                 </div>
                 <p class="textOverflow">
                   <span
-                    v-for="(type,index) in scope.row.DropCtrlTypes"
+                    v-for="(type, index) in scope.row.DropCtrlTypes"
                     :key="`da${type.Value}`"
                     class="unitBadge"
-                  >{{index+1}}.{{type.Text}}</span>
+                  >{{ index + 1 }}.{{ type.Text }}</span>
                 </p>
               </el-tooltip>
             </template>
@@ -61,16 +61,16 @@
               <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
                 <div slot="content">
                   <span
-                    v-for="(unit,index) in scope.row.CtrlUnits"
+                    v-for="(unit, index) in scope.row.CtrlUnits"
                     :key="`da${unit}`"
-                  >{{index+1}}.{{unit}}</span>
+                  >{{ index + 1 }}.{{ unit }}</span>
                 </div>
                 <p class="textOverflow">
                   <span
-                    v-for="(unit,index) in scope.row.CtrlUnits"
+                    v-for="(unit, index) in scope.row.CtrlUnits"
                     :key="`da${unit}`"
                     class="unitBadge"
-                  >{{index+1}}.{{unit}}</span>
+                  >{{ index + 1 }}.{{ unit }}</span>
                 </p>
               </el-tooltip>
             </template>
@@ -81,7 +81,7 @@
                 v-if="hasBtn('btnEdit')"
                 class="outline"
                 size="mini"
-                @click="handleAddOrEdit('edit',scope.row)"
+                @click="handleAddOrEdit('edit', scope.row)"
               >編輯</el-button>
               <el-button
                 v-if="hasBtn('btnDelete')"
@@ -119,7 +119,7 @@
           <!-- unit -->
           <div class="inputBox" style="margin-top:3rem">
             <p class="inputTitle">單位</p>
-            <ValidationProvider name="請選擇最高單位" rules="required" v-slot="{  errors,classes }">
+            <ValidationProvider name="請選擇最高單位" rules="required" v-slot="{ errors, classes }">
               <el-select
                 filterable
                 :class="classes"
@@ -134,12 +134,12 @@
                   :label="unit.UntNameFull"
                   v-for="unit in unitLv1"
                   :key="unit.UntId"
-                >{{unit.UntNameFull}}</el-option>
+                >{{ unit.UntNameFull }}</el-option>
               </el-select>
               <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
             </ValidationProvider>
 
-            <ValidationProvider v-slot="{  classes }">
+            <ValidationProvider v-slot="{ classes }">
               <el-select
                 filterable
                 :class="classes"
@@ -155,11 +155,11 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{unit.UntNameFull}}</el-option>
+                >{{ unit.UntNameFull }}</el-option>
               </el-select>
             </ValidationProvider>
 
-            <ValidationProvider v-slot="{  classes }">
+            <ValidationProvider v-slot="{ classes }">
               <el-select
                 filterable
                 :class="classes"
@@ -175,7 +175,7 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{unit.UntNameFull}}</el-option>
+                >{{ unit.UntNameFull }}</el-option>
               </el-select>
             </ValidationProvider>
           </div>
@@ -183,7 +183,7 @@
           <!-- name -->
           <div class="inputBox">
             <p class="inputTitle">名稱</p>
-            <ValidationProvider name="請選擇人員名稱" rules="required" v-slot="{  errors,classes }">
+            <ValidationProvider name="請選擇人員名稱" rules="required" v-slot="{ errors, classes }">
               <el-select
                 :class="classes"
                 :loading="userNameLoading"
@@ -209,7 +209,7 @@
           <!-- role -->
           <div class="inputBox">
             <p class="inputTitle">角色</p>
-            <ValidationProvider name="請至少選擇一種角色" rules="required" v-slot="{  errors,classes }">
+            <ValidationProvider name="請至少選擇一種角色" rules="required" v-slot="{ errors, classes }">
               <el-select
                 :class="classes"
                 multiple
@@ -223,7 +223,7 @@
                   :key="role.Id"
                   :value="role.Id"
                   :label="role.Name"
-                >{{role.Name}}</el-option>
+                >{{ role.Name }}</el-option>
               </el-select>
               <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
             </ValidationProvider>
@@ -259,7 +259,7 @@
                 v-for="type in eventTypeData"
                 :key="type.Id"
                 :label="type.Id"
-              >{{type.EventTypeName}}</el-checkbox>
+              >{{ type.EventTypeName }}</el-checkbox>
             </el-checkbox-group>
           </div>
         </el-scrollbar>
@@ -268,7 +268,7 @@
         <el-button @click="addOrEditDialog = false">取 消</el-button>
         <el-button
           type="primary"
-          v-if="addOrEdit==='新增'"
+          v-if="addOrEdit === '新增'"
           :loading="addLoading"
           @click="addHandler"
         >新 增</el-button>
@@ -295,7 +295,7 @@ export default {
       filterText: "",
       totalCount: "",
       keyWordInput: "",
-      currentPage: "",
+      currentPage: 1,
       pageSize: "",
       orgsData: "",
       rolesData: "",
@@ -332,7 +332,9 @@ export default {
       });
       let uintLv1 = arrLv1[0];
       return vm.unitsData.filter((unit) => {
-        return unit.UntIdUp === uintLv1.UntId && unit.UntLevelb === "2";
+        return (
+          unit.UntIdUp === uintLv1.UntId && unit.UntId !== vm.userUnit1Select
+        );
       });
     },
     unitLv3() {
@@ -342,7 +344,9 @@ export default {
       });
       let uintLv2 = arrLv2[0];
       return vm.unitsData.filter((unit) => {
-        return unit.UntIdUp === uintLv2.UntId && unit.UntLevelb === "3";
+        return (
+          unit.UntIdUp === uintLv2.UntId && unit.UntId !== vm.userUnit2Select
+        );
       });
     },
   },
@@ -359,7 +363,7 @@ export default {
         this.rolesData = res.data.response;
       });
     },
-    getUsersPage(page = 1, key) {
+    getUsersPage(page = this.currentPage, key) {
       const vm = this;
       let params = {
         key: vm.keyWordInput,
@@ -440,7 +444,7 @@ export default {
         vm.$api.AddAdminUser(params).then((res) => {
           vm.addOrEditDialog = false;
           vm.addLoading = false;
-          vm.getAdminUsers();
+          vm.getUsersPage();
           vm.$alertM.fire({
             icon: "success",
             title: `用戶 ${loginName} 添加成功 ! `,
@@ -466,7 +470,7 @@ export default {
             id: user.Id,
           };
           vm.$api.DeleteAdminUser(params).then((res) => {
-            vm.getAdminUsers();
+            vm.getUsersPage();
           });
           vm.$alertT.fire({
             icon: "success",
@@ -532,7 +536,7 @@ export default {
         vm.$api.EditAdminUserById(params).then((res) => {
           vm.$store.dispatch("loadingHandler", false);
           vm.addOrEditDialog = false;
-          vm.getAdminUsers();
+          vm.getUsersPage();
           vm.$alertM.fire({
             icon: "success",
             title: `用戶${loginName}更新成功 ! `,
@@ -754,5 +758,4 @@ export default {
 };
 </script>
 
-<style lang='scss'>
-</style>
+<style lang="scss"></style>

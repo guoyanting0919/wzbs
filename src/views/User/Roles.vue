@@ -39,6 +39,11 @@
               <span>{{scope.row.CreateTime}}</span>
             </template>
           </el-table-column>
+          <el-table-column width="100" prop="OrderSort" label="排序" sortable>
+            <template slot-scope="scope">
+              <span>{{scope.row.OrderSort}}</span>
+            </template>
+          </el-table-column>
           <el-table-column width="100" prop="Enabled" label="狀態" sortable>
             <template slot-scope="scope">
               <span v-if="scope.row.Enabled" class="status1">啟用</span>
@@ -94,6 +99,10 @@
           </ValidationProvider>
         </div>
         <div class="inputBox">
+          <p class="inputTitle">排序</p>
+          <el-input-number v-model="roleSort" :min="0" :max="999"></el-input-number>
+        </div>
+        <div class="inputBox">
           <p class="inputTitle">狀態</p>
           <el-switch
             active-text="啟用"
@@ -139,6 +148,8 @@ export default {
       roleNameInput: "",
       roleStatusSelect: "",
       roleDescription: "",
+      roleCreatTime: "",
+      roleSort: "",
       buttonList: [],
       keyWordInput: "",
       rolesData: "",
@@ -191,6 +202,8 @@ export default {
       }
       vm.roleNameInput = "";
       vm.roleDescription = "";
+      vm.roleSort = "";
+      vm.roleCreatTime = "";
       vm.roleStatusSelect = true;
       vm.addOrEdit = "新增";
       if (act === "add") {
@@ -201,6 +214,8 @@ export default {
         vm.addOrEditDialog = true;
         vm.roleNameInput = info.Name;
         vm.roleDescription = info.Description;
+        vm.roleSort = info.OrderSort;
+        vm.roleCreatTime = info.CreateTime;
         vm.roleStatusSelect = info.Enabled;
         vm.editId = info.Id;
       }
@@ -218,11 +233,13 @@ export default {
         let Name = vm.roleNameInput;
         let Enabled = vm.roleStatusSelect;
         let Description = vm.roleDescription;
+        let OrderSort = vm.roleSort;
         let CreateTime = moment(new Date()).format("YYYY-MM-DD");
         let params = {
           Name,
           Enabled,
           Description,
+          OrderSort,
           CreateTime,
         };
         vm.$api.AddRole(params).then((res) => {
@@ -300,11 +317,15 @@ export default {
         let Name = vm.roleNameInput;
         let Enabled = vm.roleStatusSelect;
         let Description = vm.roleDescription;
+        let OrderSort = vm.roleSort;
+        let CreateTime = vm.roleCreatTime;
         let params = {
           Id,
           Name,
           Enabled,
           Description,
+          OrderSort,
+          CreateTime,
         };
         vm.$api.EditRole(params).then((res) => {
           vm.getRoles();

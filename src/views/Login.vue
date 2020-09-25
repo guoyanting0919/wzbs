@@ -23,6 +23,13 @@
           show-password
         ></el-input>
       </div>
+      <div class="identifyBox">
+        <div @click="refreshCode">
+          <Identify :identifyCode="identifyCode"></Identify>
+        </div>
+        <input type="text" v-model="code" placeholder="請輸入驗證碼" />
+      </div>
+      <div class="changeCode">點擊圖片更新驗證碼</div>
       <button class="loginHandler" @click="loginHandler">登入 / Login</button>
     </div>
   </div>
@@ -32,14 +39,39 @@
 import route from "../assets/route.json";
 import router from "@/router";
 import { resetRouter, filterAsyncRouter } from "@/router/index";
+import Identify from "../components/Identify";
 export default {
   data() {
     return {
       account: "",
       password: "",
+      // 數字驗證
+      code: "",
+      identifyCodes: "1234567890",
+      identifyCode: "",
     };
   },
+  components: {
+    Identify,
+  },
   methods: {
+    // 生成隨機數
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
+    // 切換驗證碼
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    // 生成四位隨機驗證碼
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+    },
     loginHandler() {
       const vm = this;
       if (vm.account === "" || vm.password === "") {
@@ -48,36 +80,43 @@ export default {
           title: "帳號密碼不得為空",
         });
       } else {
-        let params = {
-          account: vm.account,
-          password: vm.password,
-          loginto: "Cal",
-        };
-        vm.$store.dispatch("loadingHandler", true);
-        vm.$api.GetAdminToken(params).then((res) => {
-          if (!res.data.success) {
-            vm.$store.dispatch("loadingHandler", false);
-            vm.$alertM.fire({
-              icon: "error",
-              title: res.data.message,
-            });
-          } else {
-            let token = res.data.token;
-            vm.$store.commit("SAVE_TOKEN", token);
+        if (vm.identifyCode !== vm.code) {
+          vm.$alertM.fire({
+            icon: "error",
+            title: `驗證碼輸入錯誤`,
+          });
+        } else {
+          let params = {
+            account: vm.account,
+            password: vm.password,
+            loginto: "Cal",
+          };
+          vm.$store.dispatch("loadingHandler", true);
+          vm.$api.GetAdminToken(params).then((res) => {
+            if (!res.data.success) {
+              vm.$store.dispatch("loadingHandler", false);
+              vm.$alertM.fire({
+                icon: "error",
+                title: res.data.message,
+              });
+            } else {
+              let token = res.data.token;
+              vm.$store.commit("SAVE_TOKEN", token);
 
-            let curTime = new Date();
-            // 設定 token 過期時間
-            let expiredate = new Date(
-              curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
-            );
-            vm.$store.commit("SAVE_TOKEN_EXPIRE", expiredate);
+              let curTime = new Date();
+              // 設定 token 過期時間
+              let expiredate = new Date(
+                curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
+              );
+              vm.$store.commit("SAVE_TOKEN_EXPIRE", expiredate);
 
-            window.localStorage.refreshtime = expiredate;
-            window.localStorage.expires_in = res.data.expires_in;
+              window.localStorage.refreshtime = expiredate;
+              window.localStorage.expires_in = res.data.expires_in;
 
-            vm.GetInfoByToken(token);
-          }
-        });
+              vm.GetInfoByToken(token);
+            }
+          });
+        }
       }
     },
     GetInfoByToken(token) {
@@ -120,6 +159,8 @@ export default {
   },
   mounted() {
     const vm = this;
+    this.identifyCode = "";
+    this.makeCode(this.identifyCodes, 4);
     if (window.localStorage.user) {
       let timerInterval;
       vm.$swal({

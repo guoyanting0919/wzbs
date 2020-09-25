@@ -17,4 +17,28 @@
     border-radius: 10px;
     width: 650px;
   }
+
+  .mainColorBox {
+    width: 25px;
+    height: 25px;
+    border: 3px solid #6e6d6d;
+    border-radius: 200px;
+  }
+
+  .daysPreviwe {
+    padding: 1px 7px;
+    // background: #666;
+    color: #fff;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+  }
+  .todayPreview {
+    .dot {
+      // background: #555;
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 100px;
+    }
+  }
 }

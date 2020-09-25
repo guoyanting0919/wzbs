@@ -9,31 +9,46 @@
     ></HeaderBox>
 
     <!-- mainTable -->
+
+    <!-- :disabled="scope.row.EventTypeName==='會議' || scope.row.EventTypeName==='活動'" -->
     <el-table
       header-cell-class-name="tableHeader"
       v-if="eventTypeData"
       :data="eventTypeData"
       empty-text="暫無資料"
-      :default-sort="{prop: 'date', order: 'descending'}"
+      :default-sort="{ prop: 'date', order: 'descending' }"
     >
-      <el-table-column prop="EventTypeName" label="類別名稱" sortable></el-table-column>
+      <el-table-column
+        prop="EventTypeName"
+        label="類別名稱"
+        sortable
+      ></el-table-column>
+      <el-table-column prop="MainColor" label="主色">
+        <template slot-scope="scope">
+          <div
+            class="mainColorBox"
+            :style="`background:${scope.row.MainColor}`"
+          ></div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="Sort" label="排序" sortable></el-table-column>
       <el-table-column prop="emit" label="操作" width="200" sortable>
         <template slot-scope="scope">
           <el-button
             v-if="hasBtn('btnEdit')"
             class="outline"
             size="mini"
-            @click="handleAddOrEdit('edit',scope.row)"
-            :disabled="scope.row.EventTypeName==='會議' || scope.row.EventTypeName==='活動'"
-          >編輯</el-button>
+            @click="handleAddOrEdit('edit', scope.row)"
+            >編輯</el-button
+          >
           <el-button
             v-if="hasBtn('btnDelete')"
             type="danger"
             class="outline"
             size="mini"
             @click="deleteHandler(scope.row)"
-            :disabled="scope.row.EventTypeName==='會議' || scope.row.EventTypeName==='活動'"
-          >刪除</el-button>
+            >刪除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -49,11 +64,19 @@
     ></Pagination>
 
     <!-- addOrEditDialog -->
-    <el-dialog custom-class="addOrEditDialog" :title="addOrEdit" :visible.sync="addOrEditDialog">
+    <el-dialog
+      custom-class="addOrEditDialog"
+      :title="addOrEdit"
+      :visible.sync="addOrEditDialog"
+    >
       <ValidationObserver ref="obs">
         <div class="inputBox">
           <p class="inputTitle">類別名稱:</p>
-          <ValidationProvider name="請輸入類別名!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入類別名!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-input
               style="width:350px"
               :class="classes"
@@ -65,7 +88,11 @@
         </div>
         <div class="inputBox" style="flex-wrap: wrap;">
           <p class="inputTitle">起迄日:</p>
-          <ValidationProvider name="請輸入起迄日!!" rules="required" v-slot="{  errors,classes }">
+          <ValidationProvider
+            name="請輸入起迄日!!"
+            rules="required"
+            v-slot="{ errors, classes }"
+          >
             <el-date-picker
               v-model="startEndDate"
               type="daterange"
@@ -79,16 +106,47 @@
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
+        <div class="inputBox">
+          <p class="inputTitle">排序</p>
+          <el-input-number
+            v-model="typeSort"
+            :min="0"
+            :max="999"
+          ></el-input-number>
+        </div>
+        <div class="inputBox">
+          <p class="inputTitle">選擇主色</p>
+          <el-color-picker v-model="mainColor"></el-color-picker>
+        </div>
+        <div class="inputBox">
+          <p class="inputTitle">預覽</p>
+          <div>
+            <div class="daysPreviwe" :style="`background:${mainColor}`">
+              08:00 跨日事件預覽
+            </div>
+            <div class="todayPreview">
+              <span class="dot" :style="`background:${mainColor}`"></span> 08:00
+              當日事件預覽
+            </div>
+          </div>
+        </div>
       </ValidationObserver>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
         <el-button
           :loading="addLoading"
-          v-if="addOrEdit==='新增'"
+          v-if="addOrEdit === '新增'"
           type="primary"
           @click="addHandler"
-        >新 增</el-button>
-        <el-button :loading="editLoading" v-else type="primary" @click="editHandler">編 輯</el-button>
+          >新 增</el-button
+        >
+        <el-button
+          :loading="editLoading"
+          v-else
+          type="primary"
+          @click="editHandler"
+          >編 輯</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -116,20 +174,9 @@ export default {
       searchLoading: false,
       addLoading: false,
       editLoading: false,
-      tableData: [
-        {
-          category: "重大會議",
-        },
-        {
-          category: "活動",
-        },
-        {
-          category: "節慶",
-        },
-        {
-          category: "其他事件",
-        },
-      ],
+      typeSort: "",
+      mainColor: "#000",
+      // predefineColors: ["#ff4500", "#ff8c00"],
     };
   },
   components: {
@@ -180,10 +227,14 @@ export default {
         let eventTypeName = vm.categoryName;
         let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
         let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+        let Sort = vm.typeSort;
+        let MainColor = vm.mainColor;
         let params = {
           eventTypeName,
           StartDate,
           EndDate,
+          Sort,
+          MainColor,
         };
         vm.$api.AddEventType(params).then((res) => {
           vm.getEventType();
@@ -209,11 +260,15 @@ export default {
         let eventTypeName = vm.categoryName;
         let StartDate = moment(vm.startEndDate[0]).format("YYYY-MM-DD");
         let EndDate = moment(vm.startEndDate[1]).format("YYYY-MM-DD");
+        let Sort = vm.typeSort;
+        let MainColor = vm.mainColor;
         let params = {
           id: vm.editId,
           eventTypeName,
           StartDate,
           EndDate,
+          Sort,
+          MainColor,
         };
         vm.$api.EditEventType(params).then((res) => {
           vm.getEventType();
@@ -270,7 +325,9 @@ export default {
       }
       vm.categoryName = "";
       vm.startEndDate = "";
+      vm.typeSort = null;
       vm.addOrEdit = "新增";
+      vm.mainColor = "#888888";
       if (act === "add") {
         vm.addOrEditDialog = true;
       } else {
@@ -279,7 +336,9 @@ export default {
         vm.editId = info.Id;
         vm.startEndDate = [info.StartDate, info.EndDate];
         vm.addOrEditDialog = true;
+        vm.mainColor = info.MainColor;
         vm.categoryName = info.EventTypeName;
+        vm.typeSort = info.Sort;
       }
     },
     getButtonList(routePath, routers) {
@@ -313,5 +372,4 @@ export default {
 };
 </script>
 
-<style lang='scss'>
-</style>
+<style lang="scss"></style>
