@@ -23,34 +23,57 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="UnitName" width="150" label="單位" sortable></el-table-column>
-          <el-table-column prop="RealName" width="100" label="名稱" sortable></el-table-column>
-          <el-table-column prop="LoginName" width="100" label="帳號" sortable></el-table-column>
+          <el-table-column
+            prop="UnitName"
+            width="150"
+            label="單位"
+            sortable
+          ></el-table-column>
+          <el-table-column
+            prop="RealName"
+            width="100"
+            label="名稱"
+            sortable
+          ></el-table-column>
+          <el-table-column
+            prop="LoginName"
+            width="100"
+            label="帳號"
+            sortable
+          ></el-table-column>
           <el-table-column prop="RoleNames" label="角色" sortable>
             <template slot-scope="scope">
               <span
                 v-for="role in scope.row.RoleNames"
                 :key="`da${role}`"
                 class="roleBadge"
-              >{{ role }}</span>
+                >{{ role }}</span
+              >
             </template>
           </el-table-column>
 
           <el-table-column prop="DropCtrlTypes" label="控制類別" sortable>
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :open-delay="500"
+                placement="top-start"
+              >
                 <div slot="content">
                   <span
                     v-for="(type, index) in scope.row.DropCtrlTypes"
                     :key="`da${type.Value}`"
-                  >{{ index + 1 }}.{{ type.Text }}</span>
+                    >{{ index + 1 }}.{{ type.Text }}</span
+                  >
                 </div>
                 <p class="textOverflow">
                   <span
                     v-for="(type, index) in scope.row.DropCtrlTypes"
                     :key="`da${type.Value}`"
                     class="unitBadge"
-                  >{{ index + 1 }}.{{ type.Text }}</span>
+                    >{{ index + 1 }}.{{ type.Text }}</span
+                  >
                 </p>
               </el-tooltip>
             </template>
@@ -58,38 +81,54 @@
 
           <el-table-column prop="CtrlUnits" label="組織" sortable>
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :open-delay="500"
+                placement="top-start"
+              >
                 <div slot="content">
                   <span
                     v-for="(unit, index) in scope.row.CtrlUnits"
                     :key="`da${unit}`"
-                  >{{ index + 1 }}.{{ unit }}</span>
+                    >{{ index + 1 }}.{{ unit }}</span
+                  >
                 </div>
                 <p class="textOverflow">
                   <span
                     v-for="(unit, index) in scope.row.CtrlUnits"
                     :key="`da${unit}`"
                     class="unitBadge"
-                  >{{ index + 1 }}.{{ unit }}</span>
+                    >{{ index + 1 }}.{{ unit }}</span
+                  >
                 </p>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="emit" width="150" label="操作">
+          <el-table-column prop="emit" min-width="150" label="操作">
             <template slot-scope="scope">
               <el-button
                 v-if="hasBtn('btnEdit')"
                 class="outline"
                 size="mini"
                 @click="handleAddOrEdit('edit', scope.row)"
-              >編輯</el-button>
+                >編輯</el-button
+              >
               <el-button
                 v-if="hasBtn('btnDelete')"
                 type="danger"
                 class="outline"
                 size="mini"
                 @click="deleteHandler(scope.row)"
-              >刪除</el-button>
+                >刪除</el-button
+              >
+              <el-button
+                v-if="hasBtn('btnDelete')"
+                class="outline"
+                size="mini"
+                @click="handleChangeUser(scope.row)"
+                >切換</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -119,7 +158,11 @@
           <!-- unit -->
           <div class="inputBox" style="margin-top:3rem">
             <p class="inputTitle">單位</p>
-            <ValidationProvider name="請選擇最高單位" rules="required" v-slot="{ errors, classes }">
+            <ValidationProvider
+              name="請選擇最高單位"
+              rules="required"
+              v-slot="{ errors, classes }"
+            >
               <el-select
                 filterable
                 :class="classes"
@@ -134,7 +177,8 @@
                   :label="unit.UntNameFull"
                   v-for="unit in unitLv1"
                   :key="unit.UntId"
-                >{{ unit.UntNameFull }}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
               <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
             </ValidationProvider>
@@ -155,7 +199,8 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{ unit.UntNameFull }}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
             </ValidationProvider>
 
@@ -175,7 +220,8 @@
                   :key="unit.UntId"
                   :value="unit.UntId"
                   :label="unit.UntNameFull"
-                >{{ unit.UntNameFull }}</el-option>
+                  >{{ unit.UntNameFull }}</el-option
+                >
               </el-select>
             </ValidationProvider>
           </div>
@@ -183,7 +229,11 @@
           <!-- name -->
           <div class="inputBox">
             <p class="inputTitle">名稱</p>
-            <ValidationProvider name="請選擇人員名稱" rules="required" v-slot="{ errors, classes }">
+            <ValidationProvider
+              name="請選擇人員名稱"
+              rules="required"
+              v-slot="{ errors, classes }"
+            >
               <el-select
                 :class="classes"
                 :loading="userNameLoading"
@@ -209,7 +259,11 @@
           <!-- role -->
           <div class="inputBox">
             <p class="inputTitle">角色</p>
-            <ValidationProvider name="請至少選擇一種角色" rules="required" v-slot="{ errors, classes }">
+            <ValidationProvider
+              name="請至少選擇一種角色"
+              rules="required"
+              v-slot="{ errors, classes }"
+            >
               <el-select
                 :class="classes"
                 multiple
@@ -223,7 +277,8 @@
                   :key="role.Id"
                   :value="role.Id"
                   :label="role.Name"
-                >{{ role.Name }}</el-option>
+                  >{{ role.Name }}</el-option
+                >
               </el-select>
               <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
             </ValidationProvider>
@@ -232,7 +287,11 @@
           <!-- organization -->
           <div class="inputBox">
             <p class="inputTitle">組織</p>
-            <el-input style="width:220px" placeholder="輸入關鍵字搜尋" v-model="filterText"></el-input>
+            <el-input
+              style="width:220px"
+              placeholder="輸入關鍵字搜尋"
+              v-model="filterText"
+            ></el-input>
           </div>
           <div class="inputBox">
             <p class="inputTitle"></p>
@@ -259,7 +318,8 @@
                 v-for="type in eventTypeData"
                 :key="type.Id"
                 :label="type.Id"
-              >{{ type.EventTypeName }}</el-checkbox>
+                >{{ type.EventTypeName }}</el-checkbox
+              >
             </el-checkbox-group>
           </div>
         </el-scrollbar>
@@ -271,8 +331,15 @@
           v-if="addOrEdit === '新增'"
           :loading="addLoading"
           @click="addHandler"
-        >新 增</el-button>
-        <el-button type="primary" v-else :loading="addLoading" @click="editHandler">提 交</el-button>
+          >新 增</el-button
+        >
+        <el-button
+          type="primary"
+          v-else
+          :loading="addLoading"
+          @click="editHandler"
+          >提 交</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -281,6 +348,8 @@
 <script>
 import HeaderBox from "../../components/HeaderBox";
 import Pagination from "../../components/Pagination";
+import { resetRouter, filterAsyncRouter } from "@/router/index";
+import router from "@/router";
 export default {
   name: "UserUsers",
   components: { HeaderBox, Pagination },
@@ -351,6 +420,64 @@ export default {
     },
   },
   methods: {
+    handleChangeUser(user) {
+      console.log(user.LoginName);
+      const vm = this;
+      vm.$api.GetAdminTokenAll({ account: user.LoginName }).then((res) => {
+        console.log(res);
+        let token = res.data.token;
+        vm.$store.commit("SAVE_TOKEN", token);
+        let curTime = new Date();
+        // 設定 token 過期時間
+        let expiredate = new Date(
+          curTime.setSeconds(curTime.getSeconds() + res.data.expires_in)
+        );
+        vm.$store.commit("SAVE_TOKEN_EXPIRE", expiredate);
+
+        window.localStorage.refreshtime = expiredate;
+        window.localStorage.expires_in = res.data.expires_in;
+
+        vm.GetInfoByToken(token);
+      });
+    },
+    GetInfoByToken(token) {
+      const vm = this;
+      let params = {
+        token,
+      };
+      vm.$api.GetInfoByToken(params).then((res) => {
+        window.localStorage.user = JSON.stringify(res.data.response);
+        console.log(res.data.response);
+
+        vm.GetNavigationBar(res.data.response.Id);
+      });
+    },
+    GetNavigationBar(uid) {
+      const vm = this;
+      console.log(uid);
+      let params = {
+        uid,
+      };
+      vm.$api.GetNavigationBar(params).then((res) => {
+        // console.log(res, params);
+        let route = res.data.response.children;
+        window.localStorage.router = JSON.stringify(route);
+
+        // 過濾拿到的router
+        let getRouter = filterAsyncRouter(route);
+        // console.log(getRouter);
+        // 動態添加router
+        router.$addRoutes(getRouter);
+
+        // vm.$store.dispatch("loadingHandler", false);
+
+        // // window.location.reload();
+
+        vm.$router
+          .replace(vm.$route.query.redirect ? vm.$route.query.redirect : "/")
+          .then(window.location.reload());
+      });
+    },
     async getUnits() {
       const vm = this;
       await vm.$api.GetUnits().then((res) => {
@@ -625,7 +752,7 @@ export default {
         vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
 
-        vm.$nextTick(function () {
+        vm.$nextTick(function() {
           vm.$refs.tree.setCheckedKeys([]);
         });
       } else {
@@ -638,7 +765,7 @@ export default {
         };
         vm.$api.GetAdminUserById(params).then((res) => {
           let user = res.data.response;
-          vm.$nextTick(function () {
+          vm.$nextTick(function() {
             (vm.userRoleSelect = user.Roles),
               (vm.eventTypeSelect = user.CtrlType),
               (vm.userControlSelect = user.CtrlUnits),

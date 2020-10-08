@@ -17,6 +17,9 @@ const api = {
   RefreshToken(params) {
     return req("get", "Login/RefreshToken/api/RefreshToken", params);
   },
+  GetAdminTokenAll(params) {
+    return req("get", "Login/GetAdminTokenAll", params);
+  },
 
   // Roles
   GetRoles(params) {
@@ -158,7 +161,7 @@ const api = {
 
   // upload
   UploadFile() {
-    return req("get", "/images/Upload/Pic");
+    return req("get", "/images/Upload/CalPic");
   },
 
   // download

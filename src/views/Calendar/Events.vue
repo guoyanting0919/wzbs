@@ -22,7 +22,7 @@
           header-cell-class-name="tableHeader"
           empty-text="暫無資料"
           :data="eventsData"
-          style="width: 100% ;overflow:auto"
+          style="width: 100%; overflow: auto"
           :default-sort="{ prop: 'date', order: 'descending' }"
           @selection-change="handleSelectionChange"
           @sort-change="hadleSortChange"
@@ -144,7 +144,7 @@
     >
       <ValidationObserver ref="obs">
         <!-- <el-scrollbar class="scrollbar-handle" ref="scrollBox"> -->
-        <div class="inputBox" style="margin-top: 3rem;">
+        <div class="inputBox" style="margin-top: 3rem">
           <div class="inputTitle">活動 / 會議名稱</div>
           <ValidationProvider
             name="請輸入活動會議名稱!!"
@@ -153,7 +153,7 @@
           >
             <el-input
               :class="classes"
-              style="width:550px"
+              style="width: 550px"
               v-model="eventNameInput"
               placeholder="請輸入活動 / 會議名稱"
             ></el-input>
@@ -212,7 +212,7 @@
           </ValidationProvider>
         </div>
 
-        <div class="inputBox">
+        <!-- <div class="inputBox">
           <div class="inputTitle">公告時間</div>
           <ValidationProvider
             name="請選擇公告時間!!"
@@ -231,7 +231,7 @@
             ></el-date-picker>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
-        </div>
+        </div> -->
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動時間</div>
@@ -261,7 +261,7 @@
           >
             <el-input
               :class="classes"
-              style="width:600px"
+              style="width: 600px"
               v-model="eventSiteInput"
               placeholder="請輸入會議 / 活動地點"
             ></el-input>
@@ -278,7 +278,7 @@
           >
             <el-input
               :class="classes"
-              style="width:600px"
+              style="width: 600px"
               v-model="eventUrlInput"
               placeholder="請輸入會議 / 活動連結"
             ></el-input>
@@ -378,7 +378,7 @@
           ></el-switch>
         </div>
 
-        <div class="inputBox" style="align-items:flex-start">
+        <div class="inputBox" style="align-items: flex-start">
           <div class="inputTitle">參與人員</div>
           <div>
             <div>
@@ -455,22 +455,22 @@
             <!-- 選擇單位(校外) -->
             <div class="selectBox" v-if="isOutSchool">
               <el-input
-                style="width:180px;margin-right:0.5rem"
+                style="width: 180px; margin-right: 0.5rem"
                 v-model="outUnit"
                 placeholder="請輸入最高單位"
               ></el-input>
               <el-input
-                style="width:180px;margin-right:0.5rem"
+                style="width: 180px; margin-right: 0.5rem"
                 v-model="outName"
                 placeholder="請輸入人員名稱"
               ></el-input>
               <el-input
-                style="width:180px;margin-right:0.5rem"
+                style="width: 180px; margin-right: 0.5rem"
                 v-model="outTitle"
                 placeholder="請輸入職稱"
               ></el-input>
               <el-select
-                style="width:180px;margin-right:0.5rem"
+                style="width: 180px; margin-right: 0.5rem"
                 v-model="outRole"
                 placeholder="參與角色"
               >
@@ -481,7 +481,7 @@
                 ></el-option>
               </el-select>
 
-              <el-button @click="outAddToTable" style="margin-top:0.5rem"
+              <el-button @click="outAddToTable" style="margin-top: 0.5rem"
                 >加入</el-button
               >
             </div>
@@ -492,7 +492,7 @@
         <div
           v-if="!isOutSchool"
           class="inputBox"
-          style="align-items:flex-start"
+          style="align-items: flex-start"
         >
           <div class="inputTitle"></div>
           <div class="selectBox">
@@ -511,7 +511,10 @@
                 :key="user.Account"
                 :value="user.Account"
                 :label="user.Name"
-              ></el-option>
+              >
+                <span>{{ user.Name }}</span>
+                <span>({{ user.Title }})</span>
+              </el-option>
             </el-select>
             <el-select v-model="memberTitle" placeholder="職稱">
               <el-option
@@ -533,7 +536,7 @@
         </div>
 
         <!-- table -->
-        <div class="inputBox" style="align-items:flex-start">
+        <div class="inputBox" style="align-items: flex-start">
           <div class="inputTitle"></div>
           <el-table
             header-cell-class-name="tableHeader"
@@ -685,7 +688,7 @@
         </div>
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
       </el-upload>
-      <div class="downloadEx" style="margin-top:0.5rem">
+      <div class="downloadEx" style="margin-top: 0.5rem">
         <a href="../行事曆匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
@@ -726,7 +729,7 @@
           限制上傳 xlsx 或 xls 格式文件
         </div>
       </el-upload>
-      <div class="downloadEx" style="margin-top:0.5rem">
+      <div class="downloadEx" style="margin-top: 0.5rem">
         <a href="../人員匯入範例.xlsx">
           <i class="fas fa-download"></i>範例檔案下載
         </a>
@@ -894,7 +897,7 @@ export default {
       eventNameInput: "",
       inputDescription: "",
       eventCategorySelete: "",
-      showDate: [],
+      showDate: ["2000-01-01T00:00:00", "2099-01-01T00:00:00"],
       eventDate: [],
       eventSiteInput: "",
       eventUrlInput: "",
@@ -1026,7 +1029,7 @@ export default {
       // console.log(file);
       return false;
     },
-    handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
+    handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
       // An example of using FormData
       // NOTE: Your key could be different such as:
       // formData.append('file', file)
@@ -1035,7 +1038,7 @@ export default {
       formData.append("image", file);
 
       axios({
-        url: "http://cal.wzu.edu.tw/images/Upload/Pic",
+        url: "https://cal.wzu.edu.tw/images/Upload/CalPic",
         method: "POST",
         data: formData,
       })
@@ -1174,6 +1177,8 @@ export default {
       vm.$api.GetUserTitle({ key: vm.userData.Account }).then((res) => {
         vm.memberTitle = "";
         vm.memberTitleList = res.data.response;
+        vm.memberTitle =
+          vm.memberTitleList.length == 1 ? vm.memberTitleList[0] : "";
       });
     },
     getUsers(params) {
@@ -1195,9 +1200,9 @@ export default {
         });
       }
     },
-    setEventDate() {
-      this.eventDate = this.showDate;
-    },
+    // setEventDate() {
+    //   this.eventDate = this.showDate;
+    // },
     relatedChange() {
       this.unit1 = "";
       this.userNameSelect = "";
@@ -1497,12 +1502,16 @@ export default {
         await vm.$refs.obs.reset();
       }
       if (act === "add") {
+        let loginUser = JSON.parse(localStorage.user);
         vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
         vm.eventNameInput = "";
         vm.inputDescription = "";
-        vm.eventCategorySelete = "";
-        vm.showDate = [];
+        vm.eventCategorySelete =
+          loginUser.DropCtrlTypes.length == 1
+            ? loginUser.DropCtrlTypes[0].Value
+            : "";
+        // vm.showDate = [];
         vm.eventDate = [];
         vm.eventSiteInput = "";
         vm.eventUrlInput = "";
@@ -1513,7 +1522,7 @@ export default {
         vm.usersTable = [];
         vm.pushSwitch = false;
         vm.userNameSelect = "";
-        vm.unitSelete = "";
+        vm.unitSelete = loginUser.UnitCode ? loginUser.UnitCode : "";
         vm.memberTitle = "";
         vm.rloeSelect = "";
         vm.outUnit = "";
@@ -1535,7 +1544,7 @@ export default {
 
           vm.$store.dispatch("loadingHandler", false);
           // console.log(event);
-          vm.showDate = [];
+          // vm.showDate = [];
           vm.eventDate = [];
           vm.eventNameInput = event.EventName;
           vm.inputDescription = event.Summary;
@@ -1882,9 +1891,9 @@ export default {
 
         vm.$store.dispatch("loadingHandler", false);
         // console.log(event);
-        vm.showDate = [];
+        // vm.showDate = [];
         vm.eventDate = [];
-        vm.eventNameInput = event.EventName;
+        vm.eventNameInput = `${event.EventName} - 複製`;
         vm.inputDescription = event.Summary;
         vm.eventCategorySelete = event.EventTypeId;
         vm.uploadUrl = event.AttachDoc;

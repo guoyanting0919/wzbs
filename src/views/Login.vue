@@ -8,7 +8,7 @@
     <div class="loginBox">
       <div class="inputBox">
         <el-input
-          style="width:300px"
+          style="width: 300px"
           prefix-icon="el-icon-user-solid"
           placeholder="帳號 / Username"
           v-model="account"
@@ -17,7 +17,7 @@
       <div class="inputBox">
         <el-input
           prefix-icon="el-icon-key"
-          style="width:300px"
+          style="width: 300px"
           placeholder="密碼 / Password"
           v-model="password"
           show-password
@@ -126,13 +126,14 @@ export default {
       };
       vm.$api.GetInfoByToken(params).then((res) => {
         window.localStorage.user = JSON.stringify(res.data.response);
-        // console.log(res.data.response);
+        console.log(res.data.response);
 
         vm.GetNavigationBar(res.data.response.Id);
       });
     },
     GetNavigationBar(uid) {
       const vm = this;
+      console.log(uid);
       let params = {
         uid,
       };
@@ -161,30 +162,35 @@ export default {
     const vm = this;
     this.identifyCode = "";
     this.makeCode(this.identifyCodes, 4);
-    if (window.localStorage.user) {
-      let timerInterval;
-      vm.$swal({
-        title: "您目前仍屬於登入狀態",
-        html: "頁面將於 <b></b> ms後跳轉至後台首頁",
-        timer: 3000,
-        timerProgressBar: true,
-        onBeforeOpen: () => {
-          vm.$swal.showLoading();
-          timerInterval = window.setInterval(() => {
-            const content = vm.$swal.getContent();
-            if (content) {
-              const b = content.querySelector("b");
-              if (b) {
-                b.textContent = vm.$swal.getTimerLeft();
-              }
-            }
-          }, 100);
-        },
-        onClose: () => {
-          clearInterval(timerInterval);
-          vm.$router.push("/");
-        },
-      });
+    let isLogin = localStorage.Token;
+    console.log(isLogin);
+    if (isLogin) {
+      // let loginUserToken = JSON.parse(localStorage.Token);
+      // console.log(loginUserToken);
+      vm.GetInfoByToken(isLogin);
+      // let timerInterval;
+      // vm.$swal({
+      //   title: "您目前仍屬於登入狀態",
+      //   html: "頁面將於 <b></b> ms後跳轉至後台首頁",
+      //   timer: 3000,
+      //   timerProgressBar: true,
+      //   onBeforeOpen: () => {
+      //     vm.$swal.showLoading();
+      //     timerInterval = window.setInterval(() => {
+      //       const content = vm.$swal.getContent();
+      //       if (content) {
+      //         const b = content.querySelector("b");
+      //         if (b) {
+      //           b.textContent = vm.$swal.getTimerLeft();
+      //         }
+      //       }
+      //     }, 100);
+      //   },
+      //   onClose: () => {
+      //     clearInterval(timerInterval);
+      //     vm.$router.push("/");
+      //   },
+      // });
     }
   },
 };
