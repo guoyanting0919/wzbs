@@ -3,29 +3,58 @@
     <div class="logoBox" v-if="!isCollapse">文藻行事曆系統後台</div>
     <div class="logoBox logoBoxCollapse" v-else>W.Z</div>
     <div class="breads">
-      <i :class="{'activeBar':isCollapse}" @click="setCollapse" class="fas fa-bars"></i>
+      <i
+        :class="{ activeBar: isCollapse }"
+        @click="setCollapse"
+        class="fas fa-bars"
+      ></i>
 
       <!-- breads -->
       <el-breadcrumb separator="/" class="breadItems">
-        <el-breadcrumb-item class="breadLink" v-for="item in $route.matched" :key="item.path">
-          <router-link :to="item.path" class="breadLink">{{ item.name }}</router-link>
+        <el-breadcrumb-item
+          class="breadLink"
+          v-for="item in $route.matched"
+          :key="item.path"
+        >
+          <router-link :to="item.path" class="breadLink">{{
+            item.name
+          }}</router-link>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
     <!-- theme switch -->
-    <el-switch disabled @change="changeTheme" class="themeSwitch" v-model="themeMode"></el-switch>
+    <el-switch
+      disabled
+      @change="changeTheme"
+      class="themeSwitch"
+      v-model="themeMode"
+    ></el-switch>
 
     <!-- user -->
     <div class="userBox" v-if="userInfo">
       <el-dropdown trigger="click">
-        <span class="el-dropdown-link userinfo-inner userStyle">{{userInfo.LoginName}}</span>
+        <span class="el-dropdown-link userinfo-inner userStyle">{{
+          userInfo.LoginName
+        }}</span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="logoutHandler">登出</el-dropdown-item>
+          <el-dropdown-item @click.native="logoutHandler"
+            >登出</el-dropdown-item
+          >
+          <el-dropdown-item>
+            <a class="trainLink" href="./download/Train.pdf">教育訓練連結</a>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div style="cursor:pointer" @click="$router.push('/login')" class="userBox" v-else>登入</div>
+    <div
+      style="cursor:pointer"
+      @click="$router.push('/login')"
+      class="userBox"
+      v-else
+    >
+      登入
+    </div>
   </div>
 </template>
 
@@ -81,5 +110,18 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.trainLink {
+  list-style: none;
+  margin: 0;
+  font-size: 14px;
+  color: #606266;
+  cursor: pointer;
+  outline: 0;
+
+  &:hover {
+    background-color: #ecf5ff;
+    color: #66b1ff;
+  }
+}
 </style>
