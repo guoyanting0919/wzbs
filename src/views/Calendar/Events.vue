@@ -1431,7 +1431,7 @@ export default {
         });
         // Vue.swal("Hello Vue world!!!");
       } else {
-        if (vm.usersTableData.length == 0) {
+        if (vm.usersTableData.length < 0) {
           vm.$alertM.fire({
             icon: "error",
             title: `請確實新增參與人員!`,
@@ -1944,7 +1944,7 @@ export default {
           title: `請確認欄位是否正確填寫!`,
         });
       } else {
-        if (vm.usersTableData.length == 0) {
+        if (vm.usersTableData.length < 0) {
           vm.$alertM.fire({
             icon: "error",
             title: `請確實新增參與人員!`,
