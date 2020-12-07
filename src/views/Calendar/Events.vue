@@ -163,12 +163,12 @@
 
         <div class="inputBox">
           <div class="inputTitle">活動 / 會議描述</div>
-          <ValidationProvider
+          <!-- <ValidationProvider
             name="請輸入活動會議描述!!"
             rules="required"
             v-slot="{ errors }"
-          >
-            <!-- <div class="personalContainer mt-5 ck" ref="ck">
+          > -->
+          <!-- <div class="personalContainer mt-5 ck" ref="ck">
               <ckeditor
                 :class="classes"
                 :editor="editor"
@@ -176,16 +176,16 @@
                 :config="editorConfig"
               ></ckeditor>
             </div>-->
-            <vue-editor
-              id="editor"
-              useCustomImageHandler
-              @image-added="handleImageAdded"
-              :editor-toolbar="customToolbar"
-              v-model="inputDescription"
-              :editorOptions="editorSettings"
-            ></vue-editor>
-            <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
-          </ValidationProvider>
+          <vue-editor
+            id="editor"
+            useCustomImageHandler
+            @image-added="handleImageAdded"
+            :editor-toolbar="customToolbar"
+            v-model="inputDescription"
+            :editorOptions="editorSettings"
+          ></vue-editor>
+          <!-- <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span> -->
+          <!-- </ValidationProvider> -->
         </div>
 
         <div class="inputBox">
