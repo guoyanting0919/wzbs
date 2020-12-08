@@ -138,23 +138,34 @@ export default {
         uid,
       };
       vm.$api.GetNavigationBar(params).then((res) => {
-        // console.log(res, params);
-        let route = res.data.response.children;
-        window.localStorage.router = JSON.stringify(route);
+        console.log(res.data.success);
+        if (res.data.success) {
+          let route = res.data.response.children;
+          window.localStorage.router = JSON.stringify(route);
 
-        // 過濾拿到的router
-        let getRouter = filterAsyncRouter(route);
-        // console.log(getRouter);
-        // 動態添加router
-        router.$addRoutes(getRouter);
+          // 過濾拿到的router
+          let getRouter = filterAsyncRouter(route);
+          // 動態添加router
+          router.$addRoutes(getRouter);
 
-        vm.$store.dispatch("loadingHandler", false);
+          vm.$store.dispatch("loadingHandler", false);
 
-        // // window.location.reload();
-
-        vm.$router
-          .replace(vm.$route.query.redirect ? vm.$route.query.redirect : "/")
-          .then(window.location.reload());
+          vm.$router
+            .replace(vm.$route.query.redirect ? vm.$route.query.redirect : "/")
+            .then(window.location.reload());
+        } else {
+          vm.$alertM.fire({
+            icon: "error",
+            title: "無此帳號或該帳號尚未設定權限",
+          });
+          window.localStorage.removeItem("user");
+          window.localStorage.removeItem("Token");
+          window.localStorage.removeItem("TokenExpire");
+          window.localStorage.removeItem("refreshtime");
+          window.localStorage.removeItem("router");
+          sessionStorage.removeItem("Tags");
+          vm.$store.dispatch("loadingHandler", false);
+        }
       });
     },
   },
@@ -163,34 +174,8 @@ export default {
     this.identifyCode = "";
     this.makeCode(this.identifyCodes, 4);
     let isLogin = localStorage.Token;
-    console.log(isLogin);
     if (isLogin) {
-      // let loginUserToken = JSON.parse(localStorage.Token);
-      // console.log(loginUserToken);
       vm.GetInfoByToken(isLogin);
-      // let timerInterval;
-      // vm.$swal({
-      //   title: "您目前仍屬於登入狀態",
-      //   html: "頁面將於 <b></b> ms後跳轉至後台首頁",
-      //   timer: 3000,
-      //   timerProgressBar: true,
-      //   onBeforeOpen: () => {
-      //     vm.$swal.showLoading();
-      //     timerInterval = window.setInterval(() => {
-      //       const content = vm.$swal.getContent();
-      //       if (content) {
-      //         const b = content.querySelector("b");
-      //         if (b) {
-      //           b.textContent = vm.$swal.getTimerLeft();
-      //         }
-      //       }
-      //     }, 100);
-      //   },
-      //   onClose: () => {
-      //     clearInterval(timerInterval);
-      //     vm.$router.push("/");
-      //   },
-      // });
     }
   },
 };
