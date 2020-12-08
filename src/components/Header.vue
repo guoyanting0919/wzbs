@@ -42,13 +42,15 @@
             >登出</el-dropdown-item
           >
           <el-dropdown-item>
-            <a class="trainLink" href="./download/Train.pdf">教育訓練連結</a>
+            <a target="_blank" class="trainLink" href="./download/Train.pdf"
+              >教育訓練連結</a
+            >
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
     <div
-      style="cursor:pointer"
+      style="cursor: pointer"
       @click="$router.push('/login')"
       class="userBox"
       v-else
