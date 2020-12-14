@@ -38,7 +38,7 @@
             prop="EventTypeName"
             label="行事曆類別"
           ></el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             width="200"
             prop="ShowStartDate"
             label="公告時間"
@@ -51,7 +51,7 @@
                 <span class="dateFz">{{ scope.row.ShowEndDate }}</span>
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             width="200"
             prop="EventStartDate"
