@@ -1484,6 +1484,7 @@ export default {
                 icon: "success",
                 title: `成功${vm.addOrEdit}${eventName}`,
               });
+              this.currentPage = 1;
               vm.getEvents();
             } else {
               vm.addOrEditDialog = false;

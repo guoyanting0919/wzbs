@@ -46,6 +46,14 @@
               >教育訓練連結</a
             >
           </el-dropdown-item>
+          <el-dropdown-item>
+            <a
+              target="_blank"
+              class="trainLink"
+              href="http://cal.wzu.edu.tw/wzfsDev/index.html#/Calendar"
+              >行事曆前台連結</a
+            >
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
