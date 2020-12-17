@@ -148,6 +148,7 @@
     <!-- addOrEditDialog -->
     <el-dialog
       @opened="scrollToTop"
+      @close="arrUnit = []"
       :title="addOrEdit"
       :visible.sync="addOrEditDialog"
       v-if="unitsData"
@@ -156,7 +157,7 @@
       <ValidationObserver ref="obs">
         <el-scrollbar ref="scrollBox" class="scrollbar-handle">
           <!-- unit -->
-          <div class="inputBox" style="margin-top:3rem">
+          <div class="inputBox" style="margin-top: 3rem">
             <p class="inputTitle">單位</p>
             <ValidationProvider
               name="請選擇最高單位"
@@ -288,7 +289,7 @@
           <div class="inputBox">
             <p class="inputTitle">組織</p>
             <el-input
-              style="width:220px"
+              style="width: 220px"
               placeholder="輸入關鍵字搜尋"
               v-model="filterText"
             ></el-input>
@@ -312,7 +313,7 @@
 
           <!-- category -->
           <div class="inputBox">
-            <p class="inputTitle" style="align-self: flex-start;">行事曆類別</p>
+            <p class="inputTitle" style="align-self: flex-start">行事曆類別</p>
             <el-checkbox-group v-model="eventTypeSelect" v-if="eventTypeData">
               <el-checkbox
                 v-for="type in eventTypeData"
@@ -355,6 +356,7 @@ export default {
   components: { HeaderBox, Pagination },
   data() {
     return {
+      arrUnit: [],
       buttonList: [],
       userNameLoading: false,
       searchLoading: false,
@@ -752,7 +754,7 @@ export default {
         vm.addOrEdit = "新增";
         vm.addOrEditDialog = true;
 
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           vm.$refs.tree.setCheckedKeys([]);
         });
       } else {
@@ -765,51 +767,58 @@ export default {
         };
         vm.$api.GetAdminUserById(params).then((res) => {
           let user = res.data.response;
-          vm.$nextTick(function() {
-            (vm.userRoleSelect = user.Roles),
-              (vm.eventTypeSelect = user.CtrlType),
-              (vm.userControlSelect = user.CtrlUnits),
-              vm.$refs.tree.setCheckedKeys(vm.userControlSelect);
+          vm.$nextTick(function () {
+            vm.userRoleSelect = user.Roles;
+            vm.eventTypeSelect = user.CtrlType;
+            vm.userControlSelect = user.CtrlUnits;
+            vm.$refs.tree.setCheckedKeys(vm.userControlSelect);
             vm.userNameSelect = user.LoginName;
             let arr = vm.unitsData.filter((unit) => {
               return unit.UntId === user.UnitCode;
             });
             let userUnit = arr[0];
-            if (userUnit.UntLevelb === "1") {
-              vm.userUnit1Select = userUnit.UntId;
+            /* ------- */
+            vm.fun(userUnit);
+            /* ------- */
+            vm.arrUnit = vm.arrUnit.reverse();
+            if (vm.arrUnit.length === 1) {
+              vm.userUnit1Select = vm.arrUnit[0];
               vm.$api.GetUsers({ unitCode: vm.userUnit1Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
-            } else if (userUnit.UntLevelb === "2") {
-              vm.userUnit1Select = userUnit.UntIdUp;
-              vm.userUnit2Select = userUnit.UntId;
+            } else if (vm.arrUnit.length === 2) {
+              vm.userUnit1Select = vm.arrUnit[0];
+              vm.userUnit2Select = vm.arrUnit[1];
               vm.$api.GetUsers({ unitCode: vm.userUnit2Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
             } else {
-              vm.userUnit2Select = userUnit.UntIdUp;
-              vm.userUnit3Select = userUnit.UntId;
-              let lv2Arr = vm.unitsData.filter((unit) => {
-                return (
-                  unit.UntLevelb === "2" && unit.UntId === vm.userUnit2Select
-                );
-              });
-              let pId = lv2Arr[0].UntIdUp;
-              let lv1Arr = vm.unitsData.filter((unit) => {
-                return unit.UntLevelb === "1" && unit.UntId === pId;
-              });
+              vm.userUnit1Select = vm.arrUnit[0];
+              vm.userUnit2Select = vm.arrUnit[1];
+              vm.userUnit3Select = vm.arrUnit[2];
+
               vm.$api.GetUsers({ unitCode: vm.userUnit3Select }).then((res) => {
                 vm.usersData = res.data;
                 vm.$store.dispatch("loadingHandler", false);
               });
-              vm.userUnit1Select = lv1Arr[0].UntId;
             }
           });
         });
 
         // console.log(info);
+      }
+    },
+
+    fun(user) {
+      const vm = this;
+      vm.arrUnit.push(user.UntId);
+      if (user.UntId !== user.UntIdUp) {
+        let a = vm.unitsData.filter((u) => {
+          return u.UntId == user.UntIdUp;
+        })[0];
+        vm.fun(a);
       }
     },
 

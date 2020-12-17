@@ -171,6 +171,11 @@ const api = {
   DownUnitExcel() {
     return req("get", "School/GetUnitExcel");
   },
+
+  //adminTitle
+  GetAdminTitles(params) {
+    return req("get", "JoinUserRole/GetAdminTitle", params);
+  },
 };
 
 export default api;

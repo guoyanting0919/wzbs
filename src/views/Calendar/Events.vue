@@ -83,7 +83,7 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column width="350" prop="emit" label="操作">
+          <el-table-column width="450" prop="emit" label="操作">
             <template slot-scope="scope">
               <el-button
                 v-if="hasBtn('btnEdit')"
@@ -105,6 +105,13 @@
                 size="mini"
                 @click="memberImportHandler(scope.row)"
                 >匯入參與人員</el-button
+              >
+              <el-button
+                v-if="hasBtn('btnEdit')"
+                class="outline"
+                size="mini"
+                @click="memberExportHandler(scope.row)"
+                >匯出參與人員</el-button
               >
               <el-button
                 v-if="hasBtn('btnDelete')"
@@ -497,6 +504,7 @@
           <div class="inputTitle"></div>
           <div class="selectBox">
             <el-select
+              style="width: 150px"
               filterable
               no-match-text="暫無資料"
               :loading="userNameLoading"
@@ -516,7 +524,11 @@
                 <span>({{ user.Title }})</span>
               </el-option>
             </el-select>
-            <el-select v-model="memberTitle" placeholder="職稱">
+            <el-select
+              style="width: 150px"
+              v-model="memberTitle"
+              placeholder="職稱"
+            >
               <el-option
                 v-for="(title, index) in memberTitleList"
                 :key="index"
@@ -524,12 +536,29 @@
                 >{{ title }}</el-option
               >
             </el-select>
-            <el-select v-model="rloeSelect" placeholder="參與角色">
+            <el-select
+              style="width: 150px"
+              v-model="rloeSelect"
+              placeholder="參與角色"
+            >
               <el-option
                 v-for="role in rolesData"
                 :key="role.Id"
                 :value="role.Name"
               ></el-option>
+            </el-select>
+            <el-select
+              style="width: 150px"
+              v-model="adminTitleSelect"
+              placeholder="行政職稱"
+            >
+              <el-option
+                v-for="role in adminTitles"
+                :key="role.Key"
+                :value="role.Value"
+              >
+                {{ role.Value }}
+              </el-option>
             </el-select>
           </div>
           <el-button :loading="addLoading" @click="addToTable">加入</el-button>
@@ -557,6 +586,10 @@
             ></el-table-column>
             <el-table-column prop="unit" label="單位"></el-table-column>
             <el-table-column prop="userType" label="參與角色"></el-table-column>
+            <el-table-column
+              prop="AdminTitle"
+              label="行政職稱"
+            ></el-table-column>
             <el-table-column prop label="刪除">
               <template slot-scope="scope">
                 <el-button
@@ -761,28 +794,7 @@ import { VueEditor, Quill } from "vue2-editor";
 import ImageResize from "quill-image-resize-vue";
 Quill.register("modules/imageResize", ImageResize);
 import axios from "axios";
-// ck
-// import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-// import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
-// import BoldPlugin from "@ckeditor/ckeditor5-basic-styles/src/bold";
-// import ItalicPlugin from "@ckeditor/ckeditor5-basic-styles/src/italic";
-// import LinkPlugin from "@ckeditor/ckeditor5-link/src/link";
-// import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
-// import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
-// import Heading from "@ckeditor/ckeditor5-heading/src/heading.js";
-// import FontBackgroundColor from "@ckeditor/ckeditor5-font/src/fontbackgroundcolor.js";
-// import FontColor from "@ckeditor/ckeditor5-font/src/fontcolor.js";
-// import FontFamily from "@ckeditor/ckeditor5-font/src/fontfamily.js";
-// import FontSize from "@ckeditor/ckeditor5-font/src/fontsize.js";
-// import MediaEmbed from "@ckeditor/ckeditor5-media-embed/src/mediaembed.js";
-// import List from "@ckeditor/ckeditor5-list/src/list.js";
-// import Image from "@ckeditor/ckeditor5-image/src/image.js";
-// import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption.js";
-// import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize.js";
-// import ImageStyle from "@ckeditor/ckeditor5-image/src/imagestyle.js";
-// import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar.js";
-// import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload.js";
-// import CKFinder from "@ckeditor/ckeditor5-ckfinder/src/ckfinder";
+
 export default {
   name: "CalendarEvents",
   components: {
@@ -815,72 +827,6 @@ export default {
         ["link", "image", "video"],
         ["clean"],
       ],
-      // ck
-      // editor: ClassicEditor,
-      // editorData: "",
-      // editorConfig: {
-      //   plugins: [
-      //     EssentialsPlugin,
-      //     BoldPlugin,
-      //     ItalicPlugin,
-      //     LinkPlugin,
-      //     ParagraphPlugin,
-      //     Alignment,
-      //     Heading,
-      //     FontBackgroundColor,
-      //     FontColor,
-      //     FontFamily,
-      //     FontSize,
-      //     MediaEmbed,
-      //     List,
-      //     Image,
-      //     ImageResize,
-      //     ImageUpload,
-      //     ImageToolbar,
-      //     ImageCaption,
-      //     ImageStyle,
-      //     CKFinder,
-      //   ],
-
-      //   toolbar: {
-      //     items: [
-      //       "heading",
-      //       "|",
-      //       "bold",
-      //       "italic",
-      //       "|",
-      //       "fontBackgroundColor",
-      //       "fontColor",
-      //       "fontSize",
-      //       "|",
-      //       "link",
-      //       "imageUpload",
-      //       "mediaEmbed",
-      //       "|",
-      //       "alignment",
-      //       "numberedList",
-      //       "|",
-      //       "undo",
-      //       "redo",
-      //     ],
-      //   },
-      //   image: {
-      //     toolbar: [
-      //       "imageTextAlternative",
-      //       "|",
-      //       "imageStyle:full",
-      //       "imageStyle:side",
-      //     ],
-      //   },
-      //   ckfinder: {
-      //     // 後端的上傳圖片 API 路徑
-      //     uploadUrl: `http://cal.wzu.edu.tw/images/Upload/Pic`,
-      //     options: {
-      //       resourceType: "Images",
-      //       // 限定類型為圖片
-      //     },
-      //   },
-      // },
 
       userNameLoading: false,
       // 全域資料
@@ -892,6 +838,7 @@ export default {
       userData: "",
       usersTable: [],
       allMembersData: "",
+      adminTitles: [],
 
       //欄位
       eventNameInput: "",
@@ -908,6 +855,7 @@ export default {
       unit3: "",
       userNameSelect: "",
       rloeSelect: "",
+      adminTitleSelect: "",
       isRelated: true,
       isOutSchool: false,
       memberTitle: "",
@@ -1091,6 +1039,13 @@ export default {
         vm.$store.dispatch("loadingHandler", false);
       });
     },
+    getAdminTitles() {
+      const vm = this;
+      vm.$api.GetAdminTitles().then((res) => {
+        vm.adminTitles = res.data.response;
+        console.log(vm.adminTitles);
+      });
+    },
     getEventRolse() {
       const vm = this;
       vm.$api.GetEventRoles().then((res) => {
@@ -1208,6 +1163,7 @@ export default {
       this.userNameSelect = "";
       this.memberTitle = "";
       this.rloeSelect = "";
+      this.adminTitleSelect = "";
       this.userData = "";
     },
     successUpload(res) {
@@ -1238,6 +1194,7 @@ export default {
         if (vm.isRelated) {
           let userId = vm.userData.Account;
           let userType = vm.rloeSelect;
+          let AdminTitle = vm.adminTitleSelect;
           let unitCode = vm.userData.UnitCode;
           let userName = vm.userData.Name;
           let usertitle = vm.memberTitle;
@@ -1246,12 +1203,14 @@ export default {
           let userData = {
             userId,
             eventId,
+            AdminTitle,
             userType,
             unitCode,
             userName,
             usertitle,
             unit,
           };
+          console.log(userData);
           let startDate = moment(vm.eventDate[0]).format("YYYY-MM-DD HH:mm:ss");
           let EndDate = moment(vm.eventDate[1]).format("YYYY-MM-DD HH:mm:ss");
           let UserName = vm.userData.Name;
@@ -1274,6 +1233,7 @@ export default {
               vm.memberTitle = "";
               vm.memberTitleList = [];
               vm.rloeSelect = "";
+              vm.adminTitleSelect = "";
               vm.userNameSelect = "";
               vm.userData = "";
               vm.usersData = "";
@@ -1301,6 +1261,7 @@ export default {
                   vm.memberTitle = "";
                   vm.memberTitleList = [];
                   vm.rloeSelect = "";
+                  vm.adminTitleSelect = "";
                   vm.userNameSelect = "";
                   vm.userData = "";
                   vm.usersData = "";
@@ -1318,6 +1279,7 @@ export default {
           // console.log("nR");
           let userId = vm.userData.Account;
           let userType = vm.rloeSelect;
+          let adminTitle = vm.adminTitleSelect;
           let unitCode = vm.unit3 || vm.unit2 || vm.unit1;
           let userName = vm.userData.Name;
           let usertitle = vm.memberTitle;
@@ -1330,6 +1292,7 @@ export default {
             userId,
             eventId,
             userType,
+            adminTitle,
             unitCode,
             userName,
             usertitle,
@@ -1357,6 +1320,7 @@ export default {
               vm.unit3 = "";
               vm.memberTitle = "";
               vm.rloeSelect = "";
+              vm.adminTitleSelect = "";
               vm.userNameSelect = "";
               vm.memberTitleList = [];
               vm.userData = "";
@@ -1385,6 +1349,7 @@ export default {
                   vm.memberTitle = "";
                   vm.memberTitleList = [];
                   vm.rloeSelect = "";
+                  vm.adminTitleSelect = "";
                   vm.userNameSelect = "";
                   vm.userData = "";
                   vm.usersData = "";
@@ -1526,6 +1491,7 @@ export default {
         vm.unitSelete = loginUser.UnitCode ? loginUser.UnitCode : "";
         vm.memberTitle = "";
         vm.rloeSelect = "";
+        vm.adminTitleSelect = "";
         vm.outUnit = "";
         vm.outName = "";
         vm.outRole = "";
@@ -1578,6 +1544,7 @@ export default {
           vm.unit3 = "";
           vm.userNameSelect = "";
           vm.rloeSelect = "";
+          vm.adminTitleSelect = "";
           vm.usersTable = event.JoinUsers;
           vm.$nextTick(() => {
             vm.addOrEditDialog = true;
@@ -1683,6 +1650,43 @@ export default {
         vm.searchLoading = false;
         vm.currentPage = 1;
       });
+    },
+
+    memberExportHandler(event) {
+      const vm = this;
+      console.log(event);
+      let date = moment(new Date()).format("YYYYMMDDHHMM");
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${vm.$store.state.token}`,
+        },
+        responseType: "blob", //// 回應類型為 blob
+      };
+      this.$http
+        .get(
+          `${vm.baseUrl}CalendarEvent/GetJoinUserExcel/calId?calId=${event.Id}`,
+          config
+        )
+        .then((res) => {
+          // console.log(res);
+          let blob = new Blob([res.data], {
+            type: "application/" + res.headers["content-type"],
+          });
+          let downloadElement = document.createElement("a");
+          let href = window.URL.createObjectURL(blob); // 創建下載的鏈接
+          downloadElement.href = href;
+          downloadElement.download = `參與人員_${date}.xlsx`; // 下載後文件名
+          // 此寫法兼容可火狐瀏覽器
+          document.body.appendChild(downloadElement);
+          downloadElement.click(); // 點擊下載
+          document.body.removeChild(downloadElement); // 下載完成移除元素
+          window.URL.revokeObjectURL(href); // 釋放掉 blob 對象
+          vm.$alertT.fire({
+            icon: "success",
+            title: `匯出成功`,
+          });
+        });
     },
 
     downloadUnitExcel() {
@@ -1918,6 +1922,7 @@ export default {
         vm.unit3 = "";
         vm.userNameSelect = "";
         vm.rloeSelect = "";
+        vm.adminTitleSelect = "";
         vm.usersTable = event.JoinUsers;
         vm.$nextTick(() => {
           vm.addOrEditDialog = true;
@@ -2116,6 +2121,7 @@ export default {
     this.getButtonList(this.$route.path, routers);
     this.getEvents();
     this.getEventRolse();
+    this.getAdminTitles();
     this.getEventType();
     this.getAllUser();
     await this.getUnits();
