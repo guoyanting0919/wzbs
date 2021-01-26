@@ -1,43 +1,15 @@
 <template>
   <div id="calendarEvent">
     <!-- headerBox -->
-    <HeaderBox
-      @searchHandlerDate="searchHandlerDate"
-      @changeHandler="changeHandler"
-      @mutDeleteHandler="mutDeleteHandler"
-      @exportHandler="exportHandler"
-      @importHandler="importHandler"
-      @handleAddOrEdit="handleAddOrEdit"
-      @getSearchDate="getSearchDate"
-      :buttonList="buttonList"
-      :showDatePicker="true"
-      :isEvent="true"
-      :searchLoading="searchLoading"
-    ></HeaderBox>
+    <HeaderBox @searchHandlerDate="searchHandlerDate" @changeHandler="changeHandler" @mutDeleteHandler="mutDeleteHandler" @exportHandler="exportHandler" @importHandler="importHandler" @handleAddOrEdit="handleAddOrEdit" @getSearchDate="getSearchDate" :buttonList="buttonList" :showDatePicker="true" :isEvent="true" :searchLoading="searchLoading"></HeaderBox>
 
     <!-- mainTable -->
     <div class="mainTable" v-if="eventsData">
       <div class="tableContainer mt-5">
-        <el-table
-          header-cell-class-name="tableHeader"
-          empty-text="暫無資料"
-          :data="eventsData"
-          style="width: 100%; overflow: auto"
-          :default-sort="{ prop: 'date', order: 'descending' }"
-          @selection-change="handleSelectionChange"
-          @sort-change="hadleSortChange"
-        >
+        <el-table header-cell-class-name="tableHeader" empty-text="暫無資料" :data="eventsData" style="width: 100%; overflow: auto" :default-sort="{ prop: 'date', order: 'descending' }" @selection-change="handleSelectionChange" @sort-change="hadleSortChange">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column
-            width="160"
-            prop="EventName"
-            label="活動 / 會議名稱"
-          ></el-table-column>
-          <el-table-column
-            width="130"
-            prop="EventTypeName"
-            label="行事曆類別"
-          ></el-table-column>
+          <el-table-column width="160" prop="EventName" label="活動 / 會議名稱"></el-table-column>
+          <el-table-column width="130" prop="EventTypeName" label="行事曆類別"></el-table-column>
           <!-- <el-table-column
             width="200"
             prop="ShowStartDate"
@@ -52,12 +24,7 @@
               </div>
             </template>
           </el-table-column> -->
-          <el-table-column
-            width="200"
-            prop="EventStartDate"
-            label="活動 / 會議時間"
-            sortable="custom"
-          >
+          <el-table-column width="200" prop="EventStartDate" label="活動 / 會議時間" sortable="custom">
             <template slot-scope="scope">
               <div class="eventDateBox">
                 <span class="dateFz">{{ scope.row.EventStartDate }}</span>
@@ -68,12 +35,7 @@
           </el-table-column>
           <el-table-column prop="EventAddr" label="地點">
             <template slot-scope="scope">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :open-delay="500"
-                placement="top-start"
-              >
+              <el-tooltip class="item" effect="dark" :open-delay="500" placement="top-start">
                 <div slot="content">
                   <span>{{ scope.row.EventAddr }}</span>
                 </div>
@@ -85,42 +47,11 @@
           </el-table-column>
           <el-table-column width="450" prop="emit" label="操作">
             <template slot-scope="scope">
-              <el-button
-                v-if="hasBtn('btnEdit')"
-                class="outline"
-                size="mini"
-                @click="copyHandler(scope.row)"
-                >複製</el-button
-              >
-              <el-button
-                v-if="hasBtn('btnEdit')"
-                class="outline"
-                size="mini"
-                @click="handleAddOrEdit('edit', scope.row)"
-                >編輯</el-button
-              >
-              <el-button
-                v-if="hasBtn('btnEdit')"
-                class="outline"
-                size="mini"
-                @click="memberImportHandler(scope.row)"
-                >匯入參與人員</el-button
-              >
-              <el-button
-                v-if="hasBtn('btnEdit')"
-                class="outline"
-                size="mini"
-                @click="memberExportHandler(scope.row)"
-                >匯出參與人員</el-button
-              >
-              <el-button
-                v-if="hasBtn('btnDelete')"
-                type="danger"
-                class="outline"
-                size="mini"
-                @click="deleteHandler(scope.row)"
-                >刪除</el-button
-              >
+              <el-button v-if="hasBtn('btnEdit')" class="outline" size="mini" @click="copyHandler(scope.row)">複製</el-button>
+              <el-button v-if="hasBtn('btnEdit')" class="outline" size="mini" @click="handleAddOrEdit('edit', scope.row)">編輯</el-button>
+              <el-button v-if="hasBtn('btnEdit')" class="outline" size="mini" @click="memberImportHandler(scope.row)">匯入參與人員</el-button>
+              <el-button v-if="hasBtn('btnEdit')" class="outline" size="mini" @click="memberExportHandler(scope.row)">匯出參與人員</el-button>
+              <el-button v-if="hasBtn('btnDelete')" type="danger" class="outline" size="mini" @click="deleteHandler(scope.row)">刪除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -129,41 +60,17 @@
 
     <!-- <ckeditor :editor="editor" v-model="inputDescription" :config="editorConfig"></ckeditor> -->
     <!-- pagination -->
-    <Pagination
-      v-if="totalCount"
-      :keyWord="keyWordInput"
-      :start="startDate"
-      :end="endDate"
-      :total="totalCount"
-      :page-size="pageSize"
-      :currentPage="currentPage"
-      @changePage="getEvents"
-    ></Pagination>
+    <Pagination v-if="totalCount" :keyWord="keyWordInput" :start="startDate" :end="endDate" :total="totalCount" :page-size="pageSize" :currentPage="currentPage" @changePage="getEvents"></Pagination>
 
     <!-- addOrEditDialog -->
 
-    <el-dialog
-      :close-on-click-modal="false"
-      :title="addOrEdit"
-      :visible.sync="addOrEditDialog"
-      v-if="unitsData"
-      custom-class="addOrEditDialog"
-    >
+    <el-dialog :close-on-click-modal="false" :title="addOrEdit" :visible.sync="addOrEditDialog" v-if="unitsData" custom-class="addOrEditDialog">
       <ValidationObserver ref="obs">
         <!-- <el-scrollbar class="scrollbar-handle" ref="scrollBox"> -->
         <div class="inputBox" style="margin-top: 3rem">
           <div class="inputTitle">活動 / 會議名稱</div>
-          <ValidationProvider
-            name="請輸入活動會議名稱!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-input
-              :class="classes"
-              style="width: 550px"
-              v-model="eventNameInput"
-              placeholder="請輸入活動 / 會議名稱"
-            ></el-input>
+          <ValidationProvider name="請輸入活動會議名稱!!" rules="required" v-slot="{ errors, classes }">
+            <el-input :class="classes" style="width: 550px" v-model="eventNameInput" placeholder="請輸入活動 / 會議名稱"></el-input>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
@@ -183,37 +90,16 @@
                 :config="editorConfig"
               ></ckeditor>
             </div>-->
-          <vue-editor
-            id="editor"
-            useCustomImageHandler
-            @image-added="handleImageAdded"
-            :editor-toolbar="customToolbar"
-            v-model="inputDescription"
-            :editorOptions="editorSettings"
-          ></vue-editor>
+          <vue-editor id="editor" useCustomImageHandler @image-added="handleImageAdded" :editor-toolbar="customToolbar" v-model="inputDescription" :editorOptions="editorSettings"></vue-editor>
           <!-- <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span> -->
           <!-- </ValidationProvider> -->
         </div>
 
         <div class="inputBox">
           <div class="inputTitle">行事曆類別</div>
-          <ValidationProvider
-            name="請選擇類別!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-select
-              :class="classes"
-              v-if="eventTypeData"
-              v-model="eventCategorySelete"
-              placeholder="請選擇行事曆類別"
-            >
-              <el-option
-                v-for="type in eventTypeData"
-                :key="type.Value"
-                :label="type.Text"
-                :value="type.Value"
-              ></el-option>
+          <ValidationProvider name="請選擇類別!!" rules="required" v-slot="{ errors, classes }">
+            <el-select :class="classes" v-if="eventTypeData" v-model="eventCategorySelete" placeholder="請選擇行事曆類別">
+              <el-option v-for="type in eventTypeData" :key="type.Value" :label="type.Text" :value="type.Value"></el-option>
             </el-select>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -242,78 +128,33 @@
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動時間</div>
-          <ValidationProvider
-            name="請選擇活動時間!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-date-picker
-              :class="classes"
-              v-model="eventDate"
-              type="datetimerange"
-              range-separator="~"
-              start-placeholder="開始時間"
-              end-placeholder="結束時間"
-            ></el-date-picker>
+          <ValidationProvider name="請選擇活動時間!!" rules="required" v-slot="{ errors, classes }">
+            <el-date-picker :class="classes" v-model="eventDate" type="datetimerange" range-separator="~" start-placeholder="開始時間" end-placeholder="結束時間"></el-date-picker>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
 
         <div class="inputBox">
           <div class="inputTitle">會議 / 活動地點</div>
-          <ValidationProvider
-            name="請輸入會議 / 活動地點!!"
-            rules
-            v-slot="{ errors, classes }"
-          >
-            <el-input
-              :class="classes"
-              style="width: 600px"
-              v-model="eventSiteInput"
-              placeholder="請輸入會議 / 活動地點"
-            ></el-input>
+          <ValidationProvider name="請輸入會議 / 活動地點!!" rules v-slot="{ errors, classes }">
+            <el-input :class="classes" style="width: 600px" v-model="eventSiteInput" placeholder="請輸入會議 / 活動地點"></el-input>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
 
         <div class="inputBox">
           <div class="inputTitle">連結</div>
-          <ValidationProvider
-            name="請輸入會議 / 活動連結!!"
-            rules
-            v-slot="{ errors, classes }"
-          >
-            <el-input
-              :class="classes"
-              style="width: 600px"
-              v-model="eventUrlInput"
-              placeholder="請輸入會議 / 活動連結"
-            ></el-input>
+          <ValidationProvider name="請輸入會議 / 活動連結!!" rules v-slot="{ errors, classes }">
+            <el-input :class="classes" style="width: 600px" v-model="eventUrlInput" placeholder="請輸入會議 / 活動連結"></el-input>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
 
         <div class="inputBox">
           <div class="inputTitle">管理單位</div>
-          <ValidationProvider
-            name="請選擇單位!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-select
-              filterable
-              no-match-text="暫無資料"
-              :class="classes"
-              v-if="userControlUnit"
-              v-model="unitSelete"
-              placeholder="請選擇單位"
-            >
-              <el-option
-                v-for="unit in userControlUnit"
-                :key="unit.UntId"
-                :label="unit.UntNameFull"
-                :value="unit.UntId"
-              ></el-option>
+          <ValidationProvider name="請選擇單位!!" rules="required" v-slot="{ errors, classes }">
+            <el-select filterable no-match-text="暫無資料" :class="classes" v-if="userControlUnit" v-model="unitSelete" placeholder="請選擇單位">
+              <el-option v-for="unit in userControlUnit" :key="unit.UntId" :label="unit.UntNameFull" :value="unit.UntId"></el-option>
             </el-select>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -321,20 +162,8 @@
 
         <div class="inputBox">
           <div class="inputTitle">上傳文件</div>
-          <el-upload
-            ref="upload"
-            class="upload-demo"
-            :action="`${baseUrl}Img`"
-            list-type="text"
-            :headers="uploadHeader"
-            :on-success="successUpload"
-          >
-            <el-tooltip
-              :open-delay="500"
-              class="item"
-              effect="dark"
-              placement="top-start"
-            >
+          <el-upload ref="upload" class="upload-demo" :action="`${baseUrl}Img`" list-type="text" :headers="uploadHeader" :on-success="successUpload">
+            <el-tooltip :open-delay="500" class="item" effect="dark" placement="top-start">
               <div slot="content">
                 檔案格式限制:doc/docx/xls/xlsx/ppt/pttx/pdf/jpg/png
                 <br />檔案大小限制:10MB
@@ -349,24 +178,10 @@
           <p class="noFiles" v-if="uploadUrl.length === 0">尚未上傳文件</p>
 
           <div v-if="uploadUrl">
-            <el-button
-              v-for="(url, index) in uploadUrl"
-              :key="index"
-              class="downloadBtn"
-              size="mini"
-            >
-              <el-tooltip
-                :open-delay="500"
-                class="item"
-                effect="dark"
-                :content="fileName(url)"
-                placement="top-start"
-              >
+            <el-button v-for="(url, index) in uploadUrl" :key="index" class="downloadBtn" size="mini">
+              <el-tooltip :open-delay="500" class="item" effect="dark" :content="fileName(url)" placement="top-start">
                 <p class="fileName" v-if="url">
-                  <i
-                    @click.capture="delFile(index)"
-                    class="fas fa-trash-alt"
-                  ></i>
+                  <i @click.capture="delFile(index)" class="fas fa-trash-alt"></i>
                   {{ fileName(url) }}
                 </p>
               </el-tooltip>
@@ -376,187 +191,62 @@
 
         <div class="inputBox">
           <div class="inputTitle">是否推播</div>
-          <el-switch
-            v-model="pushSwitch"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-text="是"
-            inactive-text="否"
-          ></el-switch>
+          <el-switch v-model="pushSwitch" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否"></el-switch>
         </div>
 
         <div class="inputBox" style="align-items: flex-start">
           <div class="inputTitle">參與人員</div>
           <div>
             <div>
-              <el-checkbox
-                @change="relatedChange"
-                class="relatedCheck"
-                v-model="isRelated"
-                v-if="!isOutSchool"
-                >是否關聯</el-checkbox
-              >
-              <el-checkbox class="relatedCheck" v-model="isOutSchool"
-                >校外人士參與</el-checkbox
-              >
+              <el-checkbox @change="relatedChange" class="relatedCheck" v-model="isRelated" v-if="!isOutSchool">是否關聯</el-checkbox>
+              <el-checkbox class="relatedCheck" v-model="isOutSchool">校外人士參與</el-checkbox>
             </div>
 
             <!-- 選擇單位(校內) -->
             <div class="selectBox" v-if="!isOutSchool">
-              <el-select
-                filterable
-                no-match-text="暫無資料"
-                @change="lv1Change"
-                class="unitSelect"
-                v-model="unit1"
-                placeholder="請選擇最高單位"
-              >
-                <el-option
-                  :value="unit.UntId"
-                  :label="unit.UntNameFull"
-                  v-for="unit in unitLv1"
-                  :key="unit.UntId"
-                  >{{ unit.UntNameFull }}</el-option
-                >
+              <el-select filterable no-match-text="暫無資料" @change="lv1Change" class="unitSelect" v-model="unit1" placeholder="請選擇最高單位">
+                <el-option :value="unit.UntId" :label="unit.UntNameFull" v-for="unit in unitLv1" :key="unit.UntId">{{ unit.UntNameFull }}</el-option>
               </el-select>
-              <el-select
-                filterable
-                clearable
-                no-match-text="暫無資料"
-                @change="lv2Change"
-                @clear="lv2Clear"
-                class="unitSelect"
-                v-model="unit2"
-                placeholder="請選擇次高單位"
-                v-if="unit1 && unitLv2.length > 0"
-              >
-                <el-option
-                  v-for="unit in unitLv2"
-                  :key="unit.UntId"
-                  :value="unit.UntId"
-                  :label="unit.UntNameFull"
-                  >{{ unit.UntNameFull }}</el-option
-                >
+              <el-select filterable clearable no-match-text="暫無資料" @change="lv2Change" @clear="lv2Clear" class="unitSelect" v-model="unit2" placeholder="請選擇次高單位" v-if="unit1 && unitLv2.length > 0">
+                <el-option v-for="unit in unitLv2" :key="unit.UntId" :value="unit.UntId" :label="unit.UntNameFull">{{ unit.UntNameFull }}</el-option>
               </el-select>
-              <el-select
-                filterable
-                clearable
-                no-match-text="暫無資料"
-                class="unitSelect"
-                @change="lv3Change"
-                @clear="lv3Clear"
-                v-model="unit3"
-                placeholder="請選擇單位"
-                v-if="unit2 && unitLv3.length > 0"
-              >
-                <el-option
-                  v-for="unit in unitLv3"
-                  :key="unit.UntId"
-                  :value="unit.UntId"
-                  :label="unit.UntNameFull"
-                  >{{ unit.UntNameFull }}</el-option
-                >
+              <el-select filterable clearable no-match-text="暫無資料" class="unitSelect" @change="lv3Change" @clear="lv3Clear" v-model="unit3" placeholder="請選擇單位" v-if="unit2 && unitLv3.length > 0">
+                <el-option v-for="unit in unitLv3" :key="unit.UntId" :value="unit.UntId" :label="unit.UntNameFull">{{ unit.UntNameFull }}</el-option>
               </el-select>
             </div>
 
             <!-- 選擇單位(校外) -->
             <div class="selectBox" v-if="isOutSchool">
-              <el-input
-                style="width: 180px; margin-right: 0.5rem"
-                v-model="outUnit"
-                placeholder="請輸入最高單位"
-              ></el-input>
-              <el-input
-                style="width: 180px; margin-right: 0.5rem"
-                v-model="outName"
-                placeholder="請輸入人員名稱"
-              ></el-input>
-              <el-input
-                style="width: 180px; margin-right: 0.5rem"
-                v-model="outTitle"
-                placeholder="請輸入職稱"
-              ></el-input>
-              <el-select
-                style="width: 180px; margin-right: 0.5rem"
-                v-model="outRole"
-                placeholder="參與角色"
-              >
-                <el-option
-                  v-for="role in rolesData"
-                  :key="role.Id"
-                  :value="role.Name"
-                ></el-option>
+              <el-input style="width: 180px; margin-right: 0.5rem" v-model="outUnit" placeholder="請輸入最高單位"></el-input>
+              <el-input style="width: 180px; margin-right: 0.5rem" v-model="outName" placeholder="請輸入人員名稱"></el-input>
+              <el-input style="width: 180px; margin-right: 0.5rem" v-model="outTitle" placeholder="請輸入職稱"></el-input>
+              <el-select style="width: 180px; margin-right: 0.5rem" v-model="outRole" placeholder="參與角色">
+                <el-option v-for="role in rolesData" :key="role.Id" :value="role.Name"></el-option>
               </el-select>
 
-              <el-button @click="outAddToTable" style="margin-top: 0.5rem"
-                >加入</el-button
-              >
+              <el-button @click="outAddToTable" style="margin-top: 0.5rem">加入</el-button>
             </div>
           </div>
         </div>
 
         <!-- 參與人員資料(校內) -->
-        <div
-          v-if="!isOutSchool"
-          class="inputBox"
-          style="align-items: flex-start"
-        >
+        <div v-if="!isOutSchool" class="inputBox" style="align-items: flex-start">
           <div class="inputTitle"></div>
           <div class="selectBox">
-            <el-select
-              style="width: 150px"
-              filterable
-              no-match-text="暫無資料"
-              :loading="userNameLoading"
-              loading-text="Loading..."
-              no-data-text="暫無資料"
-              v-model="userNameSelect"
-              placeholder="請選擇名稱"
-              @change="setUser"
-            >
-              <el-option
-                v-for="user in usersData"
-                :key="user.Account"
-                :value="user.Account"
-                :label="user.Name"
-              >
+            <el-select style="width: 150px" filterable no-match-text="暫無資料" :loading="userNameLoading" loading-text="Loading..." no-data-text="暫無資料" v-model="userNameSelect" placeholder="請選擇名稱" @change="setUser">
+              <el-option v-for="user in usersData" :key="user.Account" :value="user.Account" :label="user.Name">
                 <span>{{ user.Name }}</span>
                 <span>({{ user.Title }})</span>
               </el-option>
             </el-select>
-            <el-select
-              style="width: 150px"
-              v-model="memberTitle"
-              placeholder="職稱"
-            >
-              <el-option
-                v-for="(title, index) in memberTitleList"
-                :key="index"
-                :value="title"
-                >{{ title }}</el-option
-              >
+            <el-select style="width: 150px" v-model="memberTitle" placeholder="職稱">
+              <el-option v-for="(title, index) in memberTitleList" :key="index" :value="title">{{ title }}</el-option>
             </el-select>
-            <el-select
-              style="width: 150px"
-              v-model="rloeSelect"
-              placeholder="參與角色"
-            >
-              <el-option
-                v-for="role in rolesData"
-                :key="role.Id"
-                :value="role.Name"
-              ></el-option>
+            <el-select style="width: 150px" v-model="rloeSelect" placeholder="參與角色">
+              <el-option v-for="role in rolesData" :key="role.Id" :value="role.Name"></el-option>
             </el-select>
-            <el-select
-              style="width: 150px"
-              v-model="adminTitleSelect"
-              placeholder="行政職稱"
-            >
-              <el-option
-                v-for="role in adminTitles"
-                :key="role.Key"
-                :value="role.Value"
-              >
+            <el-select style="width: 150px" v-model="adminTitleSelect" placeholder="行政職稱">
+              <el-option v-for="role in adminTitles" :key="role.Key" :value="role.Value">
                 {{ role.Value }}
               </el-option>
             </el-select>
@@ -567,39 +257,17 @@
         <!-- table -->
         <div class="inputBox" style="align-items: flex-start">
           <div class="inputTitle"></div>
-          <el-table
-            header-cell-class-name="tableHeader"
-            v-if="usersTableData"
-            empty-text="暫無資料"
-            :data="usersTableData"
-            style="width: 100%"
-          >
-            <el-table-column
-              prop="userName"
-              label="姓名"
-              width="180"
-            ></el-table-column>
-            <el-table-column
-              prop="usertitle"
-              label="職稱"
-              width="180"
-            ></el-table-column>
+          <el-table header-cell-class-name="tableHeader" v-if="usersTableData" empty-text="暫無資料" :data="usersTableData" style="width: 100%">
+            <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
+            <el-table-column prop="usertitle" label="職稱" width="180"></el-table-column>
             <el-table-column prop="unit" label="單位"></el-table-column>
             <el-table-column prop="userType" label="參與角色"></el-table-column>
-            <el-table-column
-              prop="AdminTitle"
-              label="行政職稱"
-            ></el-table-column>
+            <el-table-column prop="AdminTitle" label="行政職稱"></el-table-column>
             <el-table-column prop label="刪除">
               <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click.native.prevent="
+                <el-button size="mini" type="danger" @click.native.prevent="
                     deleteRow(scope.$index, usersTableData)
-                  "
-                  >刪除</el-button
-                >
+                  ">刪除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -609,9 +277,7 @@
         <div v-if="addOrEdit === '編輯' && modifyBy" class="inputBox">
           <div class="inputTitle"></div>
           <div class="modifyDiv">
-            <span class="modifyText"
-              >{{ modifyBy }} 於 {{ modifyTime }} 進行最後一次編輯</span
-            >
+            <span class="modifyText">{{ modifyBy }} 於 {{ modifyTime }} 進行最後一次編輯</span>
           </div>
         </div>
 
@@ -620,55 +286,21 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="addOrEditDialog = false">取 消</el-button>
-        <el-button
-          v-if="addOrEdit === '新增'"
-          type="primary"
-          @click="addHandler"
-          >新 增</el-button
-        >
-        <el-button
-          v-if="addOrEdit === '編輯'"
-          type="primary"
-          @click="editHandler"
-          >編 輯</el-button
-        >
-        <el-button
-          v-if="addOrEdit === '複製'"
-          type="primary"
-          @click="addHandler"
-          >複 製</el-button
-        >
+        <el-button v-if="addOrEdit === '新增'" type="primary" @click="addHandler">新 增</el-button>
+        <el-button v-if="addOrEdit === '編輯'" type="primary" @click="editHandler">編 輯</el-button>
+        <el-button v-if="addOrEdit === '複製'" type="primary" @click="addHandler">複 製</el-button>
       </div>
     </el-dialog>
 
     <!-- changeDialog -->
 
-    <el-dialog
-      title="替換人員"
-      custom-class="changeDialog"
-      :visible.sync="changeDialog"
-    >
+    <el-dialog title="替換人員" custom-class="changeDialog" :visible.sync="changeDialog">
       <ValidationObserver ref="obs2">
         <div class="changeInputBox">
           <p class="changeInputTitle">原始人員</p>
-          <ValidationProvider
-            name="請原始人員!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-select
-              filterable
-              :class="classes"
-              no-match-text="無匹配資料"
-              no-data-text="無資料"
-              v-model="changeMember"
-              placeholder="請選擇原始人員"
-            >
-              <el-option
-                v-for="(member, index) in changeMemberData"
-                :key="`${member + index}`"
-                :value="member"
-              ></el-option>
+          <ValidationProvider name="請原始人員!!" rules="required" v-slot="{ errors, classes }">
+            <el-select filterable :class="classes" no-match-text="無匹配資料" no-data-text="無資料" v-model="changeMember" placeholder="請選擇原始人員">
+              <el-option v-for="(member, index) in changeMemberData" :key="`${member + index}`" :value="member"></el-option>
             </el-select>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -676,19 +308,8 @@
 
         <div class="changeInputBox">
           <p class="changeInputTitle">替換人員</p>
-          <ValidationProvider
-            name="請輸入欲替換人員!!"
-            rules="required"
-            v-slot="{ errors, classes }"
-          >
-            <el-autocomplete
-              class="inline-input"
-              :class="classes"
-              v-model="newChangeMember"
-              :fetch-suggestions="querySearch"
-              placeholder="請輸入欲替換人員"
-              :trigger-on-focus="false"
-            ></el-autocomplete>
+          <ValidationProvider name="請輸入欲替換人員!!" rules="required" v-slot="{ errors, classes }">
+            <el-autocomplete class="inline-input" :class="classes" v-model="newChangeMember" :fetch-suggestions="querySearch" placeholder="請輸入欲替換人員" :trigger-on-focus="false"></el-autocomplete>
             <span class="validateSpan" v-if="errors[0]">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
@@ -701,20 +322,7 @@
 
     <!-- importDialog -->
     <el-dialog title="匯入文件" :visible.sync="importDialogVisible" width="30%">
-      <el-upload
-        ref="import"
-        class="upload-demo"
-        :multiple="false"
-        :action="`${baseUrl}CalendarEvent/ImportExcel/xlsx`"
-        list-type="text"
-        :headers="uploadHeader"
-        :before-upload="beforeAvatarUpload"
-        :on-success="successImport"
-        :on-error="errorImport"
-        :auto-upload="false"
-        :limit="1"
-        :on-exceed="importExceed"
-      >
+      <el-upload ref="import" class="upload-demo" :multiple="false" :action="`${baseUrl}CalendarEvent/ImportExcel/xlsx`" list-type="text" :headers="uploadHeader" :before-upload="beforeAvatarUpload" :on-success="successImport" :on-error="errorImport" :auto-upload="false" :limit="1" :on-exceed="importExceed">
         <el-button size="small" type="primary">選擇上傳文件</el-button>
         <div slot="tip" class="el-upload__tip">
           限制上傳 xlsx 或 xls 格式文件
@@ -738,25 +346,8 @@
     </el-dialog>
 
     <!-- memberImportDialog -->
-    <el-dialog
-      title="參與人員匯入"
-      :visible.sync="memberImportDialogVisible"
-      width="30%"
-    >
-      <el-upload
-        ref="memberImport"
-        class="upload-demo"
-        :multiple="false"
-        :action="memberImportUrl"
-        list-type="text"
-        :headers="uploadHeader"
-        :before-upload="beforeAvatarUpload"
-        :on-success="successImport"
-        :on-error="errorImport"
-        :auto-upload="false"
-        :limit="1"
-        :on-exceed="importExceed"
-      >
+    <el-dialog title="參與人員匯入" :visible.sync="memberImportDialogVisible" width="30%">
+      <el-upload ref="memberImport" class="upload-demo" :multiple="false" :action="memberImportUrl" list-type="text" :headers="uploadHeader" :before-upload="beforeAvatarUpload" :on-success="successImport" :on-error="errorImport" :auto-upload="false" :limit="1" :on-exceed="importExceed">
         <el-button size="small" type="primary">選擇上傳文件</el-button>
         <div slot="tip" class="el-upload__tip">
           限制上傳 xlsx 或 xls 格式文件
@@ -1218,6 +809,7 @@ export default {
             startDate,
             EndDate,
             UserName,
+            UserId: vm.userData.userId,
           };
           vm.$api.CheckUserHasEvent(params).then((res) => {
             if (res.data.success) {
